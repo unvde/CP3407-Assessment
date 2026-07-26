@@ -85,8 +85,66 @@ Responsibilities:
 - [Requirements Backlog](docs/week2/requirements-backlog.md)
 - [Practical 2 Report](docs/week2/practical-report.md)
 
+### Week 3 - Iteration 1
+
+- [Iteration Plan](docs/week3/iteration-plan.md)
+- [Iteration 1 Project Board](docs/week3/project-board.md)
+- [Iteration 1 Burndown](docs/week3/burndown.md)
+
 Additional weekly documentation covering design, iterations, testing and development tools will be added as the project progresses.
 
 ## Project Status
 
-**Current stage:** Requirements analysis and formal backlog preparation.
+**Current stage:** Iteration 1 implementation.
+
+## Local Development
+
+### Requirements
+
+- Python 3.12 or later
+- pip
+
+### Setup
+
+1. Create and activate a virtual environment:
+
+   ```bash
+   python3 -m venv .venv
+   source .venv/bin/activate
+   ```
+
+2. Install dependencies:
+
+   ```bash
+   python -m pip install -r requirements.txt
+   ```
+
+3. Configure local environment variables:
+
+   ```bash
+   export DJANGO_SECRET_KEY="replace-with-a-long-random-value"
+   export DJANGO_DEBUG=True
+   export DJANGO_ALLOWED_HOSTS="127.0.0.1,localhost"
+   ```
+
+4. Prepare the database:
+
+   ```bash
+   python manage.py migrate
+   ```
+
+5. Run the development server:
+
+   ```bash
+   python manage.py runserver
+   ```
+
+6. Open `http://127.0.0.1:8000/`.
+
+### Tests
+
+Run the automated test suite with:
+
+```bash
+python manage.py test
+```
