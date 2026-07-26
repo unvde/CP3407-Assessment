@@ -1,0 +1,41 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Reading Compass{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/app.css' %}">
+</head>
+<body>
+<header class="site-header">
+    <a class="brand" href="{% url 'book-list' %}">Reading Compass</a>
+    <nav aria-label="Primary navigation">
+        {% if user.is_authenticated %}
+            <span class="user-label">Signed in as {{ user.username }}</span>
+            <a href="{% url 'book-list' %}">My books</a>
+            <a href="{% url 'book-add' %}">Add book</a>
+            <form class="inline-form" method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button class="link-button" type="submit">Log out</button>
+            </form>
+        {% else %}
+            <a href="{% url 'login' %}">Log in</a>
+            <a href="{% url 'register' %}">Register</a>
+        {% endif %}
+    </nav>
+</header>
+
+<main class="page-shell">
+    {% if messages %}
+        <div aria-live="polite">
+            {% for message in messages %}
+                <p class="message">{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+    {% block content %}{% endblock %}
+</main>
+</body>
+</html>
+
