@@ -31,7 +31,7 @@ Reading Compass is intended for students and casual readers who want a straightf
 - Personal reading dashboard
 - Search and filtering
 
-These are preliminary ideas and may be revised after target-user interviews and requirements analysis.
+These ideas have been reviewed through target-user interviews and converted into a formal requirements backlog.
 
 ## Technology Stack
 
@@ -72,19 +72,21 @@ Responsibilities:
 - Conduct quality-assurance and usability checks
 - Track progress against iteration goals
 
-## Initial Backlog Ideas
-
-The preliminary backlog is available in [`docs/initial-backlog.md`](docs/initial-backlog.md).
-
-These backlog items are early ideas rather than confirmed requirements. They will be reviewed after interviews with target users.
-
 ## Project Documentation
 
-- [Project Proposal](docs/project-proposal.md)
-- [Initial Backlog Ideas](docs/initial-backlog.md)
+### Week 1 - Project Initiation
 
-Additional documentation covering requirements, design, iterations, testing and development tools will be added as the project progresses.
+- [Project Proposal](docs/week1/project-proposal.md)
+- [Initial Backlog Ideas](docs/week1/initial-backlog.md)
+
+### Week 2 - Requirements Analysis
+
+- [Target-User Interview Findings](docs/week2/interview-findings.md)
+- [Requirements Backlog](docs/week2/requirements-backlog.md)
+- [Practical 2 Report](docs/week2/practical-report.md)
+
+Additional weekly documentation covering design, iterations, testing and development tools will be added as the project progresses.
 
 ## Project Status
 
-**Current stage:** Project initiation and preliminary planning.
+**Current stage:** Requirements analysis and formal backlog preparation.
