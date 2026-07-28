@@ -163,6 +163,19 @@ class BookManagementTests(TestCase):
         self.assertEqual(created.owner, self.user)
         self.assertRedirects(response, created.get_absolute_url())
 
+    def test_add_book_page_explains_reading_statuses(self):
+        response = self.client.get(reverse("book-add"))
+
+        self.assertContains(
+            response,
+            (
+                "Want to Read: saved for future reading; "
+                "Currently Reading: actively being read; "
+                "Paused: temporarily stopped; "
+                "Completed: finished."
+            ),
+        )
+
     def test_create_rejects_non_positive_page_count(self):
         response = self.client.post(
             reverse("book-add"),
@@ -232,4 +245,3 @@ class BookManagementTests(TestCase):
 
         self.assertEqual(response.status_code, 404)
         self.assertTrue(Book.objects.filter(pk=self.other_book.pk).exists())
-
