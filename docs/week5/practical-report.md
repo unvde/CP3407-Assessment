@@ -95,6 +95,6 @@ actual values are unavailable.
 ## 9. Completion Status
 
 All local Practical 5 work is complete. The team manually confirmed the remote
-Issue and Project Board states on 29 July 2026. Adding the Project Board URL,
-checking GitHub Pages, and committing and pushing these local changes remain
-manual actions.
+Issue and Project Board states on 29 July 2026, and the confirmed Project Board
+URL is recorded in the Week 3 documentation. GitHub Pages is not currently
+configured; enabling it would be a separate public-publishing decision.

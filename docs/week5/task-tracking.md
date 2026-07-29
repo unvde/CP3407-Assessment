@@ -51,7 +51,6 @@ confirmed on 29 July 2026 that Issues #1–#9 are closed with the `done` label a
 have Status = Done on the GitHub Project Board. The remaining manual actions
 are:
 
-1. Add the Week 5 documentation to GitHub Pages navigation if Pages uses
-   navigation separate from this repository README.
-2. Add the actual GitHub Project URL to the Week 3 project-board document.
-3. After reviewing these local changes, commit and push them manually.
+1. Decide whether to publicly enable GitHub Pages for this repository. Pages is
+   not currently configured.
+2. After reviewing these local changes, commit and push them.

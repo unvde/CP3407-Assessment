@@ -3,7 +3,7 @@
 ## Board Information
 
 **Project:** Reading Compass — Iteration 1  
-**GitHub Project URL:** `[Add the confirmed board URL when available]`
+**GitHub Project URL:** [Reading Compass — Iteration 1](https://github.com/users/unvde/projects/2)
 
 ## Workflow
 
@@ -65,4 +65,4 @@ so they have not been fabricated. The final statuses are supported by the
 implementation, automated tests and the Week 4 tracking evidence. On 29 July
 2026, the team manually confirmed that Issues #1–#9 are closed with the `done`
 label and appear in the GitHub Project with Status = Done. The board URL still
-needs to be added above when available.
+is recorded above.

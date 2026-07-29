@@ -65,8 +65,7 @@ The review content is referenced from the existing GitHub review and is not reco
 The Issue assignees, labels and open/closed states above were verified and
 synchronized. On 29 July 2026, the team also manually confirmed in a signed-in
 GitHub session that Issues #1–#9 are present in the Project with Status = Done.
-The Project Board URL still needs to be copied into the Week 3 project-board
-document.
+The Project Board URL is recorded in the Week 3 project-board document.
 
 ## 7. Completion Checklist
 
