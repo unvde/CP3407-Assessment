@@ -62,9 +62,11 @@ The review content is referenced from the existing GitHub review and is not reco
 
 ## 6. Project Board Status
 
-The Issue assignees, labels and open/closed states above were verified and synchronized. The available GitHub repository connection does not expose GitHub Project Board fields, and the browser session was not signed in, so separate Project Board status values could not be verified or changed.
-
-Manual check required: while signed in, open the repository Project and confirm Issues #1–#9 are present with Status = Done. Do not treat this document as evidence that an unverified Project field was updated.
+The Issue assignees, labels and open/closed states above were verified and
+synchronized. On 29 July 2026, the team also manually confirmed in a signed-in
+GitHub session that Issues #1–#9 are present in the Project with Status = Done.
+The Project Board URL still needs to be copied into the Week 3 project-board
+document.
 
 ## 7. Completion Checklist
 
@@ -76,4 +78,4 @@ Manual check required: while signed in, open the repository Project and confirm 
 - [x] Complete and merge PR #10.
 - [x] Close completed Issues #1–#9.
 - [x] Add issue, review and pull-request links to Week 4 documentation.
-- [ ] Verify and synchronize separate GitHub Project Board fields while signed in.
+- [x] Verify separate GitHub Project Board fields while signed in.

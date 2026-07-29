@@ -33,7 +33,11 @@ Tasks use the labels `todo`, `in-progress` and `done`. Issues [#1](https://githu
 - Reading Status Management: Done
 - Iteration 1 usability and acceptance review: Done
 
-All nine tasks are assigned, labelled `done`, closed as completed, and displayed in the Done status on the GitHub Project Board. The detailed issue mapping is recorded in [Iteration 1 Task Tracking](task-tracking.md).
+All nine tasks are assigned, labelled `done` and closed as completed. The
+detailed issue mapping is recorded in
+[Iteration 1 Task Tracking](task-tracking.md). On 29 July 2026, the team
+manually confirmed that Issues #1–#9 also have Status = Done on the GitHub
+Project Board.
 
 ## 5. Design Documentation
 
@@ -85,7 +89,7 @@ The review specifically confirmed that the four reading statuses are explained i
 - [x] Back-check task totals against story estimates.
 - [x] Use `todo`, `in-progress` and `done` tracking labels.
 - [x] Create, assign, label and close GitHub issues #1–#9.
-- [x] Place Issues #1–#9 in the Done status on the GitHub Project Board.
+- [x] Verify Issues #1–#9 have Done status on the GitHub Project Board while signed in.
 - [x] Develop and store a class diagram.
 - [x] Develop and store a sequence diagram for a key operation.
 - [x] Use meaningful commits for current code.
@@ -94,4 +98,8 @@ The review specifically confirmed that the four reading statuses are explained i
 
 ## 10. Completion Status
 
-All Practical 4 requirements have been completed. Iteration 1 tasks are decomposed, estimated, assigned and tracked; all related issues are closed and shown as Done; the required UML diagrams are documented and exported; and the pull-request review workflow has been completed and recorded.
+All Practical 4 requirements are complete. Iteration 1 tasks are decomposed,
+estimated, assigned and tracked; all related issues are closed and labelled
+`done`; their GitHub Project Board status has been manually confirmed; the
+required UML diagrams are documented and exported; and the pull-request review
+workflow has been completed and recorded.

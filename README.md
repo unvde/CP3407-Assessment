@@ -99,11 +99,19 @@ Responsibilities:
 - [Sequence Diagram](docs/week4/sequence-diagram.md)
 - [Practical 4 Report](docs/week4/practical-report.md)
 
+### Week 5 - Iteration 1 Review
+
+- [Iteration 1 Review and Actual Velocity](docs/week5/iteration-review.md)
+- [SRP and DRY Review](docs/week5/srp-dry-review.md)
+- [Task and Story Tracking](docs/week5/task-tracking.md)
+- [Practical 5 Report](docs/week5/practical-report.md)
+- [Completed User Story Documentation](docs/week5/user-stories/README.md)
+
 Additional weekly documentation covering design, iterations, testing and development tools will be added as the project progresses.
 
 ## Project Status
 
-**Current stage:** Iteration 1 implementation.
+**Current stage:** Iteration 1 completed; Iteration 2 not started.
 
 ## Local Development
 

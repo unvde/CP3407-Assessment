@@ -9,19 +9,7 @@
 
     <form method="post">
         {% csrf_token %}
-        {{ form.non_field_errors }}
-        {% for field in form %}
-            <div class="field">
-                {{ field.label_tag }}
-                {{ field }}
-                {% if field.help_text %}
-                    <p class="help-text">{{ field.help_text }}</p>
-                {% endif %}
-                {% for error in field.errors %}
-                    <p class="error">{{ error }}</p>
-                {% endfor %}
-            </div>
-        {% endfor %}
+        {% include "includes/form_fields.html" %}
         <div class="actions">
             <button class="primary-button" type="submit">Save book</button>
             <a class="text-link" href="{% if object %}{{ object.get_absolute_url }}{% else %}{% url 'book-list' %}{% endif %}">Cancel</a>

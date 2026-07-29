@@ -10,16 +10,7 @@
 
     <form method="post">
         {% csrf_token %}
-        {{ form.non_field_errors }}
-        {% for field in form %}
-            <div class="field">
-                {{ field.label_tag }}
-                {{ field }}
-                {% for error in field.errors %}
-                    <p class="error">{{ error }}</p>
-                {% endfor %}
-            </div>
-        {% endfor %}
+        {% include "includes/form_fields.html" %}
         {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
         <button class="primary-button" type="submit">Log in</button>
     </form>
@@ -27,4 +18,3 @@
     <p class="form-footer">No account yet? <a href="{% url 'register' %}">Register</a>.</p>
 </section>
 {% endblock %}
-

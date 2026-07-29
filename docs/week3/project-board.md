@@ -3,7 +3,7 @@
 ## Board Information
 
 **Project:** Reading Compass — Iteration 1  
-**GitHub Project URL:** `[Add URL after the board is created]`
+**GitHub Project URL:** `[Add the confirmed board URL when available]`
 
 ## Workflow
 
@@ -15,11 +15,11 @@ The project board uses the following statuses:
 
 ## Iteration 1 Stories
 
-| No. | User Story | Priority | Estimate | Primary Owner | Initial Status |
+| No. | User Story | Priority | Estimate | Primary Owner | Final Status |
 | --- | --- | --- | --- | --- | --- |
-| 01 | User Account Access | 10 | 2 days | Tianyang Zhang | Todo |
-| 02 | Personal Reading List | 10 | 3 days | Tianyang Zhang | Todo |
-| 03 | Reading Status Management | 10 | 2 days | Tianyang Zhang | Todo |
+| 01 | User Account Access | 10 | 2 days | Tianyang Zhang | Done |
+| 02 | Personal Reading List | 10 | 3 days | Tianyang Zhang | Done |
+| 03 | Reading Status Management | 10 | 2 days | Tianyang Zhang | Done |
 
 ## Team Responsibilities
 
@@ -56,8 +56,13 @@ A story moves to **Done** only when:
 
 | No. | Current Status | Start Date | Completion Date | Notes |
 | --- | --- | --- | --- | --- |
-| 01 | Todo | — | — | Not started |
-| 02 | Todo | — | — | Not started |
-| 03 | Todo | — | — | Not started |
+| 01 | Done | Not retrospectively invented | Iteration 1 | Registration, login, logout, protected routes and tests complete |
+| 02 | Done | Not retrospectively invented | Iteration 1 | Private book CRUD workflow and tests complete |
+| 03 | Done | Not retrospectively invented | Iteration 1 | Controlled statuses, tests and usability review complete |
 
-This table must be updated using actual development progress.
+Exact historical start and completion dates were not recorded during execution,
+so they have not been fabricated. The final statuses are supported by the
+implementation, automated tests and the Week 4 tracking evidence. On 29 July
+2026, the team manually confirmed that Issues #1–#9 are closed with the `done`
+label and appear in the GitHub Project with Status = Done. The board URL still
+needs to be added above when available.

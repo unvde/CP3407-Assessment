@@ -129,6 +129,27 @@
 | 50 | 1 | 1 day |
 | **Total** | **10** | **23 days** |
 
+## Current Story Status
+
+Status uses the shared workflow `todo`, `in-progress` and `done`.
+
+| No. | User Story | Iteration | Status |
+|:---:|---|:---:|:---:|
+| 01 | User Account Access | 1 | done |
+| 02 | Personal Reading List | 1 | done |
+| 03 | Reading Status Management | 1 | done |
+| 04 | Reading Progress Updates | 2 | todo |
+| 05 | Reading Dashboard | 2 | todo |
+| 06 | Reading Plans | 2 | todo |
+| 07 | Search and Filtering | 3 | todo |
+| 08 | Private Reading Notes | 3 | todo |
+| 09 | Completion Review | 3 | todo |
+| 10 | Duplicate Book Warning | 3 | todo |
+
+No story is currently `in-progress`: Iteration 1 is closed and Iteration 2 has
+not started. Detailed Iteration 1 evidence and velocity are recorded in the
+[Week 5 Iteration Review](../week5/iteration-review.md).
+
 ## Planning Conclusion
 
 The four priority-10 requirements form the minimum usable product. Priority-20 requirements should follow once the core reading workflow is stable. Priority-30 to priority-50 requirements may be scheduled according to the team's demonstrated velocity and remaining project budget.
