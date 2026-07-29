@@ -33,9 +33,7 @@ Tasks use the labels `todo`, `in-progress` and `done`. Issues [#1](https://githu
 - Reading Status Management: Done
 - Iteration 1 usability and acceptance review: Done
 
-All nine tasks are assigned, labelled `done`, and closed as completed. The detailed issue mapping is recorded in [Iteration 1 Task Tracking](task-tracking.md).
-
-GitHub Issue state is the verified status record. GitHub Project Board field values could not be verified through the available repository connection, so this report does not claim that separate Project fields were updated.
+All nine tasks are assigned, labelled `done`, closed as completed, and displayed in the Done status on the GitHub Project Board. The detailed issue mapping is recorded in [Iteration 1 Task Tracking](task-tracking.md).
 
 ## 5. Design Documentation
 
@@ -44,7 +42,7 @@ The application structure is documented using:
 - [Class Diagram](class-diagram.md)
 - [Add Book Sequence Diagram](sequence-diagram.md)
 
-Both diagrams are complete Mermaid diagrams stored in the repository. The class diagram explains the relationships among the Django user, book model, forms and views. The sequence diagram illustrates authentication, validation, owner assignment and persistence during book creation.
+Both diagrams are complete Mermaid diagrams stored in the repository, with exported PNG versions stored in `docs/week4/diagrams/`. The class diagram explains the relationships among the Django user, book model, forms and views. The sequence diagram illustrates authentication, validation, owner assignment and persistence during book creation.
 
 ## 6. Development Evidence
 
@@ -87,13 +85,13 @@ The review specifically confirmed that the four reading statuses are explained i
 - [x] Back-check task totals against story estimates.
 - [x] Use `todo`, `in-progress` and `done` tracking labels.
 - [x] Create, assign, label and close GitHub issues #1–#9.
+- [x] Place Issues #1–#9 in the Done status on the GitHub Project Board.
 - [x] Develop and store a class diagram.
 - [x] Develop and store a sequence diagram for a key operation.
 - [x] Use meaningful commits for current code.
 - [x] Complete and record Yuhao Guo's usability review.
 - [x] Complete, review and merge PR #10.
-- [ ] Verify and, if necessary, synchronize separate GitHub Project Board field values.
 
-## 10. Remaining Action
+## 10. Completion Status
 
-Open the repository's GitHub Project while signed in and verify that Issues #1–#9 appear in the Done column/status. This is the only Week 4 tracking item not verified through the available repository connection.
+All Practical 4 requirements have been completed. Iteration 1 tasks are decomposed, estimated, assigned and tracked; all related issues are closed and shown as Done; the required UML diagrams are documented and exported; and the pull-request review workflow has been completed and recorded.
