@@ -81,7 +81,13 @@ classDiagram
     BookDeleteView --> Book : deletes
 ```
 
-## 2. Design Notes
+## 2. Exported Diagram
+
+The exported UML image is stored at [`diagrams/class-diagram.png`](diagrams/class-diagram.png).
+
+![Reading Compass class diagram](diagrams/class-diagram.png)
+
+## 3. Design Notes
 
 - `User` is provided by Django's authentication system.
 - Each `Book` has exactly one owner, while a user may own many books.
@@ -90,7 +96,7 @@ classDiagram
 - `OwnedBookQuerysetMixin` filters queries by the authenticated user and prevents cross-user access.
 - The class-based views separate list, detail, creation, update and deletion responsibilities.
 
-## 3. Responsibility Review
+## 4. Responsibility Review
 
 The design keeps the current Iteration 1 responsibilities separated:
 
@@ -99,6 +105,3 @@ The design keeps the current Iteration 1 responsibilities separated:
 - Views coordinate HTTP workflows.
 - Templates present information.
 - Authentication and ownership checks protect private data.
-
-An exported UML image or online-diagram link can be added later if required for the final design submission.
-
