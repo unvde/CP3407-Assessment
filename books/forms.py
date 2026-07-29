@@ -23,6 +23,14 @@ class BookForm(forms.ModelForm):
     class Meta:
         model = Book
         fields = ("title", "author", "status", "total_pages")
+        help_texts = {
+            "status": (
+                "Want to Read: saved for future reading; "
+                "Currently Reading: actively being read; "
+                "Paused: temporarily stopped; "
+                "Completed: finished."
+            ),
+        }
         widgets = {
             "title": forms.TextInput(attrs={"autofocus": True}),
             "total_pages": forms.NumberInput(attrs={"min": 1}),
@@ -33,4 +41,3 @@ class BookForm(forms.ModelForm):
 
     def clean_author(self):
         return self.cleaned_data["author"].strip()
-
