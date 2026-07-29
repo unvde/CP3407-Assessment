@@ -91,6 +91,14 @@ Responsibilities:
 - [Iteration 1 Project Board](docs/week3/project-board.md)
 - [Iteration 1 Burndown](docs/week3/burndown.md)
 
+### Week 4 - Execution and Tracking
+
+- [Task Breakdown](docs/week4/task-breakdown.md)
+- [Task Tracking](docs/week4/task-tracking.md)
+- [Class Diagram](docs/week4/class-diagram.md)
+- [Sequence Diagram](docs/week4/sequence-diagram.md)
+- [Practical 4 Report](docs/week4/practical-report.md)
+
 Additional weekly documentation covering design, iterations, testing and development tools will be added as the project progresses.
 
 ## Project Status
