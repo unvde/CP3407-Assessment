@@ -4,7 +4,7 @@
 
 Iteration 1 contains three user stories originally estimated at seven development days.
 
-For planning purposes, one development day represents approximately six focused hours. Each user story has been split into implementation, testing and review tasks. The task totals are then compared with the original story estimates.
+For planning purposes, one development day represents approximately six focused hours. Each user story was split into implementation, testing and review tasks. The task totals were then compared with the original story estimates.
 
 ## 2. Story 01 — User Account Access
 
@@ -41,7 +41,7 @@ The detailed task estimate equals the original two-day user-story estimate. No a
 
 ### Back-check
 
-The detailed task estimate equals the original three-day user-story estimate. The estimate remains reasonable for the current implementation scope.
+The detailed task estimate equals the original three-day user-story estimate. The estimate remains reasonable for the implemented scope.
 
 ## 4. Story 03 — Reading Status Management
 
@@ -54,12 +54,12 @@ The detailed task estimate equals the original three-day user-story estimate. Th
 | Display readable status labels in the interface | Tianyang Zhang | 0.25 day | Done |
 | Add visual treatments for each status | Tianyang Zhang | 0.25 day | Done |
 | Add status validation and update tests | Tianyang Zhang | 0.50 day | Done |
-| Perform usability review and final verification | Tianyang Zhang and Yuhao Guo | 0.50 day | In Progress |
-| **Total** |  | **2.00 days** | **In Progress** |
+| Perform usability review and final verification | Tianyang Zhang and Yuhao Guo | 0.50 day | Done |
+| **Total** |  | **2.00 days** | **Done** |
 
 ### Back-check
 
-The detailed task estimate equals the original two-day user-story estimate. The implementation is complete, while the final team usability review remains to be recorded.
+The detailed task estimate equals the original two-day user-story estimate. Implementation, automated verification and the team usability review are complete. Yuhao Guo recorded the acceptance result in [PR #10](https://github.com/unvde/CP3407-Assessment/pull/10#pullrequestreview-4805185166).
 
 ## 5. Iteration Estimate Review
 
@@ -71,4 +71,3 @@ The detailed task estimate equals the original two-day user-story estimate. The 
 | **Total** | **7 days** | **7 days** | **0 days** |
 
 The task-level back-check supports the original seven-day Iteration 1 estimate. Future estimates should be adjusted using actual elapsed time and team velocity rather than planned effort alone.
-
