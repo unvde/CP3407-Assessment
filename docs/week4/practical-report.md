@@ -26,28 +26,29 @@ The detailed breakdown is available in [Iteration 1 Task Breakdown](task-breakdo
 
 ## 4. Progress Tracking
 
-Tasks use the labels `todo`, `in-progress` and `done`.
-
-Current implementation evidence shows:
+Tasks use the labels `todo`, `in-progress` and `done`. Issues [#1](https://github.com/unvde/CP3407-Assessment/issues/1)–[#9](https://github.com/unvde/CP3407-Assessment/issues/9) were created as retrospective Iteration 1 task tracking. Their final repository state is:
 
 - User Account Access: Done
 - Personal Reading List: Done
-- Reading Status Management: implementation and automated testing done; team usability review in progress
+- Reading Status Management: Done
+- Iteration 1 usability and acceptance review: Done
 
-The tracking plan, issue structure and commit evidence are documented in [Iteration 1 Task Tracking](task-tracking.md).
+All nine tasks are assigned, labelled `done`, and closed as completed. The detailed issue mapping is recorded in [Iteration 1 Task Tracking](task-tracking.md).
+
+GitHub Issue state is the verified status record. GitHub Project Board field values could not be verified through the available repository connection, so this report does not claim that separate Project fields were updated.
 
 ## 5. Design Documentation
 
-The current application structure is documented using:
+The application structure is documented using:
 
 - [Class Diagram](class-diagram.md)
 - [Add Book Sequence Diagram](sequence-diagram.md)
 
-The class diagram explains the relationships among the Django user, book model, forms and views. The sequence diagram illustrates authentication, validation, owner assignment and persistence during book creation.
+Both diagrams are complete Mermaid diagrams stored in the repository. The class diagram explains the relationships among the Django user, book model, forms and views. The sequence diagram illustrates authentication, validation, owner assignment and persistence during book creation.
 
 ## 6. Development Evidence
 
-Iteration 1 currently provides:
+Iteration 1 provides:
 
 - Account registration
 - Login and logout
@@ -59,54 +60,40 @@ Iteration 1 currently provides:
 - Responsive templates
 - Automated tests
 
-The Django system check passes, and all 17 automated tests pass.
+At the time of the pull-request experiment, the Django system check and all 17 automated tests passed.
 
 ## 7. Version-Control Practice
 
-Meaningful commits separate:
+Meaningful commits separate Iteration documentation, project initialisation, feature implementation, automated testing, setup documentation and the focused usability improvement. Historical dates were not changed to simulate daily activity.
 
-- Iteration documentation
-- Project initialisation
-- Feature implementation
-- Automated testing
-- Setup documentation
+## 8. Pull-Request Experiment and Review
 
-Future work should be committed on the days it is performed using focused commit messages. Historical dates must not be changed to simulate daily activity.
+The pull-request experiment was completed in [PR #10 — Improve Iteration 1 form guidance and usability](https://github.com/unvde/CP3407-Assessment/pull/10).
 
-## 8. Pull-Request Experiment
+- Branch: `feature/iteration-1-usability-review`
+- Reviewer: Yuhao Guo (`yoimiya571`)
+- Review state: Commented
+- Review outcome: no blocking code or usability defects were found; the implementation was accepted
+- Validation recorded in the PR: Django system check passed, the complete automated test suite passed, and the Add Book form was reviewed in the browser
+- Merge result: merged into `main` on 29 July 2026
+- Merge commit: `9b2010f08d8117a97248e7e9e0d82731a11c83f6`
 
-The team will use a focused usability improvement to practise the pull-request workflow:
-
-1. Create `feature/iteration-1-usability-review`.
-2. Make and test one focused improvement.
-3. Push the branch.
-4. Open a pull request into `main`.
-5. Request review from Yuhao Guo when repository permissions allow.
-6. Respond to feedback before merging.
-
-The pull-request URL and review outcome must be added after the experiment is completed.
+The review specifically confirmed that the four reading statuses are explained in user-friendly language, the shared form displays the guidance for both add and edit workflows, the guidance is defined in `BookForm`, and automated coverage checks the Add Book page. See [Yuhao Guo's recorded review](https://github.com/unvde/CP3407-Assessment/pull/10#pullrequestreview-4805185166).
 
 ## 9. Practical Completion Checklist
 
 - [x] Split Iteration 1 user stories into tasks.
 - [x] Estimate each task.
 - [x] Back-check task totals against story estimates.
-- [x] Define `todo`, `in-progress` and `done` tracking labels.
-- [x] Develop a class diagram.
-- [x] Develop a sequence diagram for a key operation.
+- [x] Use `todo`, `in-progress` and `done` tracking labels.
+- [x] Create, assign, label and close GitHub issues #1–#9.
+- [x] Develop and store a class diagram.
+- [x] Develop and store a sequence diagram for a key operation.
 - [x] Use meaningful commits for current code.
-- [ ] Create or update GitHub issues and assignments.
-- [ ] Record actual GitHub Project statuses.
-- [ ] Complete Yuhao Guo's usability review.
-- [ ] Experiment with a pull request and record its review.
-- [ ] Add external diagram links or exports if required.
+- [x] Complete and record Yuhao Guo's usability review.
+- [x] Complete, review and merge PR #10.
+- [ ] Verify and, if necessary, synchronize separate GitHub Project Board field values.
 
-## 10. Next Steps
+## 10. Remaining Action
 
-1. Create the planned GitHub issues.
-2. Assign implementation and review responsibilities.
-3. Complete the usability review.
-4. Conduct the pull-request experiment.
-5. Update the task and Practical reports with actual links and outcomes.
-6. Continue recording real progress for the Iteration 1 burndown.
-
+Open the repository's GitHub Project while signed in and verify that Issues #1–#9 appear in the Done column/status. This is the only Week 4 tracking item not verified through the available repository connection.
