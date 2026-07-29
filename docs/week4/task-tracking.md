@@ -8,41 +8,35 @@ Iteration work is tracked using three statuses:
 - **In Progress:** Implementation, testing or review is underway.
 - **Done:** The task meets its acceptance conditions and has supporting evidence.
 
-## 2. Current Story Status
+The issues were added retrospectively during Practical 4 to document the Iteration 1 task breakdown. They are not presented as real-time historical tracking.
+
+## 2. Final Story Status
 
 | No. | User Story | Owner | Estimate | Status | Evidence |
 | --- | --- | --- | ---: | --- | --- |
 | 01 | User Account Access | Tianyang Zhang | 2 days | Done | Registration, login, logout, protected pages and automated tests |
 | 02 | Personal Reading List | Tianyang Zhang | 3 days | Done | Book CRUD workflow, owner isolation and automated tests |
-| 03 | Reading Status Management | Tianyang Zhang | 2 days | In Progress | Implementation and tests complete; team usability review pending |
+| 03 | Reading Status Management | Tianyang Zhang and Yuhao Guo | 2 days | Done | Implementation and tests complete; usability review accepted in PR #10 |
 
-## 3. GitHub Issue Plan
+## 3. GitHub Issue Record
 
-The following issues should be created and assigned on the Iteration 1 GitHub Project:
+| Issue | Task | Assignee | Label | State |
+| --- | --- | --- | --- | --- |
+| [#1](https://github.com/unvde/CP3407-Assessment/issues/1) | Configure account authentication workflow | `unvde` | `done` | Closed — completed |
+| [#2](https://github.com/unvde/CP3407-Assessment/issues/2) | Implement registration and email validation | `unvde` | `done` | Closed — completed |
+| [#3](https://github.com/unvde/CP3407-Assessment/issues/3) | Test authentication and protected routes | `unvde` | `done` | Closed — completed |
+| [#4](https://github.com/unvde/CP3407-Assessment/issues/4) | Create Book model and migration | `unvde` | `done` | Closed — completed |
+| [#5](https://github.com/unvde/CP3407-Assessment/issues/5) | Implement personal book CRUD workflow | `unvde` | `done` | Closed — completed |
+| [#6](https://github.com/unvde/CP3407-Assessment/issues/6) | Enforce owner-only book access | `unvde` | `done` | Closed — completed |
+| [#7](https://github.com/unvde/CP3407-Assessment/issues/7) | Test book management and user isolation | `unvde` | `done` | Closed — completed |
+| [#8](https://github.com/unvde/CP3407-Assessment/issues/8) | Implement controlled reading statuses | `unvde` | `done` | Closed — completed |
+| [#9](https://github.com/unvde/CP3407-Assessment/issues/9) | Perform Iteration 1 usability and acceptance review | `yoimiya571` (Yuhao Guo) | `done` | Closed — completed |
 
-| Suggested Issue Title | Story | Assignee | Initial Label |
-| --- | --- | --- | --- |
-| Configure account authentication workflow | 01 | Tianyang Zhang | done |
-| Implement registration and email validation | 01 | Tianyang Zhang | done |
-| Test authentication and protected routes | 01 | Tianyang Zhang | done |
-| Create Book model and migration | 02 | Tianyang Zhang | done |
-| Implement personal book CRUD workflow | 02 | Tianyang Zhang | done |
-| Enforce owner-only book access | 02 | Tianyang Zhang | done |
-| Test book management and user isolation | 02 | Tianyang Zhang | done |
-| Implement controlled reading statuses | 03 | Tianyang Zhang | done |
-| Perform Iteration 1 usability and acceptance review | 03 | Yuhao Guo | in-progress |
+Issue #2 was corrected so its task description covers registration and unique-email validation rather than duplicating Issue #3's authentication-test task.
 
-The issue labels should use exactly:
-
-- `todo`
-- `in-progress`
-- `done`
-
-Issue statuses must reflect actual work. Creating issues after implementation should be documented as retrospective task tracking rather than presented as real-time tracking.
+The repository labels use exactly `todo`, `in-progress` and `done`. All final Iteration 1 task issues use `done`.
 
 ## 4. Commit Evidence
-
-The current Iteration 1 implementation is represented by meaningful commits:
 
 | Commit | Purpose |
 | --- | --- |
@@ -50,36 +44,36 @@ The current Iteration 1 implementation is represented by meaningful commits:
 | `ce730a3` | Implement Iteration 1 reading management |
 | `f0e1fdc` | Add Iteration 1 automated coverage |
 | `7467500` | Add local setup and Week 3 navigation |
+| `bc93f18` | Implement the focused Iteration 1 usability improvement |
+| `9b2010f` | Merge PR #10 into `main` |
 
-Future development should use smaller daily commits when work occurs on separate days. Commit dates must not be changed or fabricated.
+Historical dates were not changed or fabricated.
 
-## 5. Pull Request Experiment
+## 5. Pull Request and Review Evidence
 
-A pull request should be used for the next reviewable change:
+[PR #10 — Improve Iteration 1 form guidance and usability](https://github.com/unvde/CP3407-Assessment/pull/10) completed the planned pull-request experiment.
 
-1. Create a feature branch from `main`.
-2. Make one focused improvement.
-3. Push the feature branch.
-4. Open a pull request targeting `main`.
-5. Assign Yuhao Guo as reviewer when repository access permits.
-6. Record review comments and any resulting changes.
-7. Merge only after tests pass and review is complete.
+- Reviewer: Yuhao Guo (`yoimiya571`)
+- Recorded review: [COMMENTED review](https://github.com/unvde/CP3407-Assessment/pull/10#pullrequestreview-4805185166)
+- Result: no blocking code or usability defects; implementation accepted
+- Merge: completed into `main` on 29 July 2026
 
-Suggested experiment:
+The review content is referenced from the existing GitHub review and is not reconstructed or invented in this document.
 
-```text
-Branch: feature/iteration-1-usability-review
-PR title: Improve Iteration 1 form guidance and usability
-Reviewer: Yuhao Guo
-```
+## 6. Project Board Status
 
-## 6. Remaining Tracking Actions
+The Issue assignees, labels and open/closed states above were verified and synchronized. The available GitHub repository connection does not expose GitHub Project Board fields, and the browser session was not signed in, so separate Project Board status values could not be verified or changed.
 
-- [ ] Create or update the Iteration 1 GitHub Project.
-- [ ] Create the planned issues.
-- [ ] Assign each issue to the responsible team member.
-- [ ] Apply `todo`, `in-progress` and `done` labels.
-- [ ] Record Yuhao Guo's usability review.
-- [ ] Conduct the pull-request experiment.
-- [ ] Add the Project and pull-request links to this document.
+Manual check required: while signed in, open the repository Project and confirm Issues #1–#9 are present with Status = Done. Do not treat this document as evidence that an unverified Project field was updated.
 
+## 7. Completion Checklist
+
+- [x] Create Issues #1–#9.
+- [x] Assign each issue to the responsible team member.
+- [x] Apply final `done` labels.
+- [x] Correct Issue #2's task description.
+- [x] Record Yuhao Guo's usability review without inventing content.
+- [x] Complete and merge PR #10.
+- [x] Close completed Issues #1–#9.
+- [x] Add issue, review and pull-request links to Week 4 documentation.
+- [ ] Verify and synchronize separate GitHub Project Board fields while signed in.
