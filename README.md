@@ -101,6 +101,7 @@ Responsibilities:
 
 ### Week 5 - Iteration 1 Review
 
+- [Published GitHub Pages Site](https://unvde.github.io/CP3407-Assessment/)
 - [Iteration 1 Review and Actual Velocity](docs/week5/iteration-review.md)
 - [SRP and DRY Review](docs/week5/srp-dry-review.md)
 - [Task and Story Tracking](docs/week5/task-tracking.md)

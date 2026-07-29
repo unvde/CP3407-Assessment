@@ -10,4 +10,5 @@ completed Iteration 1 user story:
 | 03 | Reading Status Management | done | [Reading status management](story-03-reading-status.md) |
 
 These pages describe implemented behaviour, acceptance evidence and related
-code without claiming that a remote GitHub Pages deployment has been updated.
+code. They are published through the
+[Reading Compass GitHub Pages site](https://unvde.github.io/CP3407-Assessment/).

@@ -44,13 +44,15 @@ The Week 5 local documentation tasks are also complete:
 | Reconcile Week 2–5 local story statuses | done |
 | Check weekly document structure and navigation | done |
 
-## 4. Manual GitHub Follow-up
+## 4. GitHub Completion
 
-This Week 5 update deliberately makes no remote changes. The team manually
-confirmed on 29 July 2026 that Issues #1–#9 are closed with the `done` label and
-have Status = Done on the GitHub Project Board. The remaining manual actions
-are:
+The team confirmed on 29 July 2026 that:
 
-1. Decide whether to publicly enable GitHub Pages for this repository. Pages is
-   not currently configured.
-2. After reviewing these local changes, commit and push them.
+- Issues #1–#9 are closed with the `done` label.
+- Issues #1–#9 have Status = Done on the GitHub Project Board.
+- The Project Board URL is recorded in the Week 3 documentation.
+- GitHub Pages publishes from the `main` branch root with HTTPS enforced.
+- The Pages build and deployment completed successfully.
+- The repository root and Week 5 report return successful responses.
+
+**Published site:** [Reading Compass GitHub Pages](https://unvde.github.io/CP3407-Assessment/)

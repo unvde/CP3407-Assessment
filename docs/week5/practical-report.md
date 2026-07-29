@@ -47,8 +47,10 @@ GitHub Pages-ready Markdown documentation now exists for:
 - [Story 02 — Personal Reading List](user-stories/story-02-reading-list.md)
 - [Story 03 — Reading Status Management](user-stories/story-03-reading-status.md)
 
-These are local repository pages. Publishing them remotely remains a manual
-GitHub action.
+These repository pages were published successfully from the `main` branch root:
+
+- [Reading Compass GitHub Pages](https://unvde.github.io/CP3407-Assessment/)
+- [Published Practical 5 Report](https://unvde.github.io/CP3407-Assessment/docs/week5/practical-report.html)
 
 ## 6. Actual Velocity
 
@@ -96,5 +98,6 @@ actual values are unavailable.
 
 All local Practical 5 work is complete. The team manually confirmed the remote
 Issue and Project Board states on 29 July 2026, and the confirmed Project Board
-URL is recorded in the Week 3 documentation. GitHub Pages is not currently
-configured; enabling it would be a separate public-publishing decision.
+URL is recorded in the Week 3 documentation. GitHub Pages is publicly enabled
+with HTTPS enforced, and its initial build and deployment completed
+successfully.
