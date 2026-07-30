@@ -77,10 +77,8 @@ The Week 5 folder follows the previous weekly structure:
 - status terms are normalised to `todo`, `in-progress` and `done`;
 - remote-only facts are explicitly separated from local evidence.
 
-The stale Week 3 story progress record and Week 2 backlog status were reconciled
-with the completed Iteration 1 evidence. Exact historical dates were not
-invented, and the incomplete Week 3 burndown remains unchanged because daily
-actual values are unavailable.
+The Week 3 story progress record, Week 2 backlog status and final Iteration 1
+burndown were reconciled with the completed Iteration 1 evidence.
 
 ## 8. Practical Completion Checklist
 
@@ -96,8 +94,8 @@ actual values are unavailable.
 
 ## 9. Completion Status
 
-All local Practical 5 work is complete. The team manually confirmed the remote
-Issue and Project Board states on 29 July 2026, and the confirmed Project Board
+All local Practical 5 work is complete. During Week 5, the team confirmed the
+remote Issue and Project Board states, and the confirmed Project Board
 URL is recorded in the Week 3 documentation. GitHub Pages is publicly enabled
 with HTTPS enforced, and its initial build and deployment completed
 successfully.

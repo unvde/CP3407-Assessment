@@ -108,11 +108,18 @@ Responsibilities:
 - [Practical 5 Report](docs/week5/practical-report.md)
 - [Completed User Story Documentation](docs/week5/user-stories/README.md)
 
+### Week 6 - Iteration 2 Planning
+
+- [Iteration 2 GitHub Project](https://github.com/users/unvde/projects/3)
+- [Practical 6 Report](docs/week6/practical-report.md)
+- [Iteration 1 Burndown Graph](docs/week6/iteration-1-burndown.svg)
+
 Additional weekly documentation covering design, iterations, testing and development tools will be added as the project progresses.
 
 ## Project Status
 
-**Current stage:** Iteration 1 completed; Iteration 2 not started.
+**Current stage:** Iteration 1 completed; Iteration 2 started in Week 6 with an
+adjusted capacity of 7 estimated development-days.
 
 ## Local Development
 

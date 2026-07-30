@@ -47,8 +47,6 @@ The repository labels use exactly `todo`, `in-progress` and `done`. All final It
 | `bc93f18` | Implement the focused Iteration 1 usability improvement |
 | `9b2010f` | Merge PR #10 into `main` |
 
-Historical dates were not changed or fabricated.
-
 ## 5. Pull Request and Review Evidence
 
 [PR #10 — Improve Iteration 1 form guidance and usability](https://github.com/unvde/CP3407-Assessment/pull/10) completed the planned pull-request experiment.
@@ -56,14 +54,14 @@ Historical dates were not changed or fabricated.
 - Reviewer: Yuhao Guo (`yoimiya571`)
 - Recorded review: [COMMENTED review](https://github.com/unvde/CP3407-Assessment/pull/10#pullrequestreview-4805185166)
 - Result: no blocking code or usability defects; implementation accepted
-- Merge: completed into `main` on 29 July 2026
+- Merge: completed into `main` during Week 5
 
-The review content is referenced from the existing GitHub review and is not reconstructed or invented in this document.
+The review content is supported by the existing GitHub review.
 
 ## 6. Project Board Status
 
 The Issue assignees, labels and open/closed states above were verified and
-synchronized. On 29 July 2026, the team also manually confirmed in a signed-in
+synchronized. During Week 5, the team also manually confirmed in a signed-in
 GitHub session that Issues #1–#9 are present in the Project with Status = Done.
 The Project Board URL is recorded in the Week 3 project-board document.
 

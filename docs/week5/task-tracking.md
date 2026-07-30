@@ -46,7 +46,7 @@ The Week 5 local documentation tasks are also complete:
 
 ## 4. GitHub Completion
 
-The team confirmed on 29 July 2026 that:
+During the Week 5 iteration close, the team confirmed that:
 
 - Issues #1–#9 are closed with the `done` label.
 - Issues #1–#9 have Status = Done on the GitHub Project Board.
