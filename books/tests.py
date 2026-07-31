@@ -332,3 +332,48 @@ class ReadingProgressTests(TestCase):
         self.book.refresh_from_db()
         self.assertRedirects(response, self.book.get_absolute_url())
         self.assertEqual(self.book.current_page, 240)
+
+
+class ReadingDashboardTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="reader", password="pass")
+        self.other_user = User.objects.create_user(username="other", password="pass")
+        self.active_book = Book.objects.create(
+            owner=self.user,
+            title="Active Book",
+            author="A Reader",
+            status=Book.ReadingStatus.CURRENTLY_READING,
+            total_pages=200,
+            current_page=50,
+        )
+        Book.objects.create(
+            owner=self.user,
+            title="Future Book",
+            author="A Reader",
+            status=Book.ReadingStatus.WANT_TO_READ,
+        )
+        Book.objects.create(
+            owner=self.other_user,
+            title="Private Active Book",
+            author="Other Reader",
+            status=Book.ReadingStatus.CURRENTLY_READING,
+        )
+
+    def test_dashboard_requires_login(self):
+        response = self.client.get(reverse("dashboard"))
+
+        self.assertRedirects(
+            response,
+            f"{reverse('login')}?next={reverse('dashboard')}",
+        )
+
+    def test_dashboard_contains_only_currently_reading_books(self):
+        self.client.force_login(self.user)
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(response, "Active Book")
+        self.assertNotContains(response, "Future Book")
+
+    def test_dashboard_does_not_reveal_other_users_books(self):
+        self.client.force_login(self.user)
+        response = self.client.get(reverse("dashboard"))
+        self.assertNotContains(response, "Private Active Book")

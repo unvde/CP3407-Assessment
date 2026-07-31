@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard | Reading Compass{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Your current reading</p>
+        <h1>Reading dashboard</h1>
+        <p>See the books you are actively reading, their progress and plans.</p>
+    </div>
+    <a class="primary-button" href="{% url 'book-add' %}">Add a book</a>
+</div>
+
+{% if active_books %}
+    <div class="book-grid">
+        {% for book in active_books %}
+            <article class="book-card">
+                <span class="status status-{{ book.status }}">{{ book.get_status_display }}</span>
+                <h2><a href="{{ book.get_absolute_url }}">{{ book.title }}</a></h2>
+                <p class="author">by {{ book.author }}</p>
+                <dl class="dashboard-metadata">
+                    <div>
+                        <dt>Current page</dt>
+                        <dd>{{ book.current_page }}</dd>
+                    </div>
+                    <div>
+                        <dt>Progress</dt>
+                        <dd>
+                            {% if book.progress_percentage is not None %}
+                                {{ book.progress_percentage }}% complete
+                            {% else %}
+                                Percentage unavailable
+                            {% endif %}
+                        </dd>
+                    </div>
+                </dl>
+                <a class="text-link" href="{{ book.get_absolute_url }}">View details →</a>
+            </article>
+        {% endfor %}
+    </div>
+{% else %}
+    <section class="empty-state">
+        <p class="eyebrow">Nothing active right now</p>
+        <h2>No books are currently being read.</h2>
+        <p>Change a book's status to “Currently Reading” to see it here.</p>
+        <a class="primary-button" href="{% url 'book-list' %}">View my books</a>
+    </section>
+{% endif %}
+{% endblock %}

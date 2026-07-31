@@ -188,6 +188,20 @@ h2 {
     border-block: 1px solid var(--line);
 }
 
+.dashboard-metadata {
+    display: grid;
+    gap: 0.75rem;
+    margin: 1.2rem 0;
+}
+
+.dashboard-metadata div {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--line);
+}
+
 .metadata div {
     display: grid;
     gap: 0.25rem;
@@ -322,4 +336,3 @@ select:focus {
         padding: 2.5rem 0;
     }
 }
-

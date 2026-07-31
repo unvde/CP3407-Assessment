@@ -36,6 +36,17 @@ class BookListView(OwnedBookQuerysetMixin, ListView):
     template_name = "books/book_list.html"
 
 
+class DashboardView(OwnedBookQuerysetMixin, ListView):
+    model = Book
+    context_object_name = "active_books"
+    template_name = "books/dashboard.html"
+
+    def get_queryset(self) -> QuerySet:
+        return super().get_queryset().filter(
+            status=Book.ReadingStatus.CURRENTLY_READING
+        )
+
+
 class BookDetailView(OwnedBookQuerysetMixin, DetailView):
     model = Book
     context_object_name = "book"
@@ -62,4 +73,3 @@ class BookDeleteView(OwnedBookQuerysetMixin, DeleteView):
     model = Book
     template_name = "books/book_confirm_delete.html"
     success_url = reverse_lazy("book-list")
-
