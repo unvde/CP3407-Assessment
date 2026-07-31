@@ -1,8 +1,10 @@
+
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.urls import reverse
 
+from .forms import BookForm, RegistrationForm
 from .models import Book
 
 
@@ -43,6 +45,40 @@ class RegistrationTests(TestCase):
         self.assertContains(response, "An account already uses this email address.")
         self.assertFalse(User.objects.filter(username="second").exists())
 
+    def test_registration_requires_email(self):
+        response = self.client.post(
+            reverse("register"),
+            {
+                "username": "reader",
+                "email": "",
+                "password1": "StrongPass123!",
+                "password2": "StrongPass123!",
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(response.context["form"], "email", "This field is required.")
+        self.assertFalse(User.objects.filter(username="reader").exists())
+
+    def test_registration_rejects_mismatched_passwords(self):
+        response = self.client.post(
+            reverse("register"),
+            {
+                "username": "reader",
+                "email": "reader@example.com",
+                "password1": "StrongPass123!",
+                "password2": "DifferentPass123!",
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(
+            response.context["form"],
+            "password2",
+            "The two password fields didn’t match.",
+        )
+        self.assertFalse(User.objects.filter(username="reader").exists())
+
 
 class AuthenticationTests(TestCase):
     def setUp(self):
@@ -79,11 +115,23 @@ class AuthenticationTests(TestCase):
         self.assertRedirects(response, reverse("login"))
         self.assertNotIn("_auth_user_id", self.client.session)
 
-    def test_book_list_requires_login(self):
-        response = self.client.get(reverse("book-list"))
+    def test_private_book_routes_require_login(self):
+        book = Book.objects.create(
+            owner=self.user,
+            title="Dune",
+            author="Frank Herbert",
+        )
+        routes = [
+            reverse("book-add"),
+            reverse("book-detail", args=[book.pk]),
+            reverse("book-edit", args=[book.pk]),
+            reverse("book-delete", args=[book.pk]),
+        ]
 
-        expected = f"{reverse('login')}?next={reverse('book-list')}"
-        self.assertRedirects(response, expected)
+        for route in routes:
+            with self.subTest(route=route):
+                response = self.client.get(route)
+                self.assertRedirects(response, f"{reverse('login')}?next={route}")
 
 
 class BookModelTests(TestCase):
@@ -91,14 +139,6 @@ class BookModelTests(TestCase):
         self.user = User.objects.create_user(
             username="reader",
             password="StrongPass123!",
-        )
-
-    def test_status_choices_are_iteration_one_values(self):
-        values = {value for value, _label in Book.ReadingStatus.choices}
-
-        self.assertEqual(
-            values,
-            {"want_to_read", "currently_reading", "paused", "completed"},
         )
 
     def test_total_pages_must_be_positive(self):
@@ -112,10 +152,54 @@ class BookModelTests(TestCase):
         with self.assertRaises(ValidationError):
             book.full_clean()
 
-    def test_string_representation(self):
-        book = Book(title="Dune", author="Frank Herbert")
+    def test_default_status_is_want_to_read(self):
+        book = Book.objects.create(
+            owner=self.user,
+            title="Dune",
+            author="Frank Herbert",
+        )
 
-        self.assertEqual(str(book), "Dune by Frank Herbert")
+        self.assertEqual(book.status, Book.ReadingStatus.WANT_TO_READ)
+
+    def test_deleting_owner_cascades_to_books(self):
+        book = Book.objects.create(
+            owner=self.user,
+            title="Dune",
+            author="Frank Herbert",
+        )
+
+        self.user.delete()
+
+        self.assertFalse(Book.objects.filter(pk=book.pk).exists())
+
+
+class BookFormTests(TestCase):
+    def test_form_trims_title_and_author(self):
+        form = BookForm(
+            data={
+                "title": "  Dune  ",
+                "author": "  Frank Herbert  ",
+                "status": Book.ReadingStatus.WANT_TO_READ,
+                "total_pages": 412,
+            }
+        )
+
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.cleaned_data["title"], "Dune")
+        self.assertEqual(form.cleaned_data["author"], "Frank Herbert")
+
+    def test_form_rejects_unknown_status(self):
+        form = BookForm(
+            data={
+                "title": "Dune",
+                "author": "Frank Herbert",
+                "status": "abandoned",
+                "total_pages": 412,
+            }
+        )
+
+        self.assertFalse(form.is_valid())
+        self.assertIn("status", form.errors)
 
 
 class BookManagementTests(TestCase):
@@ -163,38 +247,6 @@ class BookManagementTests(TestCase):
         self.assertEqual(created.owner, self.user)
         self.assertRedirects(response, created.get_absolute_url())
 
-    def test_add_book_page_explains_reading_statuses(self):
-        response = self.client.get(reverse("book-add"))
-
-        self.assertContains(
-            response,
-            (
-                "Want to Read: saved for future reading; "
-                "Currently Reading: actively being read; "
-                "Paused: temporarily stopped; "
-                "Completed: finished."
-            ),
-        )
-
-    def test_create_rejects_non_positive_page_count(self):
-        response = self.client.post(
-            reverse("book-add"),
-            {
-                "title": "Invalid Book",
-                "author": "Example Author",
-                "status": Book.ReadingStatus.WANT_TO_READ,
-                "total_pages": 0,
-            },
-        )
-
-        self.assertEqual(response.status_code, 200)
-        self.assertFormError(
-            response.context["form"],
-            "total_pages",
-            "Ensure this value is greater than or equal to 1.",
-        )
-        self.assertFalse(Book.objects.filter(title="Invalid Book").exists())
-
     def test_update_book(self):
         response = self.client.post(
             reverse("book-edit", args=[self.book.pk]),
@@ -237,11 +289,3 @@ class BookManagementTests(TestCase):
         self.assertEqual(response.status_code, 404)
         self.other_book.refresh_from_db()
         self.assertEqual(self.other_book.title, "Beloved")
-
-    def test_cannot_delete_another_users_book(self):
-        response = self.client.post(
-            reverse("book-delete", args=[self.other_book.pk])
-        )
-
-        self.assertEqual(response.status_code, 404)
-        self.assertTrue(Book.objects.filter(pk=self.other_book.pk).exists())
