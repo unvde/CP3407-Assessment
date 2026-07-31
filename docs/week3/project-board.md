@@ -56,9 +56,9 @@ A story moves to **Done** only when:
 
 | No. | Current Status | Started | Completed | Notes |
 | --- | --- | --- | --- | --- |
-| 01 | Done | Week 3 | Week 3 | Registration, login, logout, protected routes and tests complete |
-| 02 | Done | Week 3 | Week 4 | Private book CRUD workflow and tests complete |
-| 03 | Done | Week 4 | Week 5 | Controlled statuses, tests and usability review complete |
+| 01 | Done | Week 3 Day 1 | Week 3 Day 2 | Registration, login, logout, protected routes and tests complete |
+| 02 | Done | Week 3 Day 2 | Week 4 Day 2 | Private book CRUD workflow and tests complete |
+| 03 | Done | Week 4 Day 2 | Week 5 Day 1 | Controlled statuses, tests and usability review complete |
 
 The final statuses are supported by the implementation, automated tests and
 Week 4 tracking evidence. During the Week 5 iteration close, the team confirmed

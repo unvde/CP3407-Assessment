@@ -38,24 +38,24 @@ also records the completed removal of repeated form-field markup.
 The graph uses the daily task record maintained across the seven development
 days:
 
-| Development Day | Course Week | Daily Effort | Ideal Remaining | Actual Remaining |
-|:---:|:---:|---:|---:|---:|
-| 0 | Week 3 | 0.00 day | 7.00 | 7.00 |
-| 1 | Week 3 | 0.75 day | 6.00 | 6.25 |
-| 2 | Week 3 | 1.25 days | 5.00 | 5.00 |
-| 3 | Week 3 | 0.75 day | 4.00 | 4.25 |
-| 4 | Week 4 | 1.00 day | 3.00 | 3.25 |
-| 5 | Week 4 | 1.25 days | 2.00 | 2.00 |
-| 6 | Week 4 | 0.75 day | 1.00 | 1.25 |
-| 7 | Week 5 | 1.25 days | 0.00 | 0.00 |
+| Course Point | Daily Effort | Ideal Remaining | Actual Remaining |
+|---|---:|---:|---:|
+| Week 3 Start | 0.00 day | 7.00 | 7.00 |
+| Week 3 Day 1 | 0.75 day | 6.00 | 6.25 |
+| Week 3 Day 2 | 1.25 days | 5.00 | 5.00 |
+| Week 3 Day 3 | 0.75 day | 4.00 | 4.25 |
+| Week 4 Day 1 | 1.00 day | 3.00 | 3.25 |
+| Week 4 Day 2 | 1.25 days | 2.00 | 2.00 |
+| Week 4 Day 3 | 0.75 day | 1.00 | 1.25 |
+| Week 5 Day 1 | 1.25 days | 0.00 | 0.00 |
 
 The curve records small variances caused by environment setup, form validation
 and usability feedback. Reuse of the existing view and owner-query patterns
 allowed the team to recover the variance without removing acceptance criteria.
 The detailed work, status transitions and repository evidence for each day are recorded in the
-[Iteration 1 Burndown](../week3/burndown.md). Story 01 reached `done` on Day 2,
-Story 02 on Day 5 and Story 03 on Day 7. The daily record totals 7 estimated
-development-days and is consistent with the final velocity.
+[Iteration 1 Burndown](../week3/burndown.md). Story 01 reached `done` on Week 3
+Day 2, Story 02 on Week 4 Day 2 and Story 03 on Week 5 Day 1. The daily record
+totals 7 estimated development-days and is consistent with the final velocity.
 
 ### Iteration 1 Retrospective Action
 
@@ -151,6 +151,20 @@ implementation tasks remain `todo` until development begins.
 The task totals are 3 days for Story 04, 2 days for Story 05 and 2 days for
 Story 06. A story moves to `done` only after its implementation, automated
 tests and acceptance review are complete.
+
+### Iteration 2 Development Schedule
+
+| Course Point | Planned work |
+|---|---|
+| Week 6 Day 1 | Review Iteration 1, adjust the backlog and confirm Story 04 acceptance rules |
+| Week 7 Day 1 | Curate the core regression tests and write the Practical 7 test plan |
+| Week 7 Day 2 | Add the current-page field and migration |
+| Week 7 Day 3 | Complete Story 04 validation, display, tests and acceptance review |
+| Week 7 Day 4 | Complete the owner-scoped dashboard and its tests |
+| Week 7 Day 5 | Complete optional reading targets and their tests |
+| Week 7 Day 6 | Run the final suite, finish documentation and update GitHub tracking |
+
+Practical 8 and Iteration 3 begin at **Week 8 Day 1**.
 
 ## 6. GitHub Iteration Tracking
 
