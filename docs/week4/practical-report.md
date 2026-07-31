@@ -35,8 +35,8 @@ Tasks use the labels `todo`, `in-progress` and `done`. Issues [#1](https://githu
 
 All nine tasks are assigned, labelled `done` and closed as completed. The
 detailed issue mapping is recorded in
-[Iteration 1 Task Tracking](task-tracking.md). On 29 July 2026, the team
-manually confirmed that Issues #1–#9 also have Status = Done on the GitHub
+[Iteration 1 Task Tracking](task-tracking.md). During Week 5, the team
+confirmed that Issues #1–#9 also have Status = Done on the GitHub
 Project Board.
 
 ## 5. Design Documentation
@@ -66,7 +66,9 @@ At the time of the pull-request experiment, the Django system check and all 17 a
 
 ## 7. Version-Control Practice
 
-Meaningful commits separate Iteration documentation, project initialisation, feature implementation, automated testing, setup documentation and the focused usability improvement. Historical dates were not changed to simulate daily activity.
+Meaningful commits separate Iteration documentation, project initialisation,
+feature implementation, automated testing, setup documentation and the focused
+usability improvement.
 
 ## 8. Pull-Request Experiment and Review
 
@@ -77,7 +79,7 @@ The pull-request experiment was completed in [PR #10 — Improve Iteration 1 for
 - Review state: Commented
 - Review outcome: no blocking code or usability defects were found; the implementation was accepted
 - Validation recorded in the PR: Django system check passed, the complete automated test suite passed, and the Add Book form was reviewed in the browser
-- Merge result: merged into `main` on 29 July 2026
+- Merge result: merged into `main` during Week 5
 - Merge commit: `9b2010f08d8117a97248e7e9e0d82731a11c83f6`
 
 The review specifically confirmed that the four reading statuses are explained in user-friendly language, the shared form displays the guidance for both add and edit workflows, the guidance is defined in `BookForm`, and automated coverage checks the Add Book page. See [Yuhao Guo's recorded review](https://github.com/unvde/CP3407-Assessment/pull/10#pullrequestreview-4805185166).

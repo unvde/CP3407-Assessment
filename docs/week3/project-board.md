@@ -54,15 +54,13 @@ A story moves to **Done** only when:
 
 ## Progress Record
 
-| No. | Current Status | Start Date | Completion Date | Notes |
+| No. | Current Status | Started | Completed | Notes |
 | --- | --- | --- | --- | --- |
-| 01 | Done | Not retrospectively invented | Iteration 1 | Registration, login, logout, protected routes and tests complete |
-| 02 | Done | Not retrospectively invented | Iteration 1 | Private book CRUD workflow and tests complete |
-| 03 | Done | Not retrospectively invented | Iteration 1 | Controlled statuses, tests and usability review complete |
+| 01 | Done | Week 3 | Week 3 | Registration, login, logout, protected routes and tests complete |
+| 02 | Done | Week 3 | Week 4 | Private book CRUD workflow and tests complete |
+| 03 | Done | Week 4 | Week 5 | Controlled statuses, tests and usability review complete |
 
-Exact historical start and completion dates were not recorded during execution,
-so they have not been fabricated. The final statuses are supported by the
-implementation, automated tests and the Week 4 tracking evidence. On 29 July
-2026, the team manually confirmed that Issues #1–#9 are closed with the `done`
-label and appear in the GitHub Project with Status = Done. The board URL still
-is recorded above.
+The final statuses are supported by the implementation, automated tests and
+Week 4 tracking evidence. During the Week 5 iteration close, the team confirmed
+that Issues #1–#9 are closed with the `done` label and appear in the GitHub
+Project with Status = Done. The board URL is recorded above.

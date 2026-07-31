@@ -35,11 +35,16 @@ At the end of Iteration 1, a user should be able to:
 | No. | User Story | Priority | Estimate |
 | --- | --- | --- | --- |
 | 04 | Reading Progress Updates | 10 | 3 days |
-| 05 | Reading Dashboard | 20 | 3 days |
+| 05 | Reading Dashboard | 20 | 2 days |
 | 06 | Reading Plans | 20 | 2 days |
-| **Total** |  |  | **8 days** |
+| **Total** |  |  | **7 days** |
 
 Reading Progress Updates has priority 10 but depends on the account and book-management functionality delivered in Iteration 1.
+
+Week 6 adjusted the original 8-day plan to the demonstrated Iteration 1
+velocity of 7 estimated development-days. The first dashboard release is
+restricted to active books, progress and optional targets. See the
+[Practical 6 Report](../week6/practical-report.md).
 
 ## 4. Iteration 3 — Reading Support Features
 
@@ -58,9 +63,9 @@ Reading Progress Updates has priority 10 but depends on the account and book-man
 | Iteration | Goal | Estimated Effort |
 | --- | --- | --- |
 | 1 | Core reading management | 7 days |
-| 2 | Reading plans and progress | 8 days |
+| 2 | Reading plans and progress | 7 days |
 | 3 | Reading support features | 8 days |
-| **Total** |  | **23 days** |
+| **Total** |  | **22 days** |
 
 ## 6. Planning Rationale
 

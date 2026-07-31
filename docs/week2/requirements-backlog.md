@@ -59,7 +59,9 @@
 **User Story:** As a reader, I want to view a personal dashboard so that I can quickly understand my current reading activity.
 
 **Priority:** 20  
-**Estimated Effort:** 3 days
+**Original Estimated Effort:** 3 days
+
+**Iteration 2 Adjusted Effort:** 2 days
 
 **Rationale:** The dashboard improves access to information produced by the core features.
 
@@ -138,7 +140,7 @@ Status uses the shared workflow `todo`, `in-progress` and `done`.
 | 01 | User Account Access | 1 | done |
 | 02 | Personal Reading List | 1 | done |
 | 03 | Reading Status Management | 1 | done |
-| 04 | Reading Progress Updates | 2 | todo |
+| 04 | Reading Progress Updates | 2 | in-progress |
 | 05 | Reading Dashboard | 2 | todo |
 | 06 | Reading Plans | 2 | todo |
 | 07 | Search and Filtering | 3 | todo |
@@ -146,9 +148,16 @@ Status uses the shared workflow `todo`, `in-progress` and `done`.
 | 09 | Completion Review | 3 | todo |
 | 10 | Duplicate Book Warning | 3 | todo |
 
-No story is currently `in-progress`: Iteration 1 is closed and Iteration 2 has
-not started. Detailed Iteration 1 evidence and velocity are recorded in the
+Iteration 1 is closed. Iteration 2 started in Week 6, and Story 04 is
+`in-progress` at the Week 6 planning checkpoint. Detailed Iteration 1
+evidence and velocity are recorded in the
 [Week 5 Iteration Review](../week5/iteration-review.md).
+
+The Iteration 2 plan was adjusted in Week 6 to match the demonstrated velocity
+of 7 estimated development-days. Story 05 was narrowed from 3 to 2 days; its
+first release is limited to active books, progress and optional target dates.
+The detailed scope and rationale are recorded in the
+[Week 6 Practical Report](../week6/practical-report.md).
 
 ## Planning Conclusion
 

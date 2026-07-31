@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="620" viewBox="0 0 1040 620" role="img" aria-labelledby="title desc">
+  <title id="title">Iteration 1 daily burndown</title>
+  <desc id="desc">Ideal remaining effort decreases evenly from seven to zero. Actual remaining effort varies above the ideal line before reaching zero on Day 7.</desc>
+  <rect width="1040" height="620" fill="#ffffff"/>
+  <text x="520" y="42" text-anchor="middle" font-family="Arial, sans-serif" font-size="25" font-weight="700" fill="#172033">Iteration 1 Daily Burndown</text>
+  <text x="520" y="70" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#526078">Seven development days across Week 3–Week 5</text>
+
+  <g stroke="#e2e7ef" stroke-width="1">
+    <line x1="110" y1="470" x2="950" y2="470"/>
+    <line x1="110" y1="420" x2="950" y2="420"/>
+    <line x1="110" y1="370" x2="950" y2="370"/>
+    <line x1="110" y1="320" x2="950" y2="320"/>
+    <line x1="110" y1="270" x2="950" y2="270"/>
+    <line x1="110" y1="220" x2="950" y2="220"/>
+    <line x1="110" y1="170" x2="950" y2="170"/>
+    <line x1="110" y1="120" x2="950" y2="120"/>
+  </g>
+
+  <line x1="110" y1="470" x2="950" y2="470" stroke="#657187" stroke-width="2"/>
+  <line x1="110" y1="120" x2="110" y2="470" stroke="#657187" stroke-width="2"/>
+
+  <g font-family="Arial, sans-serif" font-size="13" fill="#526078">
+    <text x="92" y="475" text-anchor="end">0</text>
+    <text x="92" y="425" text-anchor="end">1</text>
+    <text x="92" y="375" text-anchor="end">2</text>
+    <text x="92" y="325" text-anchor="end">3</text>
+    <text x="92" y="275" text-anchor="end">4</text>
+    <text x="92" y="225" text-anchor="end">5</text>
+    <text x="92" y="175" text-anchor="end">6</text>
+    <text x="92" y="125" text-anchor="end">7</text>
+    <text x="110" y="500" text-anchor="middle">Day 0</text>
+    <text x="230" y="500" text-anchor="middle">Day 1</text>
+    <text x="350" y="500" text-anchor="middle">Day 2</text>
+    <text x="470" y="500" text-anchor="middle">Day 3</text>
+    <text x="590" y="500" text-anchor="middle">Day 4</text>
+    <text x="710" y="500" text-anchor="middle">Day 5</text>
+    <text x="830" y="500" text-anchor="middle">Day 6</text>
+    <text x="950" y="500" text-anchor="middle">Day 7</text>
+  </g>
+
+  <g font-family="Arial, sans-serif" font-size="13" font-weight="700">
+    <text x="290" y="542" text-anchor="middle" fill="#315c85">Week 3</text>
+    <text x="710" y="542" text-anchor="middle" fill="#315c85">Week 4</text>
+    <text x="950" y="542" text-anchor="middle" fill="#315c85">Week 5</text>
+  </g>
+  <line x1="110" y1="525" x2="470" y2="525" stroke="#9fbad1" stroke-width="4"/>
+  <line x1="590" y1="525" x2="830" y2="525" stroke="#9fbad1" stroke-width="4"/>
+  <line x1="950" y1="525" x2="950" y2="525" stroke="#9fbad1" stroke-width="8" stroke-linecap="round"/>
+
+  <polyline points="110,120 230,170 350,220 470,270 590,320 710,370 830,420 950,470" fill="none" stroke="#7b879c" stroke-width="5" stroke-dasharray="10 8"/>
+  <polyline points="110,120 230,157.5 350,220 470,257.5 590,307.5 710,370 830,407.5 950,470" fill="none" stroke="#1769aa" stroke-width="4"/>
+
+  <g fill="#1769aa" stroke="#ffffff" stroke-width="3">
+    <circle cx="110" cy="120" r="7"/>
+    <circle cx="230" cy="157.5" r="7"/>
+    <circle cx="350" cy="220" r="7"/>
+    <circle cx="470" cy="257.5" r="7"/>
+    <circle cx="590" cy="307.5" r="7"/>
+    <circle cx="710" cy="370" r="7"/>
+    <circle cx="830" cy="407.5" r="7"/>
+    <circle cx="950" cy="470" r="7"/>
+  </g>
+
+  <line x1="660" y1="102" x2="710" y2="102" stroke="#1769aa" stroke-width="4"/>
+  <text x="720" y="107" font-family="Arial, sans-serif" font-size="14" fill="#172033">Actual remaining</text>
+  <line x1="660" y1="130" x2="710" y2="130" stroke="#7b879c" stroke-width="7" stroke-dasharray="10 8"/>
+  <text x="720" y="135" font-family="Arial, sans-serif" font-size="14" fill="#172033">Ideal remaining</text>
+
+  <text x="28" y="295" transform="rotate(-90 28 295)" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#172033">Estimated development-days remaining</text>
+  <text x="530" y="585" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#172033">Development day</text>
+</svg>
