@@ -28,6 +28,7 @@ class Book(models.Model):
         blank=True,
         validators=[MinValueValidator(1)],
     )
+    current_page = models.PositiveIntegerField(default=0, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
