@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 from .models import Book
 
@@ -28,6 +29,7 @@ class BookForm(forms.ModelForm):
             "status",
             "total_pages",
             "current_page",
+            "target_date",
         )
         help_texts = {
             "status": (
@@ -40,11 +42,13 @@ class BookForm(forms.ModelForm):
                 "Enter 0 if you have not started. Progress cannot exceed the "
                 "total page count when one is recorded."
             ),
+            "target_date": "Optional. Choose today or a future date.",
         }
         widgets = {
             "title": forms.TextInput(attrs={"autofocus": True}),
             "total_pages": forms.NumberInput(attrs={"min": 1}),
             "current_page": forms.NumberInput(attrs={"min": 0}),
+            "target_date": forms.DateInput(attrs={"type": "date"}),
         }
 
     def clean_title(self):
@@ -55,3 +59,20 @@ class BookForm(forms.ModelForm):
 
     def clean_current_page(self):
         return self.cleaned_data.get("current_page") or 0
+
+    def clean_target_date(self):
+        target_date = self.cleaned_data.get("target_date")
+        original_target = (
+            Book.objects.filter(pk=self.instance.pk)
+            .values_list("target_date", flat=True)
+            .first()
+            if self.instance.pk
+            else None
+        )
+        if (
+            target_date
+            and target_date < timezone.localdate()
+            and target_date != original_target
+        ):
+            raise forms.ValidationError("Target date cannot be in the past.")
+        return target_date

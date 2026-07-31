@@ -34,6 +34,10 @@
                             {% endif %}
                         </dd>
                     </div>
+                    <div>
+                        <dt>Target</dt>
+                        <dd>{{ book.target_date|date:"j M Y"|default:"No target set" }}</dd>
+                    </div>
                 </dl>
                 <a class="text-link" href="{{ book.get_absolute_url }}">View details →</a>
             </article>

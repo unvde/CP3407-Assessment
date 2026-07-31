@@ -1,7 +1,10 @@
+from datetime import timedelta
+
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.urls import reverse
+from django.utils import timezone
 
 from .forms import BookForm, RegistrationForm
 from .models import Book
@@ -377,3 +380,84 @@ class ReadingDashboardTests(TestCase):
         self.client.force_login(self.user)
         response = self.client.get(reverse("dashboard"))
         self.assertNotContains(response, "Private Active Book")
+
+
+class ReadingPlanTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="reader", password="pass")
+        self.other_user = User.objects.create_user(username="other", password="pass")
+        self.book = Book.objects.create(
+            owner=self.user,
+            title="Dune",
+            author="Frank Herbert",
+            status=Book.ReadingStatus.CURRENTLY_READING,
+            total_pages=400,
+        )
+        self.other_book = Book.objects.create(
+            owner=self.other_user,
+            title="Private Plan",
+            author="Other Reader",
+        )
+        self.client.force_login(self.user)
+
+    def book_data(self, target_date=""):
+        return {
+            "title": self.book.title,
+            "author": self.book.author,
+            "status": self.book.status,
+            "total_pages": self.book.total_pages,
+            "current_page": self.book.current_page,
+            "target_date": target_date,
+        }
+
+    def test_reader_can_add_future_target(self):
+        target = timezone.localdate() + timedelta(days=7)
+        response = self.client.post(
+            reverse("book-edit", args=[self.book.pk]),
+            self.book_data(target.isoformat()),
+        )
+        self.book.refresh_from_db()
+        self.assertRedirects(response, self.book.get_absolute_url())
+        self.assertEqual(self.book.target_date, target)
+
+    def test_new_past_target_is_rejected(self):
+        yesterday = timezone.localdate() - timedelta(days=1)
+        response = self.client.post(
+            reverse("book-edit", args=[self.book.pk]),
+            self.book_data(yesterday.isoformat()),
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(
+            response.context["form"],
+            "target_date",
+            "Target date cannot be in the past.",
+        )
+        self.book.refresh_from_db()
+        self.assertIsNone(self.book.target_date)
+
+    def test_reader_can_remove_target(self):
+        self.book.target_date = timezone.localdate() + timedelta(days=7)
+        self.book.save()
+        self.client.post(
+            reverse("book-edit", args=[self.book.pk]),
+            self.book_data(""),
+        )
+        self.book.refresh_from_db()
+        self.assertIsNone(self.book.target_date)
+
+    def test_reader_cannot_change_another_users_target(self):
+        target = timezone.localdate() + timedelta(days=7)
+        response = self.client.post(
+            reverse("book-edit", args=[self.other_book.pk]),
+            {
+                "title": self.other_book.title,
+                "author": self.other_book.author,
+                "status": self.other_book.status,
+                "total_pages": "",
+                "current_page": 0,
+                "target_date": target.isoformat(),
+            },
+        )
+        self.assertEqual(response.status_code, 404)
+        self.other_book.refresh_from_db()
+        self.assertIsNone(self.other_book.target_date)

@@ -28,6 +28,10 @@
             </dd>
         </div>
         <div>
+            <dt>Target date</dt>
+            <dd>{{ book.target_date|date:"j M Y"|default:"No target set" }}</dd>
+        </div>
+        <div>
             <dt>Last updated</dt>
             <dd>{{ book.updated_at|date:"j M Y, H:i" }}</dd>
         </div>
