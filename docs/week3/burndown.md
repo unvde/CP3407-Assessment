@@ -47,12 +47,9 @@ Iteration 1 delivered all 7 estimated development-days without carry-over.
 | 7 | 01 `done`; 02 `done`; 03 `done` | PR #10 review and merge commit `9b2010f` |
 
 The implementation commit `ce730a3` covers work completed across more than one
-development day. The commit messages are meaningful and the implementation,
-test and review concerns are separated, but the commit history does not provide
-one distinct commit for every development day. The Iteration 2 working
-agreement therefore requires at least one scoped, meaningful commit on each
-active development day, together with same-day issue and Project status
-updates.
+development day, so the Git history is less detailed than the burndown table.
+For Iteration 2, the team will finish each active development day with one
+scoped commit and a same-day issue and Project status update.
 
 ## Burndown Graph
 

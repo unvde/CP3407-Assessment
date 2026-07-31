@@ -13,9 +13,10 @@ The objective of Practical 2 was to obtain target-user feedback about the propos
 
 ## 3. Task One - Target-User Interviews
 
-The team conducted in-person interviews with potential users of Reading Compass.
-
-Participant names, interview dates, the number of participants and other identifying details are omitted to respect participant privacy. Responses were anonymised and consolidated so that the report records requirements without identifying individual participants.
+The team conducted in-person interviews with potential Reading Compass users.
+The available notes do not record names, interview dates or the participant
+count. For that reason, the report uses a combined summary and does not claim
+individual quotations.
 
 The interviews explored:
 

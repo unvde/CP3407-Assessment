@@ -47,7 +47,7 @@ GitHub Pages-ready Markdown documentation now exists for:
 - [Story 02 — Personal Reading List](user-stories/story-02-reading-list.md)
 - [Story 03 — Reading Status Management](user-stories/story-03-reading-status.md)
 
-These repository pages were published successfully from the `main` branch root:
+These repository pages were published from the `main` branch root:
 
 - [Reading Compass GitHub Pages](https://unvde.github.io/CP3407-Assessment/)
 - [Published Practical 5 Report](https://unvde.github.io/CP3407-Assessment/docs/week5/practical-report.html)
@@ -66,19 +66,11 @@ effort was seven estimated days, so the completion rate is `7 / 7 × 100% =
 100%` and carry-over is zero. This measures completed estimated scope, not
 calendar time.
 
-## 7. Documentation Consistency
+## 7. Cross-check
 
-The Week 5 folder follows the previous weekly structure:
-
-- a practical report summarises the week's objective and evidence;
-- detailed topics use separate linked Markdown pages;
-- tables retain the existing user-story numbers, names and day estimates;
-- relative links connect the report, evidence and README navigation;
-- status terms are normalised to `todo`, `in-progress` and `done`;
-- remote-only facts are explicitly separated from local evidence.
-
-The Week 3 story progress record, Week 2 backlog status and final Iteration 1
-burndown were reconciled with the completed Iteration 1 evidence.
+Story numbers, estimates and final statuses were checked against the Week 2
+backlog and Week 3 burndown. The linked pages use the same `todo`,
+`in-progress` and `done` terms.
 
 ## 8. Practical Completion Checklist
 
@@ -97,5 +89,4 @@ burndown were reconciled with the completed Iteration 1 evidence.
 All local Practical 5 work is complete. During Week 5, the team confirmed the
 remote Issue and Project Board states, and the confirmed Project Board
 URL is recorded in the Week 3 documentation. GitHub Pages is publicly enabled
-with HTTPS enforced, and its initial build and deployment completed
-successfully.
+with HTTPS enforced, and its initial build and deployment completed.

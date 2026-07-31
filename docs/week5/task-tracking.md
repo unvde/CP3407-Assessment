@@ -52,7 +52,7 @@ During the Week 5 iteration close, the team confirmed that:
 - Issues #1–#9 have Status = Done on the GitHub Project Board.
 - The Project Board URL is recorded in the Week 3 documentation.
 - GitHub Pages publishes from the `main` branch root with HTTPS enforced.
-- The Pages build and deployment completed successfully.
+- The Pages build and deployment completed.
 - The repository root and Week 5 report return successful responses.
 
 **Published site:** [Reading Compass GitHub Pages](https://unvde.github.io/CP3407-Assessment/)

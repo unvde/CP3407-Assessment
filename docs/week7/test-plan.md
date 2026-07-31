@@ -2,15 +2,14 @@
 
 ## Purpose
 
-This plan applies Practical 7 test-driven-development principles to the
-currently implemented Reading Compass release. It documents the tests that can
-be performed now, the risks they address, and the automation approach used.
+This plan records what will be tested during Practical 7 and why each group of
+tests is needed.
 
 ## Scope
 
-The test scope is the completed account-access, personal-reading-list,
-reading-status, progress, dashboard and reading-plan features. For
-traceability, their acceptance behaviour is expressed as seven user stories:
+The final scope covers account access, book management, reading progress, the
+dashboard and reading targets. The tests are grouped into seven user-facing
+workflows:
 
 1. **US7-01 — Account access:** As a reader, I want to register, sign in and
    sign out securely so that I can control access to my reading data.
@@ -27,31 +26,30 @@ traceability, their acceptance behaviour is expressed as seven user stories:
 7. **US7-07 — Manage reading target:** As a reader, I want an optional target
    date so that I can plan without scheduling every book.
 
-These stories are acceptance-level slices of backlog Stories 01–06.
+These workflows map back to backlog Stories 01–06.
 
 ## Test Types
 
 | Type | Purpose | Examples |
 |---|---|---|
-| Model unit tests | Verify model defaults, validation, relationships and URL behaviour | positive page count, status default, owner cascade |
-| Form unit tests | Verify normalisation and invalid-input handling independently of views | trimmed text, blank optional pages, unknown status |
+| Model unit tests | Verify defaults, validation and relationships | positive page count, status default, owner cascade |
+| Form unit tests | Verify normalisation and invalid-input handling | trimmed text, unknown status |
 | View integration tests | Exercise request, form, database, redirect and template behaviour together | registration, create, update and delete |
-| Authentication tests | Verify session creation/termination and route protection | login, logout, `next` redirect |
+| Authentication tests | Verify session creation/termination and route protection | login, logout, private-route redirects |
 | Authorisation tests | Verify object ownership boundaries | another user's book returns 404 |
-| Boundary and negative tests | Verify empty, missing, duplicate, excessive and invalid values | missing email, 201-character title, zero pages |
-| Presentation assertions | Verify important status, metadata, guidance and empty-state content | readable status label, missing-page message |
+| Boundary and negative tests | Verify missing, duplicate, excessive and invalid values | missing email, zero pages, page above total, past target |
 
 ## Test Design Techniques
 
 - **Equivalence partitioning:** valid and invalid login details; accepted and
   unrecognised reading statuses.
-- **Boundary-value analysis:** page count `1` versus `0`; title length `200`
-  versus `201`; current page equal to or above total; target today versus past.
+- **Boundary-value analysis:** positive versus zero page count; current page
+  within or above a known total; future versus past target.
 - **Decision/permission testing:** anonymous, owner and non-owner access paths.
 - **State-transition testing:** registration creates an authenticated session;
   login and logout change session state; status updates persist.
-- **Error guessing:** duplicate email with different case, duplicate username,
-  whitespace around text fields and GET requests to the POST-only logout view.
+- **Error guessing:** duplicate email with different case and whitespace around
+  title or author.
 
 ## Tools and Environment
 
@@ -89,9 +87,8 @@ Backlog Stories 07–10 (search and filtering, notes, completion reviews and
 duplicate warning) are not yet implemented on this branch. They should receive
 their own failing tests first when their TDD implementation begins.
 
-Manual usability, visual-regression, accessibility-tool, browser compatibility,
-performance and security-penetration testing are also outside this automated
-unit/integration suite. They remain useful follow-up activities.
+Browser compatibility, performance and penetration testing are outside this
+Practical 7 suite. The main workflows will still receive a short browser check.
 
 ## Risks and Controls
 

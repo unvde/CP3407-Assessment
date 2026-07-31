@@ -59,18 +59,16 @@ development-days and is consistent with the final velocity.
 
 ### Iteration 1 Retrospective Action
 
-The repository contains meaningful planning, implementation, test,
-documentation, usability and merge commits. However, one implementation commit
-contains work spanning multiple development days. For Iteration 2, each active
-development day must end with:
+One Iteration 1 implementation commit covered work from several development
+days, which made the daily history harder to compare with the burndown. For
+Iteration 2, each active development day will end with:
 
-1. at least one scoped, meaningful commit;
+1. at least one scoped commit;
 2. updated GitHub Issue labels and Project status;
 3. updated remaining effort; and
 4. a short record of blockers, review feedback and scope decisions.
 
-This working agreement makes the Iteration 2 burndown contemporaneous with the
-work and strengthens the evidence for Git/GitHub use and agile iteration.
+This keeps the burndown, issue board and repository history on the same timeline.
 
 ## 3. Iteration 2 Backlog Adjustment
 
@@ -188,4 +186,4 @@ Issues #1–#9, all with Project Status = Done.
   Iteration 2 GitHub Project.
 - Completed Iteration 1 story pages remain the published completion evidence.
 
-The Week 6 local and GitHub planning and tracking evidence is complete.
+The Week 6 planning checkpoint is complete.
