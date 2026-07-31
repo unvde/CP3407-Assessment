@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.urls import reverse
@@ -40,3 +41,20 @@ class Book(models.Model):
 
     def get_absolute_url(self):
         return reverse("book-detail", kwargs={"pk": self.pk})
+
+    def clean(self):
+        super().clean()
+        if (
+            self.total_pages is not None
+            and self.current_page is not None
+            and self.current_page > self.total_pages
+        ):
+            raise ValidationError(
+                {"current_page": "Current page cannot exceed total pages."}
+            )
+
+    @property
+    def progress_percentage(self):
+        if not self.total_pages:
+            return None
+        return round((self.current_page / self.total_pages) * 100)

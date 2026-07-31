@@ -1,4 +1,3 @@
-
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.test import TestCase
@@ -289,3 +288,47 @@ class BookManagementTests(TestCase):
         self.assertEqual(response.status_code, 404)
         self.other_book.refresh_from_db()
         self.assertEqual(self.other_book.title, "Beloved")
+
+
+class ReadingProgressTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="reader", password="pass")
+        self.book = Book.objects.create(
+            owner=self.user,
+            title="Dune",
+            author="Frank Herbert",
+            status=Book.ReadingStatus.CURRENTLY_READING,
+            total_pages=400,
+            current_page=100,
+        )
+        self.client.force_login(self.user)
+
+    def test_progress_percentage_is_calculated(self):
+        self.assertEqual(self.book.progress_percentage, 25)
+
+    def test_percentage_is_unavailable_without_total_pages(self):
+        self.book.total_pages = None
+
+        self.assertIsNone(self.book.progress_percentage)
+
+    def test_current_page_cannot_exceed_total_pages(self):
+        self.book.current_page = 401
+
+        with self.assertRaises(ValidationError):
+            self.book.full_clean()
+
+    def test_update_saves_valid_current_page(self):
+        response = self.client.post(
+            reverse("book-edit", args=[self.book.pk]),
+            {
+                "title": self.book.title,
+                "author": self.book.author,
+                "status": self.book.status,
+                "total_pages": 400,
+                "current_page": 240,
+            },
+        )
+
+        self.book.refresh_from_db()
+        self.assertRedirects(response, self.book.get_absolute_url())
+        self.assertEqual(self.book.current_page, 240)

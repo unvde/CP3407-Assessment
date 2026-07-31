@@ -22,7 +22,13 @@ class RegistrationForm(UserCreationForm):
 class BookForm(forms.ModelForm):
     class Meta:
         model = Book
-        fields = ("title", "author", "status", "total_pages")
+        fields = (
+            "title",
+            "author",
+            "status",
+            "total_pages",
+            "current_page",
+        )
         help_texts = {
             "status": (
                 "Want to Read: saved for future reading; "
@@ -30,10 +36,15 @@ class BookForm(forms.ModelForm):
                 "Paused: temporarily stopped; "
                 "Completed: finished."
             ),
+            "current_page": (
+                "Enter 0 if you have not started. Progress cannot exceed the "
+                "total page count when one is recorded."
+            ),
         }
         widgets = {
             "title": forms.TextInput(attrs={"autofocus": True}),
             "total_pages": forms.NumberInput(attrs={"min": 1}),
+            "current_page": forms.NumberInput(attrs={"min": 0}),
         }
 
     def clean_title(self):
@@ -41,3 +52,6 @@ class BookForm(forms.ModelForm):
 
     def clean_author(self):
         return self.cleaned_data["author"].strip()
+
+    def clean_current_page(self):
+        return self.cleaned_data.get("current_page") or 0
