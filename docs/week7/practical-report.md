@@ -55,7 +55,7 @@ Each selected workflow has at least three automated cases. The mapping is in
 
 ## Automated Test Implementation
 
-The suite grew from 18 to **30 tests**. During review, overlapping cases were
+The suite grew from 18 to **32 tests**. During review, overlapping cases were
 removed so that each remaining test checks a different rule or failure mode.
 The final set covers:
 
@@ -64,9 +64,10 @@ The final set covers:
 - book input, ownership, editing and deletion;
 - progress calculation, missing totals and page bounds;
 - dashboard authentication, filtering and owner isolation; and
-- future, past, removable and cross-user reading targets.
+- future, newly entered past, unchanged historical, removable and cross-user
+  reading targets.
 
-Iteration 2 Stories 04–06 account for 11 of the 30 tests.
+Iteration 2 Stories 04–06 account for 12 of the 32 tests.
 
 ## Final Test Result
 
@@ -79,8 +80,8 @@ Command:
 Result:
 
 ```text
-Found 30 test(s).
-Ran 30 tests
+Found 32 test(s).
+Ran 32 tests
 OK
 System check identified no issues (0 silenced).
 ```
@@ -103,13 +104,16 @@ console errors.
 | Discuss, document and plan testing | Completed in test plan and this report |
 | Select at least 5 user stories | 7 selected |
 | At least 3 test cases per story | 3–7 cases per story |
-| At least 15 documented cases | 30 documented |
-| At least 15 automated tests | 30 automated tests |
-| Run the complete suite | 30/30 passed |
+| At least 15 documented cases | 32 documented |
+| At least 15 automated tests | 32 automated tests |
+| Run the complete suite | 32/32 passed |
+
+Completed-story acceptance evidence is published in the
+[Iteration 2 user-story pages](user-stories/README.md).
 
 ## Reflection and Next Steps
 
 The most useful tests were the permission and boundary cases because they found
 problems that a normal form submission would not show. Iteration 3 work will
 reuse the same pattern: write the acceptance case first, implement the smallest
-change that passes it, then rerun the 30-test regression suite.
+change that passes it, then rerun the 32-test regression suite.

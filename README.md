@@ -119,6 +119,7 @@ Responsibilities:
 - [Test Plan](docs/week7/test-plan.md)
 - [Test Cases](docs/week7/test-cases.md)
 - [Practical 7 Report](docs/week7/practical-report.md)
+- [Completed Iteration 2 User Stories](docs/week7/user-stories/README.md)
 
 Additional weekly documentation covering design, iterations, testing and development tools will be added as the project progresses.
 

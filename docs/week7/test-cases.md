@@ -3,7 +3,7 @@
 ## Summary
 
 Practical 7 requires at least five user stories, three cases per story and 15
-automated tests. This focused suite documents **7 user stories and 30
+automated tests. This focused suite documents **7 user stories and 32
 automated tests**. Each case protects a distinct user-visible rule, risk or
 boundary; tests that repeated the same behaviour at another layer were removed.
 
@@ -45,6 +45,7 @@ boundary; tests that repeated the same behaviour at another layer were removed.
 | EDIT-02 | Delete own book | Book is removed and list opens | `BookManagementTests.test_delete_book` |
 | EDIT-03 | Attempt to edit another reader's book | Response is 404 and their book is unchanged | `BookManagementTests.test_cannot_edit_another_users_book` |
 | EDIT-04 | Delete the account owning a book | Related book is removed by cascade | `BookModelTests.test_deleting_owner_cascades_to_books` |
+| EDIT-05 | Attempt to delete another reader's book | Response is 404 and their book remains | `BookManagementTests.test_cannot_delete_another_users_book` |
 
 ## US7-05 — Update Reading Progress
 
@@ -71,6 +72,7 @@ boundary; tests that repeated the same behaviour at another layer were removed.
 | PLAN-02 | Add a new past target | Form rejects it and saves no target | `ReadingPlanTests.test_new_past_target_is_rejected` |
 | PLAN-03 | Clear an existing target | Optional target is removed | `ReadingPlanTests.test_reader_can_remove_target` |
 | PLAN-04 | Attempt to change another reader's target | Response is 404 and their data is unchanged | `ReadingPlanTests.test_reader_cannot_change_another_users_target` |
+| PLAN-05 | Edit another field while retaining an existing past target | Edit succeeds and the unchanged target remains | `ReadingPlanTests.test_existing_past_target_does_not_block_other_edits` |
 
 ## Coverage Check
 
@@ -79,11 +81,11 @@ boundary; tests that repeated the same behaviour at another layer were removed.
 | US7-01 Account access | 7 |
 | US7-02 Private list | 3 |
 | US7-03 Add book information | 5 |
-| US7-04 Maintain books | 4 |
+| US7-04 Maintain books | 5 |
 | US7-05 Reading progress | 4 |
 | US7-06 Dashboard | 3 |
-| US7-07 Reading target | 4 |
-| **Total** | **30** |
+| US7-07 Reading target | 5 |
+| **Total** | **32** |
 
 Every selected story has at least three distinct automated cases. All named
 methods are implemented in `books/tests.py`.
