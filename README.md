@@ -125,9 +125,9 @@ Additional weekly documentation covering design, iterations, testing and develop
 
 ## Project Status
 
-**Current stage:** Iteration 1 is complete. Iteration 2 Stories 04–06 have been
-implemented against the adjusted 7-day capacity, pass acceptance testing, and
-are ready for pull-request review.
+**Current stage:** Iteration 1 is complete. Iteration 2 Stories 04–06 were
+completed within the adjusted 7-day capacity and passed final acceptance at
+Week 7 Day 6. Iteration 3 functionality has not been started.
 
 ## Local Development
 
