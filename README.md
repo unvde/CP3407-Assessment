@@ -114,12 +114,20 @@ Responsibilities:
 - [Practical 6 Report](docs/week6/practical-report.md)
 - [Iteration 1 Burndown Graph](docs/week6/iteration-1-burndown.svg)
 
+### Week 7 - Test-Driven Development
+
+- [Test Plan](docs/week7/test-plan.md)
+- [Test Cases](docs/week7/test-cases.md)
+- [Practical 7 Report](docs/week7/practical-report.md)
+- [Completed Iteration 2 User Stories](docs/week7/user-stories/README.md)
+
 Additional weekly documentation covering design, iterations, testing and development tools will be added as the project progresses.
 
 ## Project Status
 
-**Current stage:** Iteration 1 completed; Iteration 2 started in Week 6 with an
-adjusted capacity of 7 estimated development-days.
+**Current stage:** Iteration 1 is complete. Iteration 2 Stories 04–06 were
+completed within the adjusted 7-day capacity and passed final acceptance at
+Week 7 Day 6. Iteration 3 functionality has not been started.
 
 ## Local Development
 

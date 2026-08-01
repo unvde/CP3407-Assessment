@@ -24,6 +24,12 @@
                 {% else %}
                     <p>Page count not recorded</p>
                 {% endif %}
+                <p>Current page: {{ book.current_page }}</p>
+                {% if book.progress_percentage is not None %}
+                    <p>{{ book.progress_percentage }}% complete</p>
+                {% else %}
+                    <p>Percentage unavailable</p>
+                {% endif %}
                 <a class="text-link" href="{{ book.get_absolute_url }}">View details →</a>
             </article>
         {% endfor %}
@@ -36,4 +42,3 @@
     </section>
 {% endif %}
 {% endblock %}
-

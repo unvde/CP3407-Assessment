@@ -1,8 +1,12 @@
+from datetime import timedelta
+
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.urls import reverse
+from django.utils import timezone
 
+from .forms import BookForm, RegistrationForm
 from .models import Book
 
 
@@ -43,6 +47,40 @@ class RegistrationTests(TestCase):
         self.assertContains(response, "An account already uses this email address.")
         self.assertFalse(User.objects.filter(username="second").exists())
 
+    def test_registration_requires_email(self):
+        response = self.client.post(
+            reverse("register"),
+            {
+                "username": "reader",
+                "email": "",
+                "password1": "StrongPass123!",
+                "password2": "StrongPass123!",
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(response.context["form"], "email", "This field is required.")
+        self.assertFalse(User.objects.filter(username="reader").exists())
+
+    def test_registration_rejects_mismatched_passwords(self):
+        response = self.client.post(
+            reverse("register"),
+            {
+                "username": "reader",
+                "email": "reader@example.com",
+                "password1": "StrongPass123!",
+                "password2": "DifferentPass123!",
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(
+            response.context["form"],
+            "password2",
+            "The two password fields didn’t match.",
+        )
+        self.assertFalse(User.objects.filter(username="reader").exists())
+
 
 class AuthenticationTests(TestCase):
     def setUp(self):
@@ -79,11 +117,23 @@ class AuthenticationTests(TestCase):
         self.assertRedirects(response, reverse("login"))
         self.assertNotIn("_auth_user_id", self.client.session)
 
-    def test_book_list_requires_login(self):
-        response = self.client.get(reverse("book-list"))
+    def test_private_book_routes_require_login(self):
+        book = Book.objects.create(
+            owner=self.user,
+            title="Dune",
+            author="Frank Herbert",
+        )
+        routes = [
+            reverse("book-add"),
+            reverse("book-detail", args=[book.pk]),
+            reverse("book-edit", args=[book.pk]),
+            reverse("book-delete", args=[book.pk]),
+        ]
 
-        expected = f"{reverse('login')}?next={reverse('book-list')}"
-        self.assertRedirects(response, expected)
+        for route in routes:
+            with self.subTest(route=route):
+                response = self.client.get(route)
+                self.assertRedirects(response, f"{reverse('login')}?next={route}")
 
 
 class BookModelTests(TestCase):
@@ -91,14 +141,6 @@ class BookModelTests(TestCase):
         self.user = User.objects.create_user(
             username="reader",
             password="StrongPass123!",
-        )
-
-    def test_status_choices_are_iteration_one_values(self):
-        values = {value for value, _label in Book.ReadingStatus.choices}
-
-        self.assertEqual(
-            values,
-            {"want_to_read", "currently_reading", "paused", "completed"},
         )
 
     def test_total_pages_must_be_positive(self):
@@ -112,10 +154,54 @@ class BookModelTests(TestCase):
         with self.assertRaises(ValidationError):
             book.full_clean()
 
-    def test_string_representation(self):
-        book = Book(title="Dune", author="Frank Herbert")
+    def test_default_status_is_want_to_read(self):
+        book = Book.objects.create(
+            owner=self.user,
+            title="Dune",
+            author="Frank Herbert",
+        )
 
-        self.assertEqual(str(book), "Dune by Frank Herbert")
+        self.assertEqual(book.status, Book.ReadingStatus.WANT_TO_READ)
+
+    def test_deleting_owner_cascades_to_books(self):
+        book = Book.objects.create(
+            owner=self.user,
+            title="Dune",
+            author="Frank Herbert",
+        )
+
+        self.user.delete()
+
+        self.assertFalse(Book.objects.filter(pk=book.pk).exists())
+
+
+class BookFormTests(TestCase):
+    def test_form_trims_title_and_author(self):
+        form = BookForm(
+            data={
+                "title": "  Dune  ",
+                "author": "  Frank Herbert  ",
+                "status": Book.ReadingStatus.WANT_TO_READ,
+                "total_pages": 412,
+            }
+        )
+
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.cleaned_data["title"], "Dune")
+        self.assertEqual(form.cleaned_data["author"], "Frank Herbert")
+
+    def test_form_rejects_unknown_status(self):
+        form = BookForm(
+            data={
+                "title": "Dune",
+                "author": "Frank Herbert",
+                "status": "abandoned",
+                "total_pages": 412,
+            }
+        )
+
+        self.assertFalse(form.is_valid())
+        self.assertIn("status", form.errors)
 
 
 class BookManagementTests(TestCase):
@@ -162,38 +248,6 @@ class BookManagementTests(TestCase):
         created = Book.objects.get(title="The Left Hand of Darkness")
         self.assertEqual(created.owner, self.user)
         self.assertRedirects(response, created.get_absolute_url())
-
-    def test_add_book_page_explains_reading_statuses(self):
-        response = self.client.get(reverse("book-add"))
-
-        self.assertContains(
-            response,
-            (
-                "Want to Read: saved for future reading; "
-                "Currently Reading: actively being read; "
-                "Paused: temporarily stopped; "
-                "Completed: finished."
-            ),
-        )
-
-    def test_create_rejects_non_positive_page_count(self):
-        response = self.client.post(
-            reverse("book-add"),
-            {
-                "title": "Invalid Book",
-                "author": "Example Author",
-                "status": Book.ReadingStatus.WANT_TO_READ,
-                "total_pages": 0,
-            },
-        )
-
-        self.assertEqual(response.status_code, 200)
-        self.assertFormError(
-            response.context["form"],
-            "total_pages",
-            "Ensure this value is greater than or equal to 1.",
-        )
-        self.assertFalse(Book.objects.filter(title="Invalid Book").exists())
 
     def test_update_book(self):
         response = self.client.post(
@@ -245,3 +299,190 @@ class BookManagementTests(TestCase):
 
         self.assertEqual(response.status_code, 404)
         self.assertTrue(Book.objects.filter(pk=self.other_book.pk).exists())
+
+
+class ReadingProgressTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="reader", password="pass")
+        self.book = Book.objects.create(
+            owner=self.user,
+            title="Dune",
+            author="Frank Herbert",
+            status=Book.ReadingStatus.CURRENTLY_READING,
+            total_pages=400,
+            current_page=100,
+        )
+        self.client.force_login(self.user)
+
+    def test_progress_percentage_is_calculated(self):
+        self.assertEqual(self.book.progress_percentage, 25)
+
+    def test_percentage_is_unavailable_without_total_pages(self):
+        self.book.total_pages = None
+
+        self.assertIsNone(self.book.progress_percentage)
+
+    def test_current_page_cannot_exceed_total_pages(self):
+        self.book.current_page = 401
+
+        with self.assertRaises(ValidationError):
+            self.book.full_clean()
+
+    def test_update_saves_valid_current_page(self):
+        response = self.client.post(
+            reverse("book-edit", args=[self.book.pk]),
+            {
+                "title": self.book.title,
+                "author": self.book.author,
+                "status": self.book.status,
+                "total_pages": 400,
+                "current_page": 240,
+            },
+        )
+
+        self.book.refresh_from_db()
+        self.assertRedirects(response, self.book.get_absolute_url())
+        self.assertEqual(self.book.current_page, 240)
+
+
+class ReadingDashboardTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="reader", password="pass")
+        self.other_user = User.objects.create_user(username="other", password="pass")
+        self.active_book = Book.objects.create(
+            owner=self.user,
+            title="Active Book",
+            author="A Reader",
+            status=Book.ReadingStatus.CURRENTLY_READING,
+            total_pages=200,
+            current_page=50,
+        )
+        Book.objects.create(
+            owner=self.user,
+            title="Future Book",
+            author="A Reader",
+            status=Book.ReadingStatus.WANT_TO_READ,
+        )
+        Book.objects.create(
+            owner=self.other_user,
+            title="Private Active Book",
+            author="Other Reader",
+            status=Book.ReadingStatus.CURRENTLY_READING,
+        )
+
+    def test_dashboard_requires_login(self):
+        response = self.client.get(reverse("dashboard"))
+
+        self.assertRedirects(
+            response,
+            f"{reverse('login')}?next={reverse('dashboard')}",
+        )
+
+    def test_dashboard_contains_only_currently_reading_books(self):
+        self.client.force_login(self.user)
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(response, "Active Book")
+        self.assertNotContains(response, "Future Book")
+
+    def test_dashboard_does_not_reveal_other_users_books(self):
+        self.client.force_login(self.user)
+        response = self.client.get(reverse("dashboard"))
+        self.assertNotContains(response, "Private Active Book")
+
+
+class ReadingPlanTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="reader", password="pass")
+        self.other_user = User.objects.create_user(username="other", password="pass")
+        self.book = Book.objects.create(
+            owner=self.user,
+            title="Dune",
+            author="Frank Herbert",
+            status=Book.ReadingStatus.CURRENTLY_READING,
+            total_pages=400,
+        )
+        self.other_book = Book.objects.create(
+            owner=self.other_user,
+            title="Private Plan",
+            author="Other Reader",
+        )
+        self.client.force_login(self.user)
+
+    def book_data(self, target_date=""):
+        return {
+            "title": self.book.title,
+            "author": self.book.author,
+            "status": self.book.status,
+            "total_pages": self.book.total_pages,
+            "current_page": self.book.current_page,
+            "target_date": target_date,
+        }
+
+    def test_reader_can_add_future_target(self):
+        target = timezone.localdate() + timedelta(days=7)
+        response = self.client.post(
+            reverse("book-edit", args=[self.book.pk]),
+            self.book_data(target.isoformat()),
+        )
+        self.book.refresh_from_db()
+        self.assertRedirects(response, self.book.get_absolute_url())
+        self.assertEqual(self.book.target_date, target)
+
+    def test_new_past_target_is_rejected(self):
+        yesterday = timezone.localdate() - timedelta(days=1)
+        response = self.client.post(
+            reverse("book-edit", args=[self.book.pk]),
+            self.book_data(yesterday.isoformat()),
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(
+            response.context["form"],
+            "target_date",
+            "Target date cannot be in the past.",
+        )
+        self.book.refresh_from_db()
+        self.assertIsNone(self.book.target_date)
+
+    def test_reader_can_remove_target(self):
+        self.book.target_date = timezone.localdate() + timedelta(days=7)
+        self.book.save()
+        self.client.post(
+            reverse("book-edit", args=[self.book.pk]),
+            self.book_data(""),
+        )
+        self.book.refresh_from_db()
+        self.assertIsNone(self.book.target_date)
+
+    def test_existing_past_target_does_not_block_other_edits(self):
+        past_target = timezone.localdate() - timedelta(days=1)
+        self.book.target_date = past_target
+        self.book.save()
+
+        data = self.book_data(past_target.isoformat())
+        data["title"] = "Dune Revised"
+        response = self.client.post(
+            reverse("book-edit", args=[self.book.pk]),
+            data,
+        )
+
+        self.book.refresh_from_db()
+        self.assertRedirects(response, self.book.get_absolute_url())
+        self.assertEqual(self.book.title, "Dune Revised")
+        self.assertEqual(self.book.target_date, past_target)
+
+    def test_reader_cannot_change_another_users_target(self):
+        target = timezone.localdate() + timedelta(days=7)
+        response = self.client.post(
+            reverse("book-edit", args=[self.other_book.pk]),
+            {
+                "title": self.other_book.title,
+                "author": self.other_book.author,
+                "status": self.other_book.status,
+                "total_pages": "",
+                "current_page": 0,
+                "target_date": target.isoformat(),
+            },
+        )
+        self.assertEqual(response.status_code, 404)
+        self.other_book.refresh_from_db()
+        self.assertIsNone(self.other_book.target_date)

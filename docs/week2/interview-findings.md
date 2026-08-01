@@ -2,9 +2,10 @@
 
 ## 1. Interview Overview
 
-The project team conducted in-person interviews with potential users of Reading Compass.
-
-To respect participant privacy, this report does not record names, interview dates, the number of participants or other identifying information. Responses have been anonymised and consolidated into common findings. No individual response is attributed to a specific participant.
+The project team conducted in-person interviews with potential Reading Compass
+users. The notes kept for this report do not include names, interview dates or
+the participant count, so the findings below are presented as a combined
+summary rather than individual transcripts.
 
 ## 2. Interview Purpose
 
