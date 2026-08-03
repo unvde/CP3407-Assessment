@@ -140,17 +140,16 @@ Status uses the shared workflow `todo`, `in-progress` and `done`.
 | 01 | User Account Access | 1 | done |
 | 02 | Personal Reading List | 1 | done |
 | 03 | Reading Status Management | 1 | done |
-| 04 | Reading Progress Updates | 2 | in-progress |
-| 05 | Reading Dashboard | 2 | todo |
-| 06 | Reading Plans | 2 | todo |
+| 04 | Reading Progress Updates | 2 | done |
+| 05 | Reading Dashboard | 2 | done |
+| 06 | Reading Plans | 2 | done |
 | 07 | Search and Filtering | 3 | todo |
 | 08 | Private Reading Notes | 3 | todo |
 | 09 | Completion Review | 3 | todo |
 | 10 | Duplicate Book Warning | 3 | todo |
 
-Iteration 1 is closed. Iteration 2 started in Week 6, and Story 04 is
-`in-progress` at the Week 6 planning checkpoint. Detailed Iteration 1
-evidence and velocity are recorded in the
+Iterations 1 and 2 are closed. Stories 04–06 reached `done` at the Week 7 Day 6
+acceptance checkpoint. Detailed Iteration 1 evidence and velocity are recorded in the
 [Week 5 Iteration Review](../week5/iteration-review.md).
 
 The Iteration 2 plan was adjusted in Week 6 to match the demonstrated velocity
@@ -158,6 +157,10 @@ of 7 estimated development-days. Story 05 was narrowed from 3 to 2 days; its
 first release is limited to active books, progress and optional target dates.
 The detailed scope and rationale are recorded in the
 [Week 6 Practical Report](../week6/practical-report.md).
+
+The Iteration 2 review confirms an actual velocity of 7 development-days.
+Iteration 3 therefore selects Stories 07–09 for a matching 7-day capacity.
+Story 10 remains in the product backlog and is not committed to Iteration 3.
 
 ## Planning Conclusion
 
