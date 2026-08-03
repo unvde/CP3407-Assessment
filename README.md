@@ -120,13 +120,17 @@ Responsibilities:
 - [Test Cases](docs/week7/test-cases.md)
 - [Practical 7 Report](docs/week7/practical-report.md)
 
+### Week 8 - Iteration 3
+
+- [Story 07 Search and Filtering](docs/week8/story-07-search-filtering.md)
+
 Additional weekly documentation covering design, iterations, testing and development tools will be added as the project progresses.
 
 ## Project Status
 
-**Current stage:** Iteration 1 is complete. Iteration 2 Stories 04–06 have been
-implemented against the adjusted 7-day capacity, pass acceptance testing, and
-are ready for pull-request review.
+**Current stage:** Iterations 1 and 2 are complete. Iteration 3 Story 07 search
+and filtering is implemented on the `iteration-3` branch and is undergoing its
+Week 8 Day 5 regression and acceptance review.
 
 ## Local Development
 

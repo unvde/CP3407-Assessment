@@ -461,3 +461,111 @@ class ReadingPlanTests(TestCase):
         self.assertEqual(response.status_code, 404)
         self.other_book.refresh_from_db()
         self.assertIsNone(self.other_book.target_date)
+
+
+class BookSearchAndFilterAcceptanceTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="reader", password="pass")
+        self.other_user = User.objects.create_user(username="other", password="pass")
+        self.dune = Book.objects.create(
+            owner=self.user,
+            title="Dune",
+            author="Frank Herbert",
+            status=Book.ReadingStatus.CURRENTLY_READING,
+        )
+        self.left_hand = Book.objects.create(
+            owner=self.user,
+            title="The Left Hand of Darkness",
+            author="Ursula K. Le Guin",
+            status=Book.ReadingStatus.WANT_TO_READ,
+        )
+        self.paused_book = Book.objects.create(
+            owner=self.user,
+            title="A Wizard of Earthsea",
+            author="Ursula K. Le Guin",
+            status=Book.ReadingStatus.PAUSED,
+        )
+        self.completed_book = Book.objects.create(
+            owner=self.user,
+            title="Beloved",
+            author="Toni Morrison",
+            status=Book.ReadingStatus.COMPLETED,
+        )
+        self.private_book = Book.objects.create(
+            owner=self.other_user,
+            title="Private Dune Notes",
+            author="Frank Herbert",
+            status=Book.ReadingStatus.CURRENTLY_READING,
+        )
+        self.client.force_login(self.user)
+
+    def test_search_matches_title_case_insensitively(self):
+        response = self.client.get(reverse("book-list"), {"q": "dUnE"})
+
+        self.assertQuerySetEqual(response.context["books"], [self.dune])
+
+    def test_search_matches_author_case_insensitively(self):
+        response = self.client.get(reverse("book-list"), {"q": "ursula k. le guin"})
+
+        self.assertQuerySetEqual(
+            response.context["books"],
+            [self.paused_book, self.left_hand],
+            ordered=False,
+        )
+
+    def test_every_defined_status_can_filter_results(self):
+        expected_books = {
+            Book.ReadingStatus.WANT_TO_READ: self.left_hand,
+            Book.ReadingStatus.CURRENTLY_READING: self.dune,
+            Book.ReadingStatus.PAUSED: self.paused_book,
+            Book.ReadingStatus.COMPLETED: self.completed_book,
+        }
+
+        for status, expected_book in expected_books.items():
+            with self.subTest(status=status):
+                response = self.client.get(reverse("book-list"), {"status": status})
+                self.assertQuerySetEqual(response.context["books"], [expected_book])
+
+    def test_search_and_status_filters_can_be_combined(self):
+        response = self.client.get(
+            reverse("book-list"),
+            {"q": "ursula", "status": Book.ReadingStatus.PAUSED},
+        )
+
+        self.assertQuerySetEqual(response.context["books"], [self.paused_book])
+
+    def test_filtered_results_remain_owner_scoped(self):
+        response = self.client.get(reverse("book-list"), {"q": "dune"})
+
+        self.assertQuerySetEqual(response.context["books"], [self.dune])
+
+    def test_clearing_filters_restores_full_personal_list(self):
+        response = self.client.get(reverse("book-list"), {"q": "", "status": ""})
+
+        self.assertQuerySetEqual(
+            response.context["books"],
+            [self.completed_book, self.paused_book, self.left_hand, self.dune],
+            ordered=False,
+        )
+
+    def test_unknown_status_is_ignored_safely(self):
+        response = self.client.get(reverse("book-list"), {"status": "abandoned"})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertQuerySetEqual(
+            response.context["books"],
+            [self.completed_book, self.paused_book, self.left_hand, self.dune],
+            ordered=False,
+        )
+
+    def test_page_displays_search_status_and_clear_controls(self):
+        response = self.client.get(
+            reverse("book-list"),
+            {"q": "dune", "status": Book.ReadingStatus.CURRENTLY_READING},
+        )
+
+        self.assertContains(response, 'name="q"')
+        self.assertContains(response, 'value="dune"')
+        self.assertContains(response, 'name="status"')
+        self.assertContains(response, "Currently Reading")
+        self.assertContains(response, 'href="{}"'.format(reverse("book-list")))

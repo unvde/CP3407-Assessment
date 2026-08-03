@@ -1,6 +1,6 @@
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import QuerySet
+from django.db.models import Q, QuerySet
 from django.urls import reverse_lazy
 from django.views.generic import (
     CreateView,
@@ -34,6 +34,33 @@ class BookListView(OwnedBookQuerysetMixin, ListView):
     model = Book
     context_object_name = "books"
     template_name = "books/book_list.html"
+
+    def get_queryset(self) -> QuerySet:
+        queryset = super().get_queryset()
+        query = self.request.GET.get("q", "").strip()
+        status = self.request.GET.get("status", "")
+
+        if query:
+            queryset = queryset.filter(
+                Q(title__icontains=query) | Q(author__icontains=query)
+            )
+        if status in Book.ReadingStatus.values:
+            queryset = queryset.filter(status=status)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        status = self.request.GET.get("status", "")
+        context["search_query"] = self.request.GET.get("q", "").strip()
+        context["selected_status"] = (
+            status if status in Book.ReadingStatus.values else ""
+        )
+        context["status_choices"] = Book.ReadingStatus.choices
+        context["filters_active"] = bool(
+            context["search_query"] or context["selected_status"]
+        )
+        return context
 
 
 class DashboardView(OwnedBookQuerysetMixin, ListView):

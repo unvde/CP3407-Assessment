@@ -12,6 +12,30 @@
     <a class="primary-button" href="{% url 'book-add' %}">Add a book</a>
 </div>
 
+<form class="filter-bar" method="get" role="search">
+    <div class="filter-field filter-search">
+        <label for="book-search">Search title or author</label>
+        <input
+            id="book-search"
+            name="q"
+            type="search"
+            value="{{ search_query }}"
+            placeholder="e.g. Dune or Ursula Le Guin"
+        >
+    </div>
+    <div class="filter-field">
+        <label for="status-filter">Reading status</label>
+        <select id="status-filter" name="status">
+            <option value="">All statuses</option>
+            {% for value, label in status_choices %}
+                <option value="{{ value }}"{% if selected_status == value %} selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <button class="primary-button" type="submit">Apply filters</button>
+    <a class="text-link clear-filters" href="{% url 'book-list' %}">Clear filters</a>
+</form>
+
 {% if books %}
     <div class="book-grid">
         {% for book in books %}
@@ -36,9 +60,15 @@
     </div>
 {% else %}
     <section class="empty-state">
-        <p class="eyebrow">Your list is empty</p>
-        <h2>Add the first book to your reading journey.</h2>
-        <a class="primary-button" href="{% url 'book-add' %}">Add your first book</a>
+        {% if filters_active %}
+            <p class="eyebrow">No matches</p>
+            <h2>No books match these filters.</h2>
+            <a class="primary-button" href="{% url 'book-list' %}">Clear filters</a>
+        {% else %}
+            <p class="eyebrow">Your list is empty</p>
+            <h2>Add the first book to your reading journey.</h2>
+            <a class="primary-button" href="{% url 'book-add' %}">Add your first book</a>
+        {% endif %}
     </section>
 {% endif %}
 {% endblock %}

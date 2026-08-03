@@ -118,6 +118,56 @@ h2 {
     gap: 1.25rem;
 }
 
+.filter-bar {
+    display: flex;
+    align-items: end;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding: 1.25rem;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+}
+
+.filter-field {
+    display: grid;
+    gap: 0.4rem;
+}
+
+.filter-search {
+    flex: 1;
+}
+
+.filter-field label {
+    color: var(--muted);
+    font-size: 0.82rem;
+    font-weight: 750;
+}
+
+.filter-field input,
+.filter-field select {
+    min-height: 44px;
+    padding: 0.65rem 0.8rem;
+    color: var(--ink);
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    font: inherit;
+}
+
+.clear-filters {
+    min-height: 44px;
+    padding: 0.65rem 0;
+    white-space: nowrap;
+}
+
+@media (max-width: 720px) {
+    .filter-bar {
+        align-items: stretch;
+        flex-direction: column;
+    }
+}
+
 .book-card,
 .detail-card,
 .form-card,
