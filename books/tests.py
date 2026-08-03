@@ -1,4 +1,5 @@
-from datetime import timedelta
+from datetime import date, timedelta
+from unittest.mock import patch
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -442,6 +443,17 @@ class ReadingPlanTests(TestCase):
         )
         self.book.refresh_from_db()
         self.assertIsNone(self.book.target_date)
+
+    @patch("books.forms.timezone.localdate", return_value=date.max)
+    def test_target_validation_uses_mocked_course_day(self, mocked_localdate):
+        form = BookForm(
+            instance=self.book,
+            data=self.book_data((date.max - timedelta(days=1)).isoformat()),
+        )
+
+        self.assertFalse(form.is_valid())
+        self.assertIn("target_date", form.errors)
+        mocked_localdate.assert_called_once_with()
 
     def test_reader_can_remove_target(self):
         self.book.target_date = timezone.localdate() + timedelta(days=7)
