@@ -1,4 +1,5 @@
-from datetime import timedelta
+from datetime import date, timedelta
+from unittest.mock import patch
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -292,6 +293,14 @@ class BookManagementTests(TestCase):
         self.other_book.refresh_from_db()
         self.assertEqual(self.other_book.title, "Beloved")
 
+    def test_cannot_delete_another_users_book(self):
+        response = self.client.post(
+            reverse("book-delete", args=[self.other_book.pk])
+        )
+
+        self.assertEqual(response.status_code, 404)
+        self.assertTrue(Book.objects.filter(pk=self.other_book.pk).exists())
+
 
 class ReadingProgressTests(TestCase):
     def setUp(self):
@@ -435,6 +444,17 @@ class ReadingPlanTests(TestCase):
         self.book.refresh_from_db()
         self.assertIsNone(self.book.target_date)
 
+    @patch("books.forms.timezone.localdate", return_value=date.max)
+    def test_target_validation_uses_mocked_course_day(self, mocked_localdate):
+        form = BookForm(
+            instance=self.book,
+            data=self.book_data((date.max - timedelta(days=1)).isoformat()),
+        )
+
+        self.assertFalse(form.is_valid())
+        self.assertIn("target_date", form.errors)
+        mocked_localdate.assert_called_once_with()
+
     def test_reader_can_remove_target(self):
         self.book.target_date = timezone.localdate() + timedelta(days=7)
         self.book.save()
@@ -444,6 +464,23 @@ class ReadingPlanTests(TestCase):
         )
         self.book.refresh_from_db()
         self.assertIsNone(self.book.target_date)
+
+    def test_existing_past_target_does_not_block_other_edits(self):
+        past_target = timezone.localdate() - timedelta(days=1)
+        self.book.target_date = past_target
+        self.book.save()
+
+        data = self.book_data(past_target.isoformat())
+        data["title"] = "Dune Revised"
+        response = self.client.post(
+            reverse("book-edit", args=[self.book.pk]),
+            data,
+        )
+
+        self.book.refresh_from_db()
+        self.assertRedirects(response, self.book.get_absolute_url())
+        self.assertEqual(self.book.title, "Dune Revised")
+        self.assertEqual(self.book.target_date, past_target)
 
     def test_reader_cannot_change_another_users_target(self):
         target = timezone.localdate() + timedelta(days=7)

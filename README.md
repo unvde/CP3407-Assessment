@@ -119,18 +119,28 @@ Responsibilities:
 - [Test Plan](docs/week7/test-plan.md)
 - [Test Cases](docs/week7/test-cases.md)
 - [Practical 7 Report](docs/week7/practical-report.md)
+- [Completed Iteration 2 User Stories](docs/week7/user-stories/README.md)
 
-### Week 8 - Iteration 3
+### Week 8 - Iteration 2 Review and Iteration 3 Planning
 
+- [Practical 8 Report](docs/week8/practical-report.md)
+- [Iteration 2 Review and Actual Velocity](docs/week8/iteration-2-review.md)
+- [Iteration 2 Burndown](docs/week8/iteration-2-burndown.md)
+- [Iteration 3 Plan](docs/week8/iteration-3-plan.md)
+- [Iteration 3 Project Board](docs/week8/iteration-3-project-board.md)
+- [Iteration 3 Initial Burndown](docs/week8/iteration-3-burndown.md)
+- [Mock Object Research](docs/week8/mock-object-research.md)
+- [Iteration 3 Test Specifications](docs/week8/test-specifications.md)
 - [Story 07 Search and Filtering](docs/week8/story-07-search-filtering.md)
 
 Additional weekly documentation covering design, iterations, testing and development tools will be added as the project progresses.
 
 ## Project Status
 
-**Current stage:** Iterations 1 and 2 are complete. Iteration 3 Story 07 search
-and filtering is implemented on the `iteration-3` branch and is undergoing its
-Week 8 Day 5 regression and acceptance review.
+**Current stage:** Iterations 1 and 2 are complete. Iteration 2 delivered
+Stories 04–06 with an actual velocity of 7 development-days. Iteration 3 Story
+07 search and filtering is complete; Stories 08–09 remain in the selected
+7-day capacity, while Story 10 remains in the product backlog.
 
 ## Local Development
 
