@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.utils import timezone
 
-from .models import Book
+from .models import Book, ReadingNote
 
 
 class RegistrationForm(UserCreationForm):
@@ -76,3 +76,27 @@ class BookForm(forms.ModelForm):
         ):
             raise forms.ValidationError("Target date cannot be in the past.")
         return target_date
+
+
+class ReadingNoteForm(forms.ModelForm):
+    content = forms.CharField(
+        label="Note",
+        required=False,
+        widget=forms.Textarea(
+            attrs={
+                "autofocus": True,
+                "rows": 8,
+                "placeholder": "Record an idea or observation from this book.",
+            }
+        ),
+    )
+
+    class Meta:
+        model = ReadingNote
+        fields = ("content",)
+
+    def clean_content(self):
+        content = self.cleaned_data.get("content", "").strip()
+        if not content:
+            raise forms.ValidationError("Note content cannot be blank.")
+        return content

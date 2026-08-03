@@ -43,4 +43,33 @@
         <a class="text-link" href="{% url 'book-list' %}">Back to my books</a>
     </div>
 </article>
+
+<section class="notes-section" aria-labelledby="reading-notes-heading">
+    <div class="section-heading">
+        <div>
+            <p class="eyebrow">Private reflection</p>
+            <h2 id="reading-notes-heading">Reading notes</h2>
+        </div>
+        <a class="primary-button" href="{% url 'note-add' book.pk %}">Add note</a>
+    </div>
+
+    {% if book.notes.all %}
+        <div class="notes-list">
+            {% for note in book.notes.all %}
+                <article class="note-card">
+                    <div class="note-content">{{ note.content|linebreaks }}</div>
+                    <div class="note-footer">
+                        <span>Private note</span>
+                        <a class="text-link" href="{% url 'note-edit' note.pk %}">Edit note</a>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <p>No private notes for this book yet.</p>
+            <a class="text-link" href="{% url 'note-add' book.pk %}">Add the first note</a>
+        </div>
+    {% endif %}
+</section>
 {% endblock %}

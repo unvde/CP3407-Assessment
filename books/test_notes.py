@@ -114,29 +114,40 @@ class PrivateReadingNoteAcceptanceTests(TestCase):
         self.assertEqual(response.status_code, 404)
         self.assertFalse(ReadingNote.objects.filter(content="Intrusion").exists())
 
-    def test_reader_cannot_edit_or_delete_another_readers_note(self):
-        edit_response = self.client.post(
+    def test_reader_cannot_edit_another_readers_note(self):
+        response = self.client.post(
             reverse("note-edit", args=[self.other_note.pk]),
             {"content": "Changed"},
         )
-        delete_response = self.client.post(
-            reverse("note-delete", args=[self.other_note.pk])
-        )
 
-        self.assertEqual(edit_response.status_code, 404)
-        self.assertEqual(delete_response.status_code, 404)
+        self.assertEqual(response.status_code, 404)
         self.other_note.refresh_from_db()
         self.assertEqual(self.other_note.content, "Another reader's private note")
 
-    def test_anonymous_reader_is_redirected_from_note_routes(self):
+    def test_reader_cannot_delete_another_readers_note(self):
+        response = self.client.post(
+            reverse("note-delete", args=[self.other_note.pk])
+        )
+
+        self.assertEqual(response.status_code, 404)
+        self.assertTrue(ReadingNote.objects.filter(pk=self.other_note.pk).exists())
+
+    def test_anonymous_reader_is_redirected_from_create_and_edit(self):
         self.client.logout()
         routes = [
             reverse("note-add", args=[self.book.pk]),
             reverse("note-edit", args=[self.note.pk]),
-            reverse("note-delete", args=[self.note.pk]),
         ]
 
         for route in routes:
             with self.subTest(route=route):
                 response = self.client.get(route)
                 self.assertRedirects(response, f"{reverse('login')}?next={route}")
+
+    def test_anonymous_reader_is_redirected_from_delete(self):
+        self.client.logout()
+        route = reverse("note-delete", args=[self.note.pk])
+
+        response = self.client.get(route)
+
+        self.assertRedirects(response, f"{reverse('login')}?next={route}")
