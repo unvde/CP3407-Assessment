@@ -133,14 +133,19 @@ Responsibilities:
 - [Iteration 3 Test Specifications](docs/week8/test-specifications.md)
 - [Story 07 Search and Filtering](docs/week8/story-07-search-filtering.md)
 
+### Week 9 - Iteration 3 Development
+
+- [Story 08 Private Reading Notes](docs/week9/story-08-private-notes.md)
+
 Additional weekly documentation covering design, iterations, testing and development tools will be added as the project progresses.
 
 ## Project Status
 
 **Current stage:** Iterations 1 and 2 are complete. Iteration 2 delivered
 Stories 04–06 with an actual velocity of 7 development-days. Iteration 3 Story
-07 search and filtering is complete; Stories 08–09 remain in the selected
-7-day capacity, while Story 10 remains in the product backlog.
+07 search and filtering is complete. Story 08 private reading notes is in
+progress at Week 9 Day 1; Story 09 remains in the selected 7-day capacity,
+while Story 10 remains in the product backlog.
 
 ## Local Development
 

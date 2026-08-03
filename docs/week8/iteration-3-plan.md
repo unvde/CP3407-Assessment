@@ -45,13 +45,14 @@ commitment.
 
 | Course Point | Planned work | Planned remaining |
 |---|---|---:|
-| Week 8 Day 1 | Close Iteration 2; plan Iteration 3; specify Story 07 tests | 7 days |
-| Week 8 Day 2 | Implement and accept Story 07 | 5 days |
-| Week 8 Day 3 | Specify tests and add Story 08 model | 4 days |
-| Week 8 Day 4 | Implement private-note workflows | 2.5 days |
-| Week 9 Day 1 | Accept Story 08; specify Story 09 tests | 2 days |
-| Week 9 Day 2 | Implement Story 09 | 0.5 day |
-| Week 9 Day 3 | Final regression and acceptance review | 0 days |
+| Week 8 Day 1–4 | Close Iteration 2; plan Iteration 3; prepare issues, research and TDD specifications | 7 days |
+| Week 8 Day 5 | Implement and accept Story 07 | 5 days |
+| Week 9 Day 1 | Specify Story 08 tests; add the reading-note model and migration | 4 days |
+| Week 9 Day 2 | Implement private-note create and edit workflows | 3.25 days |
+| Week 9 Day 3 | Complete note deletion, privacy controls and Story 08 acceptance | 2 days |
+| Week 9 Day 4 | Specify Story 09 tests; add completion-review data and migration | 1 day |
+| Week 9 Day 5 | Implement and accept Story 09 | 0 days |
+| Week 9 Day 6 | Defect tracking, system testing and final Iteration 3 acceptance records | 0 days |
 
 ## Definition of Done
 

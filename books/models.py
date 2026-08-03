@@ -59,3 +59,34 @@ class Book(models.Model):
         if not self.total_pages:
             return None
         return round((self.current_page / self.total_pages) * 100)
+
+
+class ReadingNote(models.Model):
+    book = models.ForeignKey(
+        Book,
+        on_delete=models.CASCADE,
+        related_name="notes",
+    )
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-updated_at", "-created_at"]
+        constraints = [
+            models.CheckConstraint(
+                condition=~models.Q(content=""),
+                name="reading_note_content_not_empty",
+            )
+        ]
+
+    def __str__(self):
+        return f"Note for {self.book}"
+
+    def clean(self):
+        super().clean()
+        self.content = self.content.strip()
+        if not self.content:
+            raise ValidationError(
+                {"content": "Note content cannot be blank."}
+            )
