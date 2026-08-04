@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.core.management import call_command
 from django.test import TestCase
 from django.urls import reverse
 from unittest.mock import patch
@@ -163,3 +164,48 @@ class PublicDiscoveryTests(TestCase):
         self.assertContains(response, self.public_list.name)
         self.assertContains(response, "A classic.")
         self.assertNotContains(response, self.private_list.name)
+
+
+class CategoryBrowseTests(TestCase):
+    def setUp(self):
+        science_fiction = Category.objects.create(name="Science Fiction")
+        romance = Category.objects.create(name="Romance")
+        self.dune = CatalogBook.objects.create(title="Dune", author="Frank Herbert")
+        self.emma = CatalogBook.objects.create(title="Emma", author="Jane Austen")
+        self.dune.categories.add(science_fiction)
+        self.emma.categories.add(romance)
+        self.science_fiction = science_fiction
+
+    def test_category_link_only_shows_books_with_that_tag(self):
+        response = self.client.get(
+            reverse("catalog-book-list"),
+            {"category": self.science_fiction.slug},
+        )
+
+        self.assertContains(response, "Science Fiction books")
+        self.assertContains(response, self.dune.title)
+        self.assertNotContains(response, self.emma.title)
+        self.assertContains(response, "Show all books")
+
+
+class DemoContentCommandTests(TestCase):
+    def test_command_creates_demo_activity_idempotently(self):
+        options = {
+            "reader_password": "Reader-Test-Password-2026",
+            "admin_password": "Admin-Test-Password-2026",
+            "verbosity": 0,
+        }
+        call_command("seed_demo_content", **options)
+        call_command("seed_demo_content", **options)
+
+        self.assertEqual(
+            User.objects.filter(username__startswith="demo_").count(), 4
+        )
+        self.assertTrue(
+            User.objects.filter(
+                username="reading_admin", is_staff=True, is_superuser=True
+            ).exists()
+        )
+        self.assertEqual(CatalogBook.objects.count(), 10)
+        self.assertEqual(ReadingList.objects.count(), 5)
+        self.assertEqual(PublicReview.objects.count(), 8)

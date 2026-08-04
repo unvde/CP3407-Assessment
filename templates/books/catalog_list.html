@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="page-heading">
-    <div><p class="eyebrow">Community catalogue</p><h1>Explore books</h1><p>Discover books already added by readers and join their discussions.</p></div>
+    <div><p class="eyebrow">Community catalogue</p><h1>{% if active_category %}{{ active_category.name }} books{% else %}Explore books{% endif %}</h1><p>{% if active_category %}Showing only books tagged {{ active_category.name }}.{% else %}Discover books already added by readers and join their discussions.{% endif %}</p></div>
     <div class="actions"><a class="secondary-button" href="{% url 'public-list-list' %}">Browse community lists</a>{% if user.is_authenticated %}<a class="primary-button" href="{% url 'book-search' %}">Import a book</a>{% endif %}</div>
 </div>
 
@@ -14,12 +14,14 @@
     <button class="primary-button" type="submit">Explore</button>
 </form>
 
+{% if categories %}<section class="inline-panel"><div class="section-heading"><div><p class="eyebrow">Browse by tag</p><h2>Choose a category</h2></div>{% if active_category %}<a class="secondary-button button-small" href="{% url 'catalog-book-list' %}">Show all books</a>{% endif %}</div><div class="tag-list category-browser">{% for category in categories %}<a class="tag{% if selected_category == category.slug %} is-selected{% endif %}" href="{% url 'catalog-book-list' %}?category={{ category.slug }}">{{ category.name }} <span aria-label="{{ category.book_count }} books">{{ category.book_count }}</span></a>{% endfor %}</div></section>{% endif %}
+
 {% if catalog_books %}
 <div class="catalog-grid">
     {% for book in catalog_books %}
     <article class="catalog-card">
         <div class="cover-shell">{% if book.cover_url %}<img src="{{ book.cover_url }}" alt="Cover of {{ book.title }}">{% else %}<span>No cover</span>{% endif %}</div>
-        <div><h2><a href="{{ book.get_absolute_url }}">{{ book.title }}</a></h2><p class="author">by {{ book.author }}</p>{% if book.review_count %}<p class="rating-line"><span aria-hidden="true">★</span> {{ book.average_rating|floatformat:1 }} · {{ book.review_count }} review{{ book.review_count|pluralize }}</p>{% endif %}<div class="tag-list">{% for category in book.categories.all|slice:":3" %}<span class="tag">{{ category.name }}</span>{% endfor %}</div><a class="primary-button button-small" href="{{ book.get_absolute_url }}">View book</a></div>
+        <div><h2><a href="{{ book.get_absolute_url }}">{{ book.title }}</a></h2><p class="author">by {{ book.author }}</p>{% if book.review_count %}<p class="rating-line"><span aria-hidden="true">★</span> {{ book.average_rating|floatformat:1 }} · {{ book.review_count }} review{{ book.review_count|pluralize }}</p>{% endif %}<div class="tag-list">{% for category in book.categories.all|slice:":3" %}<a class="tag" href="{% url 'catalog-book-list' %}?category={{ category.slug }}">{{ category.name }}</a>{% endfor %}</div><a class="primary-button button-small" href="{{ book.get_absolute_url }}">View book</a></div>
     </article>
     {% endfor %}
 </div>

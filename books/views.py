@@ -426,7 +426,12 @@ class CatalogBookListView(ListView):
         context = super().get_context_data(**kwargs)
         context["search_query"] = self.request.GET.get("q", "").strip()
         context["selected_category"] = self.request.GET.get("category", "").strip()
-        context["categories"] = Category.objects.all()
+        context["categories"] = Category.objects.annotate(
+            book_count=Count("books", distinct=True)
+        ).filter(book_count__gt=0)
+        context["active_category"] = context["categories"].filter(
+            slug=context["selected_category"]
+        ).first()
         return context
 
 
