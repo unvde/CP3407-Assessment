@@ -566,6 +566,7 @@ textarea:focus {
 .public-list-copy p { max-width: 70ch; }
 .public-list-preview { display: flex; align-items: center; justify-content: flex-end; gap: 1rem; }
 .public-list-preview .tag-list { justify-content: flex-end; margin: 0; }
+.public-list-preview .primary-button { white-space: nowrap; }
 @media (max-width: 760px) {
     .public-list-card { grid-template-columns: 1fr; gap: 1rem; }
     .public-list-preview { align-items: flex-start; justify-content: flex-start; flex-direction: column; }
