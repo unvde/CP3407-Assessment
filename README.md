@@ -143,12 +143,13 @@ Additional weekly documentation covering design, iterations, testing and develop
 
 ## Project Status
 
-**Current stage:** Iterations 1 and 2 are complete. Iteration 2 delivered
-Stories 04–06 with an actual velocity of 7 development-days. Iteration 3 Story
-07 search and filtering, Story 08 private reading notes and Story 09 completion
-review are complete. Story 10 remains in the product backlog outside the
-selected Iteration 3 capacity. Iteration 3 has passed final system testing and
-is ready for pull-request review.
+**Current stage:** Iterations 1–3 are complete. Iteration 2 delivered Stories
+04–06 with an actual velocity of 7 development-days. Iteration 3 delivered
+Story 07 search and filtering, Story 08 private reading notes and Story 09
+completion review within the same 7-development-day capacity. The completed
+Iteration 3 scope passed final system testing and was merged into `main` through
+[PR #49](https://github.com/unvde/CP3407-Assessment/pull/49). Story 10 remains
+in the product backlog because it was outside the selected Iteration 3 capacity.
 
 ## Local Development
 
