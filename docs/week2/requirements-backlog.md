@@ -143,13 +143,16 @@ Status uses the shared workflow `todo`, `in-progress` and `done`.
 | 04 | Reading Progress Updates | 2 | done |
 | 05 | Reading Dashboard | 2 | done |
 | 06 | Reading Plans | 2 | done |
-| 07 | Search and Filtering | 3 | todo |
-| 08 | Private Reading Notes | 3 | todo |
-| 09 | Completion Review | 3 | todo |
-| 10 | Duplicate Book Warning | 3 | todo |
+| 07 | Search and Filtering | 3 | done |
+| 08 | Private Reading Notes | 3 | done |
+| 09 | Completion Review | 3 | done |
+| 10 | Duplicate Book Warning | Backlog | todo |
 
-Iterations 1 and 2 are closed. Stories 04–06 reached `done` at the Week 7 Day 6
-acceptance checkpoint. Detailed Iteration 1 evidence and velocity are recorded in the
+Iterations 1–3 are closed. Stories 04–06 reached `done` at the Week 7 Day 6
+acceptance checkpoint. Stories 07–09 reached `done` at the Iteration 3 final
+acceptance checkpoint and were merged into `main` through
+[PR #49](https://github.com/unvde/CP3407-Assessment/pull/49). Detailed
+Iteration 1 evidence and velocity are recorded in the
 [Week 5 Iteration Review](../week5/iteration-review.md).
 
 The Iteration 2 plan was adjusted in Week 6 to match the demonstrated velocity
@@ -159,8 +162,9 @@ The detailed scope and rationale are recorded in the
 [Week 6 Practical Report](../week6/practical-report.md).
 
 The Iteration 2 review confirms an actual velocity of 7 development-days.
-Iteration 3 therefore selects Stories 07–09 for a matching 7-day capacity.
-Story 10 remains in the product backlog and is not committed to Iteration 3.
+Iteration 3 therefore selected and completed Stories 07–09 for a matching
+7-day capacity. Story 10 remains in the product backlog and was not committed
+to Iteration 3.
 
 ## Planning Conclusion
 
