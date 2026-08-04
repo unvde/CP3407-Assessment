@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
 
-from .models import Book, CatalogBook, Category, Forum, ForumPost
+from .models import Book, CatalogBook, Category, Forum, ForumPost, ForumReply
 from .services import BookSearchResult, search_open_library
 
 
@@ -208,6 +208,75 @@ class ForumPermissionTests(TestCase):
         self.assertContains(response, self.forum.title)
         self.assertContains(response, self.post.title)
         self.assertContains(response, "Community moderation")
+
+
+class ForumReplyPermissionTests(TestCase):
+    def setUp(self):
+        self.author = User.objects.create_user(username="author", password="pass")
+        self.other = User.objects.create_user(username="other", password="pass")
+        self.staff = User.objects.create_user(
+            username="moderator", password="pass", is_staff=True
+        )
+        book = CatalogBook.objects.create(title="Dune", author="Frank Herbert")
+        forum = Forum.objects.create(
+            book=book,
+            title="Dune discussion",
+            created_by=self.author,
+        )
+        self.post = ForumPost.objects.create(
+            forum=forum,
+            author=self.author,
+            title="Water and power",
+            content="How does water shape political power?",
+        )
+        self.reply = ForumReply.objects.create(
+            post=self.post,
+            author=self.other,
+            content="Scarcity makes every drop political.",
+        )
+
+    def test_logged_in_reader_can_reply_to_post(self):
+        self.client.force_login(self.author)
+        response = self.client.post(
+            reverse("forum-reply-add", args=[self.post.pk]),
+            {"content": "The stillsuits reinforce that idea."},
+        )
+
+        created_reply = ForumReply.objects.get(
+            content="The stillsuits reinforce that idea."
+        )
+        self.assertRedirects(response, created_reply.get_absolute_url())
+        self.assertEqual(created_reply.author, self.author)
+
+    def test_reply_author_can_edit_but_other_reader_cannot(self):
+        edit_url = reverse("forum-reply-edit", args=[self.reply.pk])
+        self.client.force_login(self.author)
+        self.assertEqual(
+            self.client.post(edit_url, {"content": "Hijacked"}).status_code,
+            404,
+        )
+
+        self.client.force_login(self.other)
+        response = self.client.post(edit_url, {"content": "Updated reply"})
+        self.reply.refresh_from_db()
+        self.assertRedirects(response, self.reply.get_absolute_url())
+        self.assertEqual(self.reply.content, "Updated reply")
+
+    def test_staff_can_delete_any_reply(self):
+        self.client.force_login(self.staff)
+        response = self.client.post(
+            reverse("forum-reply-delete", args=[self.reply.pk])
+        )
+
+        self.assertRedirects(response, self.post.get_absolute_url())
+        self.assertFalse(ForumReply.objects.filter(pk=self.reply.pk).exists())
+
+    def test_moderation_dashboard_lists_reply(self):
+        self.client.force_login(self.staff)
+        response = self.client.get(reverse("moderation-dashboard"))
+
+        self.assertContains(response, self.reply.content)
+        self.assertContains(response, "Recent replies")
 
 
 class CategoryModerationTests(TestCase):

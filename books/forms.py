@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.utils import timezone
 
-from .models import Book, Category, Forum, ForumPost, ReadingNote
+from .models import Book, Category, Forum, ForumPost, ForumReply, ReadingNote
 
 
 def parse_category_names(value):
@@ -130,6 +130,24 @@ class ForumPostForm(forms.ModelForm):
 
     def clean_title(self):
         return self.cleaned_data["title"].strip()
+
+    def clean_content(self):
+        return self.cleaned_data["content"].strip()
+
+
+class ForumReplyForm(forms.ModelForm):
+    class Meta:
+        model = ForumReply
+        fields = ("content",)
+        labels = {"content": "Reply"}
+        widgets = {
+            "content": forms.Textarea(
+                attrs={
+                    "rows": 6,
+                    "placeholder": "Add to the discussion…",
+                }
+            )
+        }
 
     def clean_content(self):
         return self.cleaned_data["content"].strip()

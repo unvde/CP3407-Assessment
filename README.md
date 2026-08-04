@@ -33,7 +33,7 @@ Reading Compass is intended for students and casual readers who want a straightf
 - Open Library title, author and ISBN search with one-click import
 - Shared book catalogue with covers, publication metadata and categories
 - User-created free-text categories when API metadata is incomplete
-- One public discussion forum per book with user posts
+- One public discussion forum per book with posts and threaded replies
 - Forum-owner editing and administrator moderation controls
 - A dedicated moderation dashboard for forums, posts and categories
 

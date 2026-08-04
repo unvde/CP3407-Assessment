@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Delete reply | Reading Compass{% endblock %}
+{% block content %}
+<section class="form-card">
+    <p class="eyebrow">Forum moderation</p>
+    <h1>Delete this reply?</h1>
+    <blockquote class="post-preview">{{ object.content|truncatewords:35 }}</blockquote>
+    <form method="post">{% csrf_token %}<div class="actions"><button class="danger-button" type="submit">Delete reply</button><a class="text-link" href="{{ object.get_absolute_url }}">Cancel</a></div></form>
+</section>
+{% endblock %}

@@ -13,7 +13,22 @@
 <section class="moderation-summary" aria-label="Moderation totals">
     <article><strong>{{ forum_count }}</strong><span>Forums</span></article>
     <article><strong>{{ post_count }}</strong><span>Posts</span></article>
+    <article><strong>{{ reply_count }}</strong><span>Replies</span></article>
     <article><strong>{{ category_count }}</strong><span>Categories</span></article>
+</section>
+
+<section class="moderation-section">
+    <div class="section-heading"><div><p class="eyebrow">Conversation follow-ups</p><h2>Recent replies</h2></div></div>
+    {% if recent_replies %}
+    <div class="moderation-list">
+        {% for reply in recent_replies %}
+        <article class="moderation-row">
+            <div><h3><a href="{{ reply.get_absolute_url }}">Reply to “{{ reply.post.title }}”</a></h3><p>{{ reply.content|truncatewords:18 }} · by {{ reply.author.username|default:"Deleted user" }} · {{ reply.created_at|date:"j M Y, H:i" }}</p></div>
+            <div class="note-actions"><a class="text-link" href="{% url 'forum-reply-edit' reply.pk %}">Edit</a><a class="danger-link" href="{% url 'forum-reply-delete' reply.pk %}">Delete</a></div>
+        </article>
+        {% endfor %}
+    </div>
+    {% else %}<p class="empty-inline">No replies have been published.</p>{% endif %}
 </section>
 
 <section class="moderation-section">

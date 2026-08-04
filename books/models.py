@@ -284,3 +284,36 @@ class ForumPost(models.Model):
 
     def get_absolute_url(self):
         return f"{self.forum.get_absolute_url()}#post-{self.pk}"
+
+
+class ForumReply(models.Model):
+    post = models.ForeignKey(
+        ForumPost,
+        on_delete=models.CASCADE,
+        related_name="replies",
+    )
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="forum_replies",
+    )
+    content = models.TextField(max_length=2000)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["created_at"]
+        verbose_name_plural = "forum replies"
+
+    def __str__(self):
+        return f"Reply to {self.post}"
+
+    def clean(self):
+        super().clean()
+        self.content = self.content.strip()
+        if not self.content:
+            raise ValidationError({"content": "Reply content cannot be blank."})
+
+    def get_absolute_url(self):
+        return f"{self.post.get_absolute_url()}-reply-{self.pk}"

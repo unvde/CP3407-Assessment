@@ -24,11 +24,20 @@ from .forms import (
     CompletionReviewForm,
     ForumForm,
     ForumPostForm,
+    ForumReplyForm,
     ReadingNoteForm,
     RegistrationForm,
     parse_category_names,
 )
-from .models import Book, CatalogBook, Category, Forum, ForumPost, ReadingNote
+from .models import (
+    Book,
+    CatalogBook,
+    Category,
+    Forum,
+    ForumPost,
+    ForumReply,
+    ReadingNote,
+)
 from .services import BookSearchError, load_import_token, search_open_library
 
 
@@ -443,7 +452,7 @@ class ForumDetailView(DetailView):
 
     def get_queryset(self):
         return Forum.objects.select_related("book", "created_by").prefetch_related(
-            "posts__author"
+            "posts__author", "posts__replies__author"
         )
 
 
@@ -493,6 +502,55 @@ class ForumPostDeleteView(ForumPostPermissionMixin, DeleteView):
         return self.object.forum.get_absolute_url()
 
 
+class ForumReplyCreateView(LoginRequiredMixin, CreateView):
+    model = ForumReply
+    form_class = ForumReplyForm
+    template_name = "forum/reply_form.html"
+
+    def get_post(self):
+        return get_object_or_404(
+            ForumPost.objects.select_related("forum"),
+            pk=self.kwargs["post_pk"],
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["post"] = self.get_post()
+        return context
+
+    def form_valid(self, form):
+        form.instance.post = self.get_post()
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+
+class ForumReplyPermissionMixin(LoginRequiredMixin):
+    model = ForumReply
+
+    def get_queryset(self):
+        queryset = ForumReply.objects.select_related("post__forum")
+        if self.request.user.is_staff:
+            return queryset
+        return queryset.filter(author=self.request.user)
+
+
+class ForumReplyUpdateView(ForumReplyPermissionMixin, UpdateView):
+    form_class = ForumReplyForm
+    template_name = "forum/reply_form.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["post"] = self.object.post
+        return context
+
+
+class ForumReplyDeleteView(ForumReplyPermissionMixin, DeleteView):
+    template_name = "forum/reply_confirm_delete.html"
+
+    def get_success_url(self):
+        return self.object.post.get_absolute_url()
+
+
 class ModerationDashboardView(StaffRequiredMixin, TemplateView):
     template_name = "moderation/dashboard.html"
 
@@ -504,11 +562,15 @@ class ModerationDashboardView(StaffRequiredMixin, TemplateView):
         context["recent_posts"] = ForumPost.objects.select_related(
             "forum", "author"
         )[:20]
+        context["recent_replies"] = ForumReply.objects.select_related(
+            "post__forum", "author"
+        )[:20]
         context["categories"] = Category.objects.select_related(
             "created_by"
         ).annotate(book_count=Count("books"))
         context["forum_count"] = Forum.objects.count()
         context["post_count"] = ForumPost.objects.count()
+        context["reply_count"] = ForumReply.objects.count()
         context["category_count"] = Category.objects.count()
         return context
 

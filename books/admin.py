@@ -1,6 +1,14 @@
 from django.contrib import admin
 
-from .models import Book, CatalogBook, Category, Forum, ForumPost, ReadingNote
+from .models import (
+    Book,
+    CatalogBook,
+    Category,
+    Forum,
+    ForumPost,
+    ForumReply,
+    ReadingNote,
+)
 
 
 @admin.register(Category)
@@ -50,3 +58,10 @@ class ForumPostAdmin(admin.ModelAdmin):
     list_display = ("title", "forum", "author", "updated_at")
     search_fields = ("title", "content", "author__username", "forum__title")
     list_select_related = ("forum", "author")
+
+
+@admin.register(ForumReply)
+class ForumReplyAdmin(admin.ModelAdmin):
+    list_display = ("post", "author", "updated_at")
+    search_fields = ("content", "author__username", "post__title")
+    list_select_related = ("post", "author")
