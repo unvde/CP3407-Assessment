@@ -136,6 +136,7 @@ Responsibilities:
 ### Week 9 - Iteration 3 Development
 
 - [Story 08 Private Reading Notes](docs/week9/story-08-private-notes.md)
+- [Story 09 Completion Review](docs/week9/story-09-completion-review.md)
 
 Additional weekly documentation covering design, iterations, testing and development tools will be added as the project progresses.
 
@@ -144,8 +145,8 @@ Additional weekly documentation covering design, iterations, testing and develop
 **Current stage:** Iterations 1 and 2 are complete. Iteration 2 delivered
 Stories 04–06 with an actual velocity of 7 development-days. Iteration 3 Story
 07 search and filtering and Story 08 private reading notes are complete. Story
-09 completion review is next in the selected 7-day capacity, while Story 10
-remains in the product backlog.
+09 completion review is in progress at Week 9 Day 4, while Story 10 remains in
+the product backlog.
 
 ## Local Development
 

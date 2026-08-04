@@ -1,8 +1,13 @@
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.core.validators import MinValueValidator
+from django.core.validators import (
+    MaxLengthValidator,
+    MaxValueValidator,
+    MinValueValidator,
+)
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
 
 
 class Book(models.Model):
@@ -31,6 +36,17 @@ class Book(models.Model):
     )
     current_page = models.PositiveIntegerField(default=0, blank=True)
     target_date = models.DateField(null=True, blank=True)
+    rating = models.PositiveSmallIntegerField(
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(1), MaxValueValidator(5)],
+    )
+    completion_date = models.DateField(null=True, blank=True)
+    reflection = models.TextField(
+        blank=True,
+        max_length=1000,
+        validators=[MaxLengthValidator(1000)],
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -45,6 +61,7 @@ class Book(models.Model):
 
     def clean(self):
         super().clean()
+        self.reflection = self.reflection.strip()
         if (
             self.total_pages is not None
             and self.current_page is not None
@@ -52,6 +69,24 @@ class Book(models.Model):
         ):
             raise ValidationError(
                 {"current_page": "Current page cannot exceed total pages."}
+            )
+        has_review = any(
+            (
+                self.rating is not None,
+                self.completion_date is not None,
+                bool(self.reflection),
+            )
+        )
+        if has_review and self.status != self.ReadingStatus.COMPLETED:
+            raise ValidationError(
+                {"status": "Only completed books can have a review."}
+            )
+        if (
+            self.completion_date
+            and self.completion_date > timezone.localdate()
+        ):
+            raise ValidationError(
+                {"completion_date": "Completion date cannot be in the future."}
             )
 
     @property

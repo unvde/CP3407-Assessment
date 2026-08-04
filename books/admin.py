@@ -5,7 +5,14 @@ from .models import Book, ReadingNote
 
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
-    list_display = ("title", "author", "owner", "status", "updated_at")
+    list_display = (
+        "title",
+        "author",
+        "owner",
+        "status",
+        "rating",
+        "updated_at",
+    )
     list_filter = ("status",)
     search_fields = ("title", "author", "owner__username")
 
