@@ -8,6 +8,7 @@ from .views import (
     BookUpdateView,
     DashboardView,
     ReadingNoteCreateView,
+    ReadingNoteDeleteView,
     ReadingNoteUpdateView,
 )
 
@@ -28,5 +29,10 @@ urlpatterns = [
         "notes/<int:pk>/edit/",
         ReadingNoteUpdateView.as_view(),
         name="note-edit",
+    ),
+    path(
+        "notes/<int:pk>/delete/",
+        ReadingNoteDeleteView.as_view(),
+        name="note-delete",
     ),
 ]

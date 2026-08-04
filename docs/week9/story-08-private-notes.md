@@ -49,3 +49,30 @@ implemented request scope pass 51 tests with a clean Django system check and no
 migration drift. The complete Story 08 suite now has only three expected red
 tests, all caused by the intentionally absent `note-delete` route scheduled for
 Week 9 Day 3.
+
+## Week 9 Day 3
+
+The deletion and privacy workflow is complete:
+
+- an owner can open the delete confirmation and delete an owned note;
+- successful deletion returns to the parent book detail;
+- delete queries are restricted through the parent book owner;
+- another reader receives a not-found response and their note remains intact;
+- anonymous delete requests redirect to sign in; and
+- each note card provides an explicit edit and delete action.
+
+## Acceptance Result
+
+| Criterion | Evidence | Result |
+|---|---|:---:|
+| Create a note on an owned book | Valid create request assigns the owned book and redirects to its detail | Pass |
+| Edit an owned note | Updated content persists through the owner-scoped edit view | Pass |
+| Delete an owned note | Confirmed deletion removes the note and returns to the book | Pass |
+| Reject blank content | Form and model validation reject whitespace-only content | Pass |
+| Keep notes private | Owned-book and owned-note query boundaries return 404 for cross-reader mutations | Pass |
+| Require authentication | Create, edit and delete routes redirect anonymous readers to sign in | Pass |
+| Preserve lifecycle rules | Deleting a book cascades to its notes | Pass |
+
+The complete Django suite passes all 54 tests. Django system check reports no
+issues, and the migration drift check reports no changes. Story 08 therefore
+meets its definition of done.

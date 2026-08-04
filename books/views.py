@@ -145,3 +145,14 @@ class ReadingNoteUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_success_url(self):
         return self.object.book.get_absolute_url()
+
+
+class ReadingNoteDeleteView(LoginRequiredMixin, DeleteView):
+    model = ReadingNote
+    template_name = "books/note_confirm_delete.html"
+
+    def get_queryset(self) -> QuerySet:
+        return ReadingNote.objects.filter(book__owner=self.request.user)
+
+    def get_success_url(self):
+        return self.object.book.get_absolute_url()
