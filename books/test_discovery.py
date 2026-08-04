@@ -176,7 +176,7 @@ class CategoryBrowseTests(TestCase):
         self.emma.categories.add(romance)
         self.science_fiction = science_fiction
 
-    @patch("books.views.search_open_library")
+    @patch("books.views.search_open_library_subject")
     def test_trait_search_uses_api_and_shows_pagination(self, search):
         search.return_value = [
             BookSearchResult(
@@ -201,7 +201,6 @@ class CategoryBrowseTests(TestCase):
             "Science Fiction",
             limit=10,
             page=2,
-            subject="Science Fiction",
         )
 
 

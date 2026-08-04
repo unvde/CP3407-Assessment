@@ -45,7 +45,12 @@ from .models import (
     ReadingList,
     ReadingNote,
 )
-from .services import BookSearchError, load_import_token, search_open_library
+from .services import (
+    BookSearchError,
+    load_import_token,
+    search_open_library,
+    search_open_library_subject,
+)
 
 
 CATEGORY_ALIASES = {
@@ -451,11 +456,10 @@ class CatalogBookListView(ListView):
         context["next_api_page"] = page + 1
         if context["trait"]:
             try:
-                context["api_results"] = search_open_library(
+                context["api_results"] = search_open_library_subject(
                     context["trait"],
                     limit=10,
                     page=page,
-                    subject=context["trait"],
                 )
             except BookSearchError as exc:
                 context["api_search_error"] = str(exc)

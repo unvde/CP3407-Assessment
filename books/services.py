@@ -14,6 +14,7 @@ from django.core import signing
 
 
 OPEN_LIBRARY_SEARCH_URL = "https://openlibrary.org/search.json"
+OPEN_LIBRARY_SUBJECT_URL = "https://openlibrary.org/subjects"
 IMPORT_SALT = "reading-compass.book-import"
 logger = logging.getLogger(__name__)
 
@@ -181,6 +182,75 @@ def search_open_library(query, limit=12, page=1, subject=None):
         ranked_results.append((score, result))
     ranked_results.sort(key=lambda item: (-item[0], item[1].title.casefold()))
     return [result for _, result in ranked_results[:limit]]
+
+
+def search_open_library_subject(subject, limit=10, page=1):
+    subject = " ".join(subject.strip().split())
+    if not subject:
+        return []
+    page = max(int(page or 1), 1)
+    subject_key = re.sub(r"[^a-z0-9]+", "_", subject.casefold()).strip("_")
+    if not subject_key:
+        return []
+    params = urlencode({"limit": limit, "offset": (page - 1) * limit})
+    request = Request(
+        f"{OPEN_LIBRARY_SUBJECT_URL}/{subject_key}.json?{params}",
+        headers={
+            "Accept": "application/json",
+            "User-Agent": getattr(
+                settings,
+                "OPEN_LIBRARY_USER_AGENT",
+                "ReadingCompass/1.0 (student project)",
+            ),
+        },
+    )
+    try:
+        ssl_context = ssl.create_default_context(cafile=certifi.where())
+        with urlopen(request, timeout=12, context=ssl_context) as response:
+            payload = json.load(response)
+    except (HTTPError, URLError, TimeoutError, json.JSONDecodeError) as exc:
+        logger.warning("Open Library subject search failed: %s", exc)
+        raise BookSearchError("Book search is temporarily unavailable.") from exc
+
+    results = []
+    seen = set()
+    for item in payload.get("works", []):
+        title = str(item.get("title", "")).strip()
+        work_key = str(item.get("key", "")).replace("/works/", "")[:40]
+        if not title or not work_key or work_key in seen:
+            continue
+        seen.add(work_key)
+        cover_id = item.get("cover_id")
+        author_names = [
+            str(author.get("name", "")).strip()
+            for author in item.get("authors", [])
+            if str(author.get("name", "")).strip()
+        ]
+        categories = tuple(
+            dict.fromkeys(
+                [subject]
+                + [
+                    str(value).strip()[:80]
+                    for value in item.get("subject", [])[:3]
+                    if str(value).strip()
+                ]
+            )
+        )
+        results.append(
+            BookSearchResult(
+                title=title[:200],
+                author=", ".join(author_names)[:200] or "Unknown author",
+                open_library_key=work_key,
+                cover_url=(
+                    f"https://covers.openlibrary.org/b/id/{cover_id}-M.jpg"
+                    if cover_id
+                    else ""
+                ),
+                published_year=item.get("first_publish_year"),
+                categories=categories,
+            )
+        )
+    return results
 
 
 def load_import_token(token, max_age=3600):

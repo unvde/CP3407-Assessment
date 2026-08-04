@@ -7,7 +7,11 @@ from django.test import TestCase
 from django.urls import reverse
 
 from .models import Book, CatalogBook, Category, Forum, ForumPost, ForumReply
-from .services import BookSearchResult, search_open_library
+from .services import (
+    BookSearchResult,
+    search_open_library,
+    search_open_library_subject,
+)
 
 
 class OpenLibraryServiceTests(TestCase):
@@ -62,15 +66,15 @@ class OpenLibraryServiceTests(TestCase):
         self.assertEqual([result.title for result in results], ["Dune", "Children of Dune"])
 
     @patch("books.services.urlopen")
-    def test_subject_search_requests_requested_page(self, urlopen):
+    def test_subject_search_uses_subject_endpoint_and_offset(self, urlopen):
         urlopen.return_value = io.BytesIO(
             json.dumps(
                 {
-                    "docs": [
+                    "works": [
                         {
                             "key": "/works/space-opera",
                             "title": "A Space Opera",
-                            "author_name": ["A. Writer"],
+                            "authors": [{"name": "A. Writer"}],
                             "subject": ["Science fiction"],
                         }
                     ]
@@ -78,14 +82,14 @@ class OpenLibraryServiceTests(TestCase):
             ).encode()
         )
 
-        results = search_open_library(
-            "Science fiction", limit=10, page=3, subject="Science fiction"
+        results = search_open_library_subject(
+            "Science fiction", limit=10, page=3
         )
 
         self.assertEqual(results[0].title, "A Space Opera")
         request = urlopen.call_args.args[0]
-        self.assertIn("page=3", request.full_url)
-        self.assertIn("subject%3A%22Science+fiction%22", request.full_url)
+        self.assertIn("/subjects/science_fiction.json", request.full_url)
+        self.assertIn("offset=20", request.full_url)
 
 
 class BookImportTests(TestCase):
