@@ -49,9 +49,9 @@ class OpenLibraryServiceTests(TestCase):
                 {
                     "docs": [
                         {"key": "/works/noise", "title": "Go Ask Alice", "author_name": ["Anonymous"]},
-                        {"key": "/works/dune", "title": "Dune", "author_name": ["Frank Herbert"]},
+                        {"key": "/works/dune", "title": "Dune", "author_name": ["Frank Herbert"], "edition_count": 300},
                         {"key": "/works/children", "title": "Children of Dune", "author_name": ["Frank Herbert"]},
-                        {"key": "/works/dune", "title": "Dune", "author_name": ["Frank Herbert"]},
+                        {"key": "/works/dune", "title": "Dune", "author_name": ["Frank Herbert"], "edition_count": 300},
                     ]
                 }
             ).encode()

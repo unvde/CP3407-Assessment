@@ -58,7 +58,7 @@ def _normalise_search_text(value):
     return " ".join(re.findall(r"[a-z0-9]+", (value or "").casefold()))
 
 
-def _result_score(result, query):
+def _result_score(result, query, edition_count=0):
     clean_query = _normalise_search_text(query)
     isbn_query = _clean_isbn(query)
     if isbn_query and len(isbn_query) in {10, 13}:
@@ -69,8 +69,9 @@ def _result_score(result, query):
     categories = [_normalise_search_text(value) for value in result.categories]
     if not clean_query:
         return -1
+    popularity_bonus = min(max(int(edition_count or 0), 0), 300)
     if title == clean_query:
-        return 1_000
+        return 1_000 + popularity_bonus
     score = 0
     if title.startswith(clean_query):
         score += 600
@@ -102,7 +103,7 @@ def search_open_library(query, limit=12):
             "limit": min(max(limit * 4, 20), 50),
             "fields": (
                 "key,title,author_name,isbn,cover_i,publisher,"
-                "first_publish_year,subject"
+                "first_publish_year,subject,edition_count"
             ),
         }
     )
@@ -166,7 +167,7 @@ def search_open_library(query, limit=12):
         )
         if dedupe_key in seen:
             continue
-        score = _result_score(result, query)
+        score = _result_score(result, query, item.get("edition_count", 0))
         if score < 0:
             continue
         seen.add(dedupe_key)
