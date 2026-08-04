@@ -20,10 +20,13 @@ from .views import (
     CategoryDeleteView,
     CategoryUpdateView,
     ForumCreateView,
+    ForumDeleteView,
     ForumDetailView,
     ForumPostCreateView,
     ForumPostDeleteView,
     ForumPostUpdateView,
+    ForumUpdateView,
+    ModerationDashboardView,
 )
 
 
@@ -62,9 +65,12 @@ urlpatterns = [
     ),
     path("books/<int:book_pk>/forum/create/", ForumCreateView.as_view(), name="forum-create"),
     path("forums/<int:pk>/", ForumDetailView.as_view(), name="forum-detail"),
+    path("forums/<int:pk>/edit/", ForumUpdateView.as_view(), name="forum-edit"),
+    path("forums/<int:pk>/delete/", ForumDeleteView.as_view(), name="forum-delete"),
     path("forums/<int:forum_pk>/posts/add/", ForumPostCreateView.as_view(), name="forum-post-add"),
     path("forum-posts/<int:pk>/edit/", ForumPostUpdateView.as_view(), name="forum-post-edit"),
     path("forum-posts/<int:pk>/delete/", ForumPostDeleteView.as_view(), name="forum-post-delete"),
     path("categories/<int:pk>/edit/", CategoryUpdateView.as_view(), name="category-edit"),
     path("categories/<int:pk>/delete/", CategoryDeleteView.as_view(), name="category-delete"),
+    path("moderation/", ModerationDashboardView.as_view(), name="moderation-dashboard"),
 ]

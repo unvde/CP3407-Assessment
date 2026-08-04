@@ -4,7 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core import signing
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
-from django.db.models import Q, QuerySet
+from django.db.models import Count, Q, QuerySet
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
@@ -371,6 +371,15 @@ class CatalogBookCategoryAddView(LoginRequiredMixin, View):
         return redirect(catalog_book)
 
 
+class StaffRequiredMixin(LoginRequiredMixin):
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return super().dispatch(request, *args, **kwargs)
+        if not request.user.is_staff:
+            raise PermissionDenied
+        return super().dispatch(request, *args, **kwargs)
+
+
 class ForumCreateView(LoginRequiredMixin, CreateView):
     model = Forum
     form_class = ForumForm
@@ -399,6 +408,32 @@ class ForumCreateView(LoginRequiredMixin, CreateView):
         form.instance.book = self.get_book()
         form.instance.created_by = self.request.user
         return super().form_valid(form)
+
+
+class ForumPermissionMixin(LoginRequiredMixin):
+    model = Forum
+
+    def get_queryset(self):
+        queryset = Forum.objects.select_related("book", "created_by")
+        if self.request.user.is_staff:
+            return queryset
+        return queryset.filter(created_by=self.request.user)
+
+
+class ForumUpdateView(ForumPermissionMixin, UpdateView):
+    form_class = ForumForm
+    template_name = "forum/forum_form.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["catalog_book"] = self.object.book
+        return context
+
+
+class ForumDeleteView(StaffRequiredMixin, DeleteView):
+    model = Forum
+    template_name = "forum/forum_confirm_delete.html"
+    success_url = reverse_lazy("moderation-dashboard")
 
 
 class ForumDetailView(DetailView):
@@ -458,11 +493,24 @@ class ForumPostDeleteView(ForumPostPermissionMixin, DeleteView):
         return self.object.forum.get_absolute_url()
 
 
-class StaffRequiredMixin(LoginRequiredMixin):
-    def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_staff:
-            raise PermissionDenied
-        return super().dispatch(request, *args, **kwargs)
+class ModerationDashboardView(StaffRequiredMixin, TemplateView):
+    template_name = "moderation/dashboard.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["forums"] = Forum.objects.select_related(
+            "book", "created_by"
+        ).annotate(post_count=Count("posts"))
+        context["recent_posts"] = ForumPost.objects.select_related(
+            "forum", "author"
+        )[:20]
+        context["categories"] = Category.objects.select_related(
+            "created_by"
+        ).annotate(book_count=Count("books"))
+        context["forum_count"] = Forum.objects.count()
+        context["post_count"] = ForumPost.objects.count()
+        context["category_count"] = Category.objects.count()
+        return context
 
 
 class CategoryUpdateView(StaffRequiredMixin, UpdateView):

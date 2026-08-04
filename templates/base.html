@@ -16,7 +16,7 @@
             <a href="{% url 'book-list' %}">My books</a>
             <a href="{% url 'catalog-book-list' %}">Explore</a>
             <a href="{% url 'book-search' %}">Find a book</a>
-            {% if user.is_staff %}<a href="{% url 'admin:index' %}">Moderation</a>{% endif %}
+            {% if user.is_staff %}<a href="{% url 'moderation-dashboard' %}">Moderation</a>{% endif %}
             <form class="inline-form" method="post" action="{% url 'logout' %}">
                 {% csrf_token %}
                 <button class="link-button" type="submit">Log out</button>

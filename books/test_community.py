@@ -157,6 +157,58 @@ class ForumPermissionTests(TestCase):
         self.assertRedirects(response, self.forum.get_absolute_url())
         self.assertFalse(ForumPost.objects.filter(pk=self.post.pk).exists())
 
+    def test_forum_creator_can_edit_forum(self):
+        self.client.force_login(self.author)
+        response = self.client.post(
+            reverse("forum-edit", args=[self.forum.pk]),
+            {"title": "Arrakis readers", "description": "Discuss the desert."},
+        )
+
+        self.forum.refresh_from_db()
+        self.assertRedirects(response, self.forum.get_absolute_url())
+        self.assertEqual(self.forum.title, "Arrakis readers")
+
+    def test_other_user_cannot_edit_forum(self):
+        self.client.force_login(self.other)
+        response = self.client.post(
+            reverse("forum-edit", args=[self.forum.pk]),
+            {"title": "Hijacked forum", "description": "Changed"},
+        )
+
+        self.assertEqual(response.status_code, 404)
+        self.forum.refresh_from_db()
+        self.assertNotEqual(self.forum.title, "Hijacked forum")
+
+    def test_only_staff_can_delete_forum_and_its_posts(self):
+        delete_url = reverse("forum-delete", args=[self.forum.pk])
+        self.client.force_login(self.author)
+        self.assertEqual(self.client.post(delete_url).status_code, 403)
+
+        self.client.force_login(self.staff)
+        response = self.client.post(delete_url)
+
+        self.assertRedirects(response, reverse("moderation-dashboard"))
+        self.assertFalse(Forum.objects.filter(pk=self.forum.pk).exists())
+        self.assertFalse(ForumPost.objects.filter(pk=self.post.pk).exists())
+
+    def test_moderation_dashboard_is_staff_only_and_lists_public_content(self):
+        dashboard_url = reverse("moderation-dashboard")
+        self.client.logout()
+        self.assertRedirects(
+            self.client.get(dashboard_url),
+            f"{reverse('login')}?next={dashboard_url}",
+        )
+
+        self.client.force_login(self.author)
+        self.assertEqual(self.client.get(dashboard_url).status_code, 403)
+
+        self.client.force_login(self.staff)
+        response = self.client.get(dashboard_url)
+
+        self.assertContains(response, self.forum.title)
+        self.assertContains(response, self.post.title)
+        self.assertContains(response, "Community moderation")
+
 
 class CategoryModerationTests(TestCase):
     def setUp(self):

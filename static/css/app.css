@@ -558,6 +558,45 @@ textarea:focus {
 .post-heading h2 { margin-bottom: 0.25rem; }
 .post-content { padding-top: 1rem; }
 .post-content p:last-child { margin-bottom: 0; }
+.heading-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 0.9rem; }
+
+.moderation-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.moderation-summary article {
+    display: grid;
+    gap: 0.2rem;
+    padding: 1.4rem;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+}
+
+.moderation-summary strong { color: var(--green-dark); font-family: Georgia, serif; font-size: 2.2rem; line-height: 1; }
+.moderation-summary span, .moderation-row p { color: var(--muted); }
+.moderation-section { margin-top: 2.5rem; }
+.moderation-section h2 { margin-bottom: 0; }
+.moderation-list { display: grid; gap: 0.75rem; }
+
+.moderation-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 1.15rem 1.3rem;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+}
+
+.moderation-row h3 { margin: 0 0 0.25rem; }
+.moderation-row h3 a { color: var(--ink); text-decoration: none; }
+.moderation-row p { margin: 0; font-size: 0.9rem; }
+.empty-inline { padding: 1rem 1.2rem; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
 .detail-cover { float: right; width: 120px; max-height: 180px; margin: 0 0 1rem 1.5rem; border-radius: 8px; object-fit: cover; }
 
 @media (max-width: 720px) {
@@ -586,4 +625,8 @@ textarea:focus {
     .catalog-hero { grid-template-columns: 1fr; }
     .cover-shell.large { width: 130px; height: 190px; }
     .search-row, .forum-callout { align-items: stretch; flex-direction: column; }
+    .heading-actions { align-items: stretch; flex-direction: column; width: 100%; }
+    .heading-actions .primary-button, .heading-actions .secondary-button { text-align: center; }
+    .moderation-summary { grid-template-columns: 1fr; }
+    .moderation-row { align-items: flex-start; flex-direction: column; }
 }

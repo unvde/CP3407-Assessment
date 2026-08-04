@@ -1,1 +1,17 @@
-{% extends "base.html" %}{% block title %}Create forum | Reading Compass{% endblock %}{% block content %}<section class="form-card"><p class="eyebrow">{{ catalog_book.title }}</p><h1>Create a book forum</h1><p>Give readers a clear place to discuss this book. There can be one forum per book.</p><form method="post">{% csrf_token %}{% include "includes/form_fields.html" %}<div class="actions"><button class="primary-button" type="submit">Create forum</button><a class="text-link" href="{{ catalog_book.get_absolute_url }}">Cancel</a></div></form></section>{% endblock %}
+{% extends "base.html" %}
+{% block title %}{% if object %}Edit{% else %}Create{% endif %} forum | Reading Compass{% endblock %}
+{% block content %}
+<section class="form-card">
+    <p class="eyebrow">{{ catalog_book.title }}</p>
+    <h1>{% if object %}Edit forum{% else %}Create a book forum{% endif %}</h1>
+    <p>{% if object %}Keep the title and introduction useful for everyone discussing this book.{% else %}Give readers a clear place to discuss this book. There can be one forum per book.{% endif %}</p>
+    <form method="post">
+        {% csrf_token %}
+        {% include "includes/form_fields.html" %}
+        <div class="actions">
+            <button class="primary-button" type="submit">{% if object %}Save forum{% else %}Create forum{% endif %}</button>
+            <a class="text-link" href="{% if object %}{{ object.get_absolute_url }}{% else %}{{ catalog_book.get_absolute_url }}{% endif %}">Cancel</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Delete forum | Reading Compass{% endblock %}
+{% block content %}
+<section class="form-card">
+    <p class="eyebrow">Forum moderation</p>
+    <h1>Delete “{{ object.title }}”?</h1>
+    <p>This permanently removes the forum and all {{ object.posts.count }} post{{ object.posts.count|pluralize }} inside it. The book remains in the public catalogue.</p>
+    <form method="post">
+        {% csrf_token %}
+        <div class="actions">
+            <button class="danger-button" type="submit">Delete forum and posts</button>
+            <a class="text-link" href="{{ object.get_absolute_url }}">Cancel</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

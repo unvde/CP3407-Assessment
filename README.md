@@ -34,7 +34,8 @@ Reading Compass is intended for students and casual readers who want a straightf
 - Shared book catalogue with covers, publication metadata and categories
 - User-created free-text categories when API metadata is incomplete
 - One public discussion forum per book with user posts
-- Author and administrator moderation controls
+- Forum-owner editing and administrator moderation controls
+- A dedicated moderation dashboard for forums, posts and categories
 
 These ideas have been reviewed through target-user interviews and converted into a formal requirements backlog.
 

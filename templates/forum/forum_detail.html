@@ -1,6 +1,18 @@
 {% extends "base.html" %}
 {% block title %}{{ forum.title }} | Reading Compass{% endblock %}
 {% block content %}
-<div class="page-heading"><div><p class="eyebrow"><a href="{{ forum.book.get_absolute_url }}">{{ forum.book.title }}</a></p><h1>{{ forum.title }}</h1><p>{{ forum.description|default:"A place for readers to discuss this book." }}</p></div>{% if user.is_authenticated %}<a class="primary-button" href="{% url 'forum-post-add' forum.pk %}">Write a post</a>{% else %}<a class="primary-button" href="{% url 'login' %}?next={{ request.path }}">Log in to post</a>{% endif %}</div>
+<div class="page-heading">
+    <div>
+        <p class="eyebrow"><a href="{{ forum.book.get_absolute_url }}">{{ forum.book.title }}</a></p>
+        <h1>{{ forum.title }}</h1>
+        <p>{{ forum.description|default:"A place for readers to discuss this book." }}</p>
+        <p class="post-meta">Created by {{ forum.created_by.username|default:"Deleted user" }} · {{ forum.created_at|date:"j M Y" }}</p>
+    </div>
+    <div class="heading-actions">
+        {% if user == forum.created_by or user.is_staff %}<a class="secondary-button" href="{% url 'forum-edit' forum.pk %}">Edit forum</a>{% endif %}
+        {% if user.is_staff %}<a class="danger-link" href="{% url 'forum-delete' forum.pk %}">Delete forum</a>{% endif %}
+        {% if user.is_authenticated %}<a class="primary-button" href="{% url 'forum-post-add' forum.pk %}">Write a post</a>{% else %}<a class="primary-button" href="{% url 'login' %}?next={{ request.path }}">Log in to post</a>{% endif %}
+    </div>
+</div>
 {% if forum.posts.all %}<div class="post-list">{% for post in forum.posts.all %}<article class="post-card" id="post-{{ post.pk }}"><div class="post-heading"><div><h2>{{ post.title }}</h2><p class="post-meta">By {{ post.author.username|default:"Deleted user" }} · {{ post.created_at|date:"j M Y, H:i" }}{% if post.updated_at != post.created_at %} · edited{% endif %}</p></div>{% if user == post.author or user.is_staff %}<div class="note-actions"><a class="text-link" href="{% url 'forum-post-edit' post.pk %}">Edit</a><a class="danger-link" href="{% url 'forum-post-delete' post.pk %}">{% if user.is_staff and user != post.author %}Remove as moderator{% else %}Delete{% endif %}</a></div>{% endif %}</div><div class="post-content">{{ post.content|linebreaks }}</div></article>{% endfor %}</div>{% else %}<section class="empty-state"><h2>No posts yet</h2><p>Be the first reader to start a conversation.</p>{% if user.is_authenticated %}<a class="primary-button" href="{% url 'forum-post-add' forum.pk %}">Write the first post</a>{% endif %}</section>{% endif %}
 {% endblock %}
