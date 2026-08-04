@@ -33,6 +33,14 @@ flowchart TD
 
 Forms use associated labels and visible error messages; navigation and actions use semantic links/buttons; status is communicated with text as well as colour; keyboard focus remains visible; cards collapse to a single column at narrow widths; destructive actions require confirmation.
 
+## Visual system
+
+- Deep forest navigation and warm paper surfaces give the product a consistent editorial identity.
+- Georgia headings distinguish discovery and reading content; the system font stack keeps controls and body copy clear.
+- Reusable green primary actions, outlined secondary actions, gold category tags and text-labelled status chips keep meaning consistent across screens.
+- Raised cards, restrained gradients and book-cover shadows add hierarchy without changing the server-rendered interaction model.
+- Motion is limited to short hover transitions and is disabled when reduced motion is requested.
+
 ## Prototype-to-code evidence
 
 The deployed implementation at https://reading-compass.onrender.com/ is the acceptance reference. Templates under `templates/` implement the screen hierarchy and `static/css/app.css` provides the responsive visual system. The editable prototype source covers the Explore, community book and dashboard views: [Reading Compass — Current System Prototype](https://www.figma.com/design/IGorE0HsUzZ7mb68WYIBqJ).
