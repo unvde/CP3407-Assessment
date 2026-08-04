@@ -93,6 +93,32 @@ class AuthenticationTests(TestCase):
 
         self.assertRedirects(response, reverse("book-list"))
 
+    def test_normal_reader_is_not_redirected_to_staff_page_after_login(self):
+        response = self.client.post(
+            f"{reverse('login')}?next={reverse('moderation-dashboard')}",
+            {"username": "reader", "password": "StrongPass123!"},
+            follow=True,
+        )
+
+        self.assertRedirects(response, reverse("book-list"))
+        self.assertContains(
+            response,
+            "that page is only available to administrators",
+        )
+
+    def test_staff_user_can_continue_to_moderation_after_login(self):
+        staff = User.objects.create_user(
+            username="staff",
+            password="StrongPass123!",
+            is_staff=True,
+        )
+        response = self.client.post(
+            f"{reverse('login')}?next={reverse('moderation-dashboard')}",
+            {"username": staff.username, "password": "StrongPass123!"},
+        )
+
+        self.assertRedirects(response, reverse("moderation-dashboard"))
+
     def test_invalid_login(self):
         response = self.client.post(
             reverse("login"),

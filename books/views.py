@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.models import User
+from django.contrib.auth.views import LoginView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core import signing
 from django.core.exceptions import PermissionDenied
@@ -9,6 +10,7 @@ from django.db.models import Avg, Count, Q, QuerySet
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
+from urllib.parse import urlsplit
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.text import slugify
 from django.views.generic import (
@@ -104,6 +106,22 @@ class RegisterView(CreateView):
         response = super().form_valid(form)
         login(self.request, self.object)
         return response
+
+
+class SafeLoginView(LoginView):
+    template_name = "registration/login.html"
+
+    def get_success_url(self):
+        redirect_to = super().get_success_url()
+        path = urlsplit(redirect_to).path
+        staff_only_paths = ("/moderation/", "/admin/")
+        if not self.request.user.is_staff and path.startswith(staff_only_paths):
+            messages.info(
+                self.request,
+                "You are signed in, but that page is only available to administrators.",
+            )
+            return str(reverse_lazy("book-list"))
+        return redirect_to
 
 
 class OwnedBookQuerysetMixin(LoginRequiredMixin):
