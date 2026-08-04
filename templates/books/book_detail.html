@@ -44,6 +44,41 @@
     </div>
 </article>
 
+{% if book.status == "completed" %}
+    <section class="review-section" aria-labelledby="completion-review-heading">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">Finished-book reflection</p>
+                <h2 id="completion-review-heading">Completion review</h2>
+            </div>
+            <a class="primary-button" href="{% url 'book-review' book.pk %}">
+                {% if book.rating %}Edit review{% else %}Add review{% endif %}
+            </a>
+        </div>
+
+        {% if book.rating %}
+            <article class="review-card">
+                <dl class="review-metadata">
+                    <div>
+                        <dt>Rating</dt>
+                        <dd>{{ book.rating }} / 5</dd>
+                    </div>
+                    <div>
+                        <dt>Completed</dt>
+                        <dd>{{ book.completion_date|date:"j M Y" }}</dd>
+                    </div>
+                </dl>
+                <div class="review-reflection">{{ book.reflection|linebreaks }}</div>
+            </article>
+        {% else %}
+            <div class="empty-state">
+                <p>No completion review recorded yet.</p>
+                <a class="text-link" href="{% url 'book-review' book.pk %}">Add a review</a>
+            </div>
+        {% endif %}
+    </section>
+{% endif %}
+
 <section class="notes-section" aria-labelledby="reading-notes-heading">
     <div class="section-heading">
         <div>

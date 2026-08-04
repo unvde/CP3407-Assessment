@@ -11,7 +11,12 @@ from django.views.generic import (
     UpdateView,
 )
 
-from .forms import BookForm, ReadingNoteForm, RegistrationForm
+from .forms import (
+    BookForm,
+    CompletionReviewForm,
+    ReadingNoteForm,
+    RegistrationForm,
+)
 from .models import Book, ReadingNote
 
 
@@ -156,3 +161,19 @@ class ReadingNoteDeleteView(LoginRequiredMixin, DeleteView):
 
     def get_success_url(self):
         return self.object.book.get_absolute_url()
+
+
+class CompletionReviewUpdateView(LoginRequiredMixin, UpdateView):
+    model = Book
+    form_class = CompletionReviewForm
+    context_object_name = "book"
+    template_name = "books/review_form.html"
+
+    def get_queryset(self) -> QuerySet:
+        return Book.objects.filter(
+            owner=self.request.user,
+            status=Book.ReadingStatus.COMPLETED,
+        )
+
+    def get_success_url(self):
+        return self.object.get_absolute_url()

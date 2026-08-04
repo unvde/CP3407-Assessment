@@ -39,3 +39,40 @@ All five model tests now pass. Existing regression plus the implemented Story
 09 model scope passes 59 tests, Django system check reports no issues and the
 migration drift check reports no changes. Six tests remain red for the
 deliberately unimplemented Week 9 Day 5 review route, form and detail display.
+
+## Week 9 Day 5
+
+The completion-review workflow is implemented:
+
+- `CompletionReviewForm` requires a rating, completion date and reflection;
+- the form provides the 1–5 and 1000-character boundaries;
+- completion dates are checked at both form and model levels against the
+  controlled course-day collaborator;
+- the update view selects only completed books owned by the authenticated
+  reader;
+- the same workflow creates the first review and updates an existing review;
+- non-completed and cross-reader book requests return not found;
+- anonymous access redirects to sign in; and
+- the completed owned book detail provides add/edit controls and renders the
+  private rating, completion date and reflection.
+
+The workflow tests initially expected one time-collaborator call. The spy showed
+two calls because form validation and model validation each enforce the date
+boundary. The expectation was corrected to verify both layers explicitly.
+
+## Acceptance Result
+
+| Criterion | Evidence | Result |
+|---|---|:---:|
+| Store review data | Valid rating, controlled completion date and reflection persist | Pass |
+| Validate rating | Values below 1 and above 5 are rejected | Pass |
+| Validate completion date | A date after the controlled course day is rejected | Pass |
+| Require completed status | A non-completed book cannot enter the review workflow | Pass |
+| Update a review | Existing review values can be replaced and persist | Pass |
+| Preserve privacy | Cross-reader requests return 404 and do not change data | Pass |
+| Display the review | Unique review text appears only on the owned completed book detail | Pass |
+| Enforce reflection boundary | 1000 characters pass and 1001 characters fail | Pass |
+
+The complete Django suite passes all 65 tests. Django system check reports no
+issues, and the migration drift check reports no changes. Story 09 therefore
+meets its definition of done.

@@ -296,7 +296,8 @@ textarea:focus {
     border-color: var(--green);
 }
 
-.notes-section {
+.notes-section,
+.review-section {
     max-width: 760px;
     margin: 2rem auto 0;
 }
@@ -337,6 +338,34 @@ textarea:focus {
 .note-actions {
     display: flex;
     gap: 1rem;
+}
+
+.review-card {
+    padding: 1.5rem;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+}
+
+.review-metadata {
+    display: flex;
+    gap: 2rem;
+    margin: 0 0 1rem;
+}
+
+.review-metadata div {
+    display: grid;
+    gap: 0.2rem;
+}
+
+.review-reflection {
+    padding-top: 1rem;
+    border-top: 1px solid var(--line);
+}
+
+.review-reflection p:last-child {
+    margin-bottom: 0;
 }
 
 .help-text {

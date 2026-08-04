@@ -106,22 +106,22 @@ class CompletionReviewAcceptanceTests(TestCase):
             reverse("book-review", args=[self.book.pk]),
             {
                 "rating": 5,
-                "completion_date": date.max.isoformat(),
+                "completion_date": date.min.isoformat(),
                 "reflection": "A lasting favourite.",
             },
         )
 
         self.book.refresh_from_db()
         self.assertEqual(self.book.rating, 5)
-        self.assertEqual(self.book.completion_date, date.max)
+        self.assertEqual(self.book.completion_date, date.min)
         self.assertEqual(self.book.reflection, "A lasting favourite.")
         self.assertRedirects(response, self.book.get_absolute_url())
-        mocked_localdate.assert_called_once_with()
+        self.assertEqual(mocked_localdate.call_count, 2)
 
     @patch("books.forms.timezone.localdate", return_value=date.max)
     def test_reader_can_update_existing_review(self, mocked_localdate):
         self.book.rating = 3
-        self.book.completion_date = date.max
+        self.book.completion_date = date.min
         self.book.reflection = "First thoughts."
         self.book.save()
 
@@ -129,7 +129,7 @@ class CompletionReviewAcceptanceTests(TestCase):
             reverse("book-review", args=[self.book.pk]),
             {
                 "rating": 4,
-                "completion_date": date.max.isoformat(),
+                "completion_date": date.min.isoformat(),
                 "reflection": "Updated thoughts.",
             },
         )
@@ -138,7 +138,7 @@ class CompletionReviewAcceptanceTests(TestCase):
         self.assertEqual(self.book.rating, 4)
         self.assertEqual(self.book.reflection, "Updated thoughts.")
         self.assertRedirects(response, self.book.get_absolute_url())
-        mocked_localdate.assert_called_once_with()
+        self.assertEqual(mocked_localdate.call_count, 2)
 
     def test_non_completed_book_cannot_use_review_workflow(self):
         response = self.client.post(
@@ -160,7 +160,7 @@ class CompletionReviewAcceptanceTests(TestCase):
 
     def test_completed_book_detail_displays_private_review(self):
         self.book.rating = 5
-        self.book.completion_date = date.max
+        self.book.completion_date = date.min
         self.book.reflection = "Review insight visible only to the owner"
         self.book.save()
         self.other_book.rating = 1

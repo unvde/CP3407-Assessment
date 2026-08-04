@@ -144,9 +144,9 @@ Additional weekly documentation covering design, iterations, testing and develop
 
 **Current stage:** Iterations 1 and 2 are complete. Iteration 2 delivered
 Stories 04–06 with an actual velocity of 7 development-days. Iteration 3 Story
-07 search and filtering and Story 08 private reading notes are complete. Story
-09 completion review is in progress at Week 9 Day 4, while Story 10 remains in
-the product backlog.
+07 search and filtering, Story 08 private reading notes and Story 09 completion
+review are complete. Story 10 remains in the product backlog outside the
+selected Iteration 3 capacity.
 
 ## Local Development
 
