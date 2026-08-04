@@ -30,6 +30,11 @@ Reading Compass is intended for students and casual readers who want a straightf
 - Completion reviews
 - Personal reading dashboard
 - Search and filtering
+- Open Library title, author and ISBN search with one-click import
+- Shared book catalogue with covers, publication metadata and categories
+- User-created free-text categories when API metadata is incomplete
+- One public discussion forum per book with user posts
+- Author and administrator moderation controls
 
 These ideas have been reviewed through target-user interviews and converted into a formal requirements backlog.
 
@@ -185,6 +190,7 @@ in the product backlog because it was outside the selected Iteration 3 capacity.
    export DJANGO_SECRET_KEY="replace-with-a-long-random-value"
    export DJANGO_DEBUG=True
    export DJANGO_ALLOWED_HOSTS="127.0.0.1,localhost"
+   export OPEN_LIBRARY_USER_AGENT="ReadingCompass/1.0 (contact: you@example.com)"
    ```
 
 4. Prepare the database:
@@ -201,6 +207,10 @@ in the product backlog because it was outside the selected Iteration 3 capacity.
 
 6. Open `http://127.0.0.1:8000/`.
 
+Book search uses the public Open Library Search and Covers APIs and does not
+require an API key. If the service is unavailable or a title cannot be found,
+readers can always add the book manually.
+
 ### Tests
 
 Run the automated test suite with:
@@ -208,3 +218,22 @@ Run the automated test suite with:
 ```bash
 python manage.py test
 ```
+
+## Deployment
+
+The repository includes a Render Blueprint for a repeatable test deployment:
+
+- Django runs behind Gunicorn.
+- WhiteNoise serves versioned static files.
+- Render PostgreSQL stores accounts, books, categories and forum posts.
+- Database migrations and static-file collection run during each build.
+- `/health/` provides a lightweight service health check.
+- GitHub Actions runs migrations checks, tests and Django's deployment checks.
+
+To create the hosted test version, open the Render Blueprint dashboard, connect
+this GitHub repository, select `render.yaml`, and apply the Blueprint. Render
+generates the production secret and database connection automatically.
+
+The Blueprint intentionally uses Render's free instances during active
+development. A free PostgreSQL database expires after 30 days, so upgrade the
+database or move to a persistent production provider before final delivery.

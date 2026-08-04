@@ -392,7 +392,8 @@ textarea:focus {
 }
 
 .primary-button,
-.danger-button {
+.danger-button,
+.secondary-button {
     display: inline-block;
     padding: 0.72rem 1rem;
     color: white;
@@ -414,6 +415,12 @@ textarea:focus {
 
 .danger-button {
     background: var(--danger);
+}
+
+.secondary-button {
+    color: var(--green-dark);
+    background: transparent;
+    border: 1px solid var(--green);
 }
 
 .danger-link {
@@ -440,6 +447,119 @@ textarea:focus {
     margin: 1.4rem 0 0;
 }
 
+.compact-actions { margin-top: 0; }
+
+.hero-search,
+.inline-panel,
+.forum-callout {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+}
+
+.hero-search label { display: block; margin-bottom: 0.55rem; font-weight: 750; }
+.search-row { display: flex; align-items: center; gap: 0.75rem; }
+.search-row input { flex: 1; }
+.search-row .primary-button, .search-row .secondary-button { white-space: nowrap; }
+.search-results, .post-list { display: grid; gap: 1rem; }
+
+.search-result {
+    display: grid;
+    grid-template-columns: 90px 1fr auto;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 1.25rem;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+}
+
+.search-result h2, .catalog-card h2 { margin-bottom: 0.3rem; }
+.book-facts, .post-meta, .source-note { color: var(--muted); font-size: 0.9rem; }
+
+.cover-shell {
+    display: grid;
+    width: 76px;
+    height: 108px;
+    place-items: center;
+    overflow: hidden;
+    color: var(--muted);
+    background: #e8e8df;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    text-align: center;
+}
+
+.cover-shell.large { width: 180px; height: 260px; }
+.cover-shell img { width: 100%; height: 100%; object-fit: cover; }
+.tag-list { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.7rem 0; }
+
+.tag {
+    padding: 0.23rem 0.55rem;
+    color: #584727;
+    background: #efe8d5;
+    border-radius: 999px;
+    font-size: 0.76rem;
+    font-weight: 700;
+}
+
+.tag a { text-decoration: none; }
+.catalog-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; }
+
+.catalog-card {
+    display: grid;
+    grid-template-columns: 76px 1fr;
+    gap: 1rem;
+    padding: 1.2rem;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+}
+
+.catalog-card h2 a { color: var(--ink); text-decoration: none; }
+
+.catalog-hero {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 2rem;
+    max-width: 900px;
+    margin: 0 auto 2rem;
+    padding: 2rem;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+}
+
+.compact-metadata { padding-bottom: 0; border-bottom: 0; }
+.inline-panel, .forum-callout { max-width: 900px; margin-inline: auto; }
+.inline-panel h2 { margin-bottom: 0.25rem; }
+
+.forum-callout {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    background: #e8efe6;
+}
+
+.forum-callout p:last-child { margin-bottom: 0; }
+
+.post-card {
+    padding: 1.5rem;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+}
+
+.post-heading { display: flex; align-items: start; justify-content: space-between; gap: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--line); }
+.post-heading h2 { margin-bottom: 0.25rem; }
+.post-content { padding-top: 1rem; }
+.post-content p:last-child { margin-bottom: 0; }
+.detail-cover { float: right; width: 120px; max-height: 180px; margin: 0 0 1rem 1.5rem; border-radius: 8px; object-fit: cover; }
+
 @media (max-width: 720px) {
     .site-header,
     .page-heading {
@@ -459,4 +579,11 @@ textarea:focus {
     .page-shell {
         padding: 2.5rem 0;
     }
+
+    .search-result { grid-template-columns: 76px 1fr; }
+    .search-result form { grid-column: 1 / -1; }
+    .search-result form button { width: 100%; }
+    .catalog-hero { grid-template-columns: 1fr; }
+    .cover-shell.large { width: 130px; height: 190px; }
+    .search-row, .forum-callout { align-items: stretch; flex-direction: column; }
 }

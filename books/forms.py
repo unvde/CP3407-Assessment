@@ -3,7 +3,19 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.utils import timezone
 
-from .models import Book, ReadingNote
+from .models import Book, Category, Forum, ForumPost, ReadingNote
+
+
+def parse_category_names(value):
+    names = []
+    seen = set()
+    for raw_name in value.replace("，", ",").split(","):
+        name = raw_name.strip()
+        key = name.casefold()
+        if name and key not in seen:
+            names.append(name[:80])
+            seen.add(key)
+    return names
 
 
 class RegistrationForm(UserCreationForm):
@@ -21,6 +33,14 @@ class RegistrationForm(UserCreationForm):
 
 
 class BookForm(forms.ModelForm):
+    categories = forms.CharField(
+        required=False,
+        max_length=500,
+        label="Categories",
+        help_text="Optional. Separate categories with commas, for example: Science fiction, Adventure.",
+        widget=forms.TextInput(attrs={"placeholder": "Science fiction, Romance"}),
+    )
+
     class Meta:
         model = Book
         fields = (
@@ -30,6 +50,7 @@ class BookForm(forms.ModelForm):
             "total_pages",
             "current_page",
             "target_date",
+            "categories",
         )
         help_texts = {
             "status": (
@@ -50,6 +71,13 @@ class BookForm(forms.ModelForm):
             "current_page": forms.NumberInput(attrs={"min": 0}),
             "target_date": forms.DateInput(attrs={"type": "date"}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance.pk and self.instance.catalog_book_id:
+            self.fields["categories"].initial = ", ".join(
+                self.instance.catalog_book.categories.values_list("name", flat=True)
+            )
 
     def clean_title(self):
         return self.cleaned_data["title"].strip()
@@ -76,6 +104,50 @@ class BookForm(forms.ModelForm):
         ):
             raise forms.ValidationError("Target date cannot be in the past.")
         return target_date
+
+    def clean_categories(self):
+        return parse_category_names(self.cleaned_data.get("categories", ""))
+
+
+class ForumForm(forms.ModelForm):
+    class Meta:
+        model = Forum
+        fields = ("title", "description")
+        widgets = {"description": forms.Textarea(attrs={"rows": 4})}
+
+    def clean_title(self):
+        return self.cleaned_data["title"].strip()
+
+    def clean_description(self):
+        return self.cleaned_data["description"].strip()
+
+
+class ForumPostForm(forms.ModelForm):
+    class Meta:
+        model = ForumPost
+        fields = ("title", "content")
+        widgets = {"content": forms.Textarea(attrs={"rows": 9})}
+
+    def clean_title(self):
+        return self.cleaned_data["title"].strip()
+
+    def clean_content(self):
+        return self.cleaned_data["content"].strip()
+
+
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = ("name",)
+
+    def clean_name(self):
+        name = self.cleaned_data["name"].strip()
+        duplicate = Category.objects.filter(name__iexact=name).exclude(
+            pk=self.instance.pk
+        )
+        if duplicate.exists():
+            raise forms.ValidationError("A category with this name already exists.")
+        return name
 
 
 class ReadingNoteForm(forms.ModelForm):

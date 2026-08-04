@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}{{ catalog_book.title }} | Reading Compass{% endblock %}
+
+{% block content %}
+<article class="catalog-hero">
+    <div class="cover-shell large">{% if catalog_book.cover_url %}<img src="{{ catalog_book.cover_url }}" alt="Cover of {{ catalog_book.title }}">{% else %}<span>No cover</span>{% endif %}</div>
+    <div>
+        <p class="eyebrow">Community book page</p><h1>{{ catalog_book.title }}</h1><p class="detail-author">by {{ catalog_book.author }}</p>
+        <div class="tag-list">{% for category in catalog_book.categories.all %}<span class="tag">{{ category.name }}{% if user.is_staff %} <a aria-label="Edit {{ category.name }}" href="{% url 'category-edit' category.pk %}">✎</a>{% endif %}</span>{% endfor %}</div>
+        <dl class="metadata compact-metadata">
+            <div><dt>ISBN</dt><dd>{{ catalog_book.isbn_13|default:catalog_book.isbn_10|default:"Not recorded" }}</dd></div>
+            <div><dt>Publisher</dt><dd>{{ catalog_book.publisher|default:"Not recorded" }}</dd></div>
+            <div><dt>First published</dt><dd>{{ catalog_book.published_year|default:"Not recorded" }}</dd></div>
+        </dl>
+        <div class="actions">
+            {% if user.is_authenticated %}{% if shelf_book %}<a class="primary-button" href="{{ shelf_book.get_absolute_url }}">Open my reading entry</a>{% else %}<form method="post" action="{% url 'catalog-book-add' catalog_book.pk %}">{% csrf_token %}<button class="primary-button" type="submit">Add to my books</button></form>{% endif %}{% else %}<a class="primary-button" href="{% url 'login' %}?next={{ request.path }}">Log in to add this book</a>{% endif %}
+        </div>
+    </div>
+</article>
+
+{% if user.is_authenticated %}
+<section class="inline-panel"><h2>Add categories</h2><p>Use short, useful labels separated by commas.</p><form method="post" action="{% url 'catalog-category-add' catalog_book.pk %}" class="search-row">{% csrf_token %}<input name="categories" maxlength="500" placeholder="Fantasy, Found family" required><button class="secondary-button" type="submit">Add</button></form></section>
+{% endif %}
+
+<section class="forum-callout">
+    <div><p class="eyebrow">Reader discussion</p><h2>{% if forum %}Join the conversation{% else %}Start this book's forum{% endif %}</h2><p>{% if forum %}Read posts and share your take with other readers.{% else %}No one has created a discussion space for this book yet.{% endif %}</p></div>
+    {% if forum %}<a class="primary-button" href="{{ forum.get_absolute_url }}">Open forum</a>{% elif user.is_authenticated %}<a class="primary-button" href="{% url 'forum-create' catalog_book.pk %}">Create forum</a>{% else %}<a class="primary-button" href="{% url 'login' %}?next={{ request.path }}">Log in to create forum</a>{% endif %}
+</section>
+{% endblock %}

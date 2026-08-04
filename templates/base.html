@@ -12,15 +12,17 @@
     <a class="brand" href="{% url 'book-list' %}">Reading Compass</a>
     <nav aria-label="Primary navigation">
         {% if user.is_authenticated %}
-            <span class="user-label">Signed in as {{ user.username }}</span>
             <a href="{% url 'dashboard' %}">Dashboard</a>
             <a href="{% url 'book-list' %}">My books</a>
-            <a href="{% url 'book-add' %}">Add book</a>
+            <a href="{% url 'catalog-book-list' %}">Explore</a>
+            <a href="{% url 'book-search' %}">Find a book</a>
+            {% if user.is_staff %}<a href="{% url 'admin:index' %}">Moderation</a>{% endif %}
             <form class="inline-form" method="post" action="{% url 'logout' %}">
                 {% csrf_token %}
                 <button class="link-button" type="submit">Log out</button>
             </form>
         {% else %}
+            <a href="{% url 'catalog-book-list' %}">Explore</a>
             <a href="{% url 'login' %}">Log in</a>
             <a href="{% url 'register' %}">Register</a>
         {% endif %}
