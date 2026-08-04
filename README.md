@@ -74,6 +74,12 @@ Responsibilities:
 
 ## Project Documentation
 
+### Design Evidence
+
+- [Complete Architecture Design](docs/design/architecture.md)
+- [Database Design and ERD](docs/design/database-design.md)
+- [Interface Design and Figma Prototype](docs/design/interface-design.md)
+
 ### Week 1 - Project Initiation
 
 - [Project Proposal](docs/week1/project-proposal.md)
