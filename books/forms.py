@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.utils import timezone
 
-from .models import Book
+from .models import Book, ReadingNote
 
 
 class RegistrationForm(UserCreationForm):
@@ -76,3 +76,59 @@ class BookForm(forms.ModelForm):
         ):
             raise forms.ValidationError("Target date cannot be in the past.")
         return target_date
+
+
+class ReadingNoteForm(forms.ModelForm):
+    content = forms.CharField(
+        label="Note",
+        required=False,
+        widget=forms.Textarea(
+            attrs={
+                "autofocus": True,
+                "rows": 8,
+                "placeholder": "Record an idea or observation from this book.",
+            }
+        ),
+    )
+
+    class Meta:
+        model = ReadingNote
+        fields = ("content",)
+
+    def clean_content(self):
+        content = self.cleaned_data.get("content", "").strip()
+        if not content:
+            raise forms.ValidationError("Note content cannot be blank.")
+        return content
+
+
+class CompletionReviewForm(forms.ModelForm):
+    rating = forms.IntegerField(
+        min_value=1,
+        max_value=5,
+        widget=forms.NumberInput(attrs={"min": 1, "max": 5, "autofocus": True}),
+        help_text="Choose a rating from 1 to 5.",
+    )
+    completion_date = forms.DateField(
+        widget=forms.DateInput(attrs={"type": "date"}),
+    )
+    reflection = forms.CharField(
+        max_length=1000,
+        widget=forms.Textarea(attrs={"rows": 8}),
+        help_text="Up to 1000 characters.",
+    )
+
+    class Meta:
+        model = Book
+        fields = ("rating", "completion_date", "reflection")
+
+    def clean_completion_date(self):
+        completion_date = self.cleaned_data["completion_date"]
+        if completion_date > timezone.localdate():
+            raise forms.ValidationError(
+                "Completion date cannot be in the future."
+            )
+        return completion_date
+
+    def clean_reflection(self):
+        return self.cleaned_data["reflection"].strip()

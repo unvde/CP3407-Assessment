@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}{% if object %}Edit{% else %}Add{% endif %} note | Reading Compass{% endblock %}
+
+{% block content %}
+<section class="form-card">
+    <p class="eyebrow">Private reading note</p>
+    <h1>{% if object %}Edit note{% else %}Add a note{% endif %}</h1>
+    <p>For <a href="{{ book.get_absolute_url }}">{{ book.title }}</a> by {{ book.author }}.</p>
+
+    <form method="post">
+        {% csrf_token %}
+        {% include "includes/form_fields.html" %}
+        <div class="actions">
+            <button class="primary-button" type="submit">Save note</button>
+            <a class="text-link" href="{{ book.get_absolute_url }}">Cancel</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

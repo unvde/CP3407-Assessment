@@ -131,15 +131,24 @@ Responsibilities:
 - [Iteration 3 Initial Burndown](docs/week8/iteration-3-burndown.md)
 - [Mock Object Research](docs/week8/mock-object-research.md)
 - [Iteration 3 Test Specifications](docs/week8/test-specifications.md)
+- [Story 07 Search and Filtering](docs/week8/story-07-search-filtering.md)
+
+### Week 9 - Iteration 3 Development
+
+- [Story 08 Private Reading Notes](docs/week9/story-08-private-notes.md)
+- [Story 09 Completion Review](docs/week9/story-09-completion-review.md)
+- [Iteration 3 Final Acceptance](docs/week9/iteration-3-final-acceptance.md)
 
 Additional weekly documentation covering design, iterations, testing and development tools will be added as the project progresses.
 
 ## Project Status
 
 **Current stage:** Iterations 1 and 2 are complete. Iteration 2 delivered
-Stories 04–06 with an actual velocity of 7 development-days. Iteration 3 is at
-the Week 8 planning and TDD starting point with Stories 07–09 selected to match
-the same 7-day capacity; Story 10 remains in the product backlog.
+Stories 04–06 with an actual velocity of 7 development-days. Iteration 3 Story
+07 search and filtering, Story 08 private reading notes and Story 09 completion
+review are complete. Story 10 remains in the product backlog outside the
+selected Iteration 3 capacity. Iteration 3 has passed final system testing and
+is ready for pull-request review.
 
 ## Local Development
 

@@ -1,18 +1,25 @@
-# Iteration 3 Initial Burndown
+# Iteration 3 Burndown
 
-This baseline is established at Week 8 Day 1 before implementation begins.
-Actual remaining effort is 7 development-days.
+The baseline begins at Week 8 Day 1 with 7 development-days. Accepted effort
+is removed from the actual line only when a complete story meets the Definition
+of Done; partial task progress remains visible in GitHub without presenting
+unaccepted work as velocity.
 
 | Course Point | Ideal Remaining | Actual Remaining |
 |---|---:|---:|
 | Week 8 Day 1 | 7.00 | 7.00 |
-| Week 8 Day 2 | 5.00 | — |
-| Week 8 Day 3 | 4.00 | — |
-| Week 8 Day 4 | 2.50 | — |
-| Week 9 Day 1 | 2.00 | — |
-| Week 9 Day 2 | 0.50 | — |
-| Week 9 Day 3 | 0.00 | — |
+| Week 8 Day 2 | 7.00 | 7.00 |
+| Week 8 Day 3 | 7.00 | 7.00 |
+| Week 8 Day 4 | 7.00 | 7.00 |
+| Week 8 Day 5 | 5.00 | 5.00 |
+| Week 9 Day 1 | 4.00 | 5.00 |
+| Week 9 Day 2 | 3.25 | 5.00 |
+| Week 9 Day 3 | 2.00 | 2.00 |
+| Week 9 Day 4 | 1.00 | 2.00 |
+| Week 9 Day 5 | 0.00 | 0.00 |
+| Week 9 Day 6 | 0.00 | 0.00 |
 
-The actual column will be updated only at the named course checkpoints. A story
-reduces remaining effort when its tasks meet the Definition of Done; partial
-work is recorded at task level and is not presented as accepted velocity.
+Story 07 removed 2 accepted days at Week 8 Day 5. Story 08 removed 3 accepted
+days at Week 9 Day 3, and Story 09 removed the final 2 accepted days at Week 9
+Day 5. Week 9 Day 6 is a close-out checkpoint outside story capacity, so the
+remaining effort stays at zero while system testing and final records complete.

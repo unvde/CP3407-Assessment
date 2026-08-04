@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Completion review | Reading Compass{% endblock %}
+
+{% block content %}
+<section class="form-card">
+    <p class="eyebrow">Completed book</p>
+    <h1>{% if book.rating %}Edit{% else %}Add{% endif %} completion review</h1>
+    <p>For <a href="{{ book.get_absolute_url }}">{{ book.title }}</a> by {{ book.author }}.</p>
+
+    <form method="post">
+        {% csrf_token %}
+        {% include "includes/form_fields.html" %}
+        <div class="actions">
+            <button class="primary-button" type="submit">Save review</button>
+            <a class="text-link" href="{{ book.get_absolute_url }}">Cancel</a>
+        </div>
+    </form>
+</section>
+{% endblock %}
