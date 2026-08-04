@@ -3,9 +3,9 @@
 ## Purpose
 
 A mock object replaces a collaborator with a controlled test double. It is most
-useful when a test depends on time, a network service, email, file storage or
-another slow or non-deterministic boundary. Mocks are not a substitute for
-testing Django models, queries and views against the test database.
+useful at slow or non-deterministic boundaries such as an external API. It is
+not a substitute for testing Django models, queries, permissions and views
+against the isolated test database.
 
 ## Test-Double Vocabulary
 
@@ -13,39 +13,75 @@ testing Django models, queries and views against the test database.
 - **Spy:** records how it was called.
 - **Mock:** combines controlled behaviour with interaction expectations.
 - **Fake:** provides a lightweight working implementation, such as Django's
-  in-memory test email backend.
+  test email backend or test database.
 
-## Reading Compass Decision
+## Reading Compass Boundaries
 
-Iteration 3 search, notes and review persistence should primarily use Django
-database and request tests. Those behaviours depend on real query construction,
-relationships, validation and permissions, so replacing them with mocks would
-hide important failures.
-
-Time is a suitable boundary to mock. `BookForm` reads
-`books.forms.timezone.localdate`; the suite patches that name to a fixed course
-day and verifies that a preceding target is rejected. The test also asserts the
-collaborator was called, demonstrating both stub and spy behaviour without
-depending on the machine clock.
+The application keeps Open Library communication in `books.services`. Service
+tests patch `books.services.urlopen` because that is the name used by the code
+under test. The prepared response behaves as a context manager and contains
+realistic JSON, so ranking, normalisation, ISBN selection and duplicate removal
+still run as production code.
 
 ```python
-@patch("books.forms.timezone.localdate", return_value=date.max)
-def test_target_validation_uses_mocked_course_day(self, mocked_localdate):
-    target = (date.max - timedelta(days=1)).isoformat()
-    form = BookForm(instance=self.book, data=self.book_data(target))
-    self.assertFalse(form.is_valid())
-    mocked_localdate.assert_called_once_with()
+@patch("books.services.urlopen")
+def test_search_parses_results_using_explicit_certificate_context(self, urlopen):
+    urlopen.return_value = io.BytesIO(
+        json.dumps({"docs": [{
+            "key": "/works/OL893415W",
+            "title": "Dune",
+            "author_name": ["Frank Herbert"],
+            "isbn": ["9780441172719"],
+        }]}).encode()
+    )
+
+    results = search_open_library("Dune")
+
+    self.assertEqual(results[0].title, "Dune")
+    _, kwargs = urlopen.call_args
+    self.assertEqual(kwargs["timeout"], 8)
+    self.assertIsNotNone(kwargs["context"])
 ```
 
-The patch targets the name used by the code under test, not the original
-library definition. This avoids leaking a global time change into unrelated
-tests.
+View tests patch the imported service name in `books.views`. This isolates view
+behaviour from the network while retaining real requests, authentication,
+messages, templates and database writes.
 
-## Iteration 3 Guidance
+```python
+@patch("books.views.search_open_library")
+def test_search_displays_api_results(self, search):
+    search.return_value = [self.result]
 
-- Use real Django requests and database objects for owner isolation.
-- Mock an external service only after an integration boundary is introduced.
-- Assert outcomes first; assert calls only when the collaboration is itself a
-  requirement.
-- Keep return values realistic and add at least one non-mocked integration test
-  for every external boundary.
+    response = self.client.get(reverse("book-search"), {"q": "Dune"})
+
+    self.assertContains(response, "Dune")
+    self.assertContains(response, "9780441172719")
+    search.assert_called_once_with("Dune")
+```
+
+Discovery tests apply the same pattern to
+`books.views.search_open_library_subject`. They cover successful remote
+results, temporary failures and the local-catalogue fallback without making the
+suite depend on internet availability.
+
+## What Remains Real
+
+- Model validation and database constraints.
+- Authentication, owner scoping and staff permissions.
+- Signed import token verification.
+- Catalogue, shelf, review, list and forum persistence.
+- Response status, redirects, messages and rendered content.
+
+Keeping these collaborators real is important because replacing them would
+hide integration errors in the behaviour the application owns.
+
+## Rules Used by the Test Suite
+
+- Patch the symbol where the production code looks it up.
+- Use realistic external payloads, including missing and duplicate fields.
+- Assert user-visible outcomes before optional call details.
+- Cover success, HTTP/network failure, timeout and invalid-response paths at the
+  service boundary.
+- Keep view tests deterministic by preventing live network access.
+- Retain end-to-end Django workflow tests for the data written after a mocked
+  search result is returned.
