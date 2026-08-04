@@ -1,91 +1,29 @@
 {% extends "base.html" %}
-
 {% block title %}My books | Reading Compass{% endblock %}
-
 {% block content %}
 <div class="page-heading">
-    <div>
-        <p class="eyebrow">Your reading space</p>
-        <h1>My books</h1>
-        <p>Keep each book in the right place as your reading changes.</p>
-    </div>
-    <div class="actions compact-actions">
-        <a class="primary-button" href="{% url 'book-search' %}">Find a book</a>
-        <a class="secondary-button" href="{% url 'book-add' %}">Add manually</a>
-    </div>
+    <div><p class="eyebrow">Your reading space</p><h1>My books</h1><p>Update reading status directly, or edit the book information when needed.</p></div>
+    <div class="actions compact-actions"><a class="primary-button" href="{% url 'book-search' %}">Find a book</a><a class="secondary-button" href="{% url 'book-add' %}">Add manually</a></div>
 </div>
 
 <form class="filter-bar" method="get" role="search">
-    <div class="filter-field filter-search">
-        <label for="book-search">Search title or author</label>
-        <input
-            id="book-search"
-            name="q"
-            type="search"
-            value="{{ search_query }}"
-            placeholder="e.g. Dune or Ursula Le Guin"
-        >
-    </div>
-    <div class="filter-field">
-        <label for="status-filter">Reading status</label>
-        <select id="status-filter" name="status">
-            <option value="">All statuses</option>
-            {% for value, label in status_choices %}
-                <option value="{{ value }}"{% if selected_status == value %} selected{% endif %}>{{ label }}</option>
-            {% endfor %}
-        </select>
-    </div>
-    <div class="filter-field">
-        <label for="category-filter">Category</label>
-        <select id="category-filter" name="category">
-            <option value="">All categories</option>
-            {% for category in categories %}
-                <option value="{{ category.slug }}"{% if selected_category == category.slug %} selected{% endif %}>{{ category.name }}</option>
-            {% endfor %}
-        </select>
-    </div>
+    <div class="filter-field filter-search"><label for="book-search">Search title or author</label><input id="book-search" name="q" type="search" value="{{ search_query }}" placeholder="e.g. Dune or Ursula Le Guin"></div>
+    <div class="filter-field"><label for="status-filter">Reading status</label><select id="status-filter" name="status"><option value="">All statuses</option>{% for value, label in status_choices %}<option value="{{ value }}"{% if selected_status == value %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+    <div class="filter-field"><label for="category-filter">Category</label><select id="category-filter" name="category"><option value="">All categories</option>{% for category in categories %}<option value="{{ category.slug }}"{% if selected_category == category.slug %} selected{% endif %}>{{ category.name }}</option>{% endfor %}</select></div>
     <button class="primary-button" type="submit">Apply filters</button>
-    <a class="text-link clear-filters" href="{% url 'book-list' %}">Clear filters</a>
+    <a class="secondary-button button-small" href="{% url 'book-list' %}">Clear</a>
 </form>
 
-{% if books %}
-    <div class="book-grid">
-        {% for book in books %}
-            <article class="book-card">
-                <span class="status status-{{ book.status }}">{{ book.get_status_display }}</span>
-                <h2><a href="{{ book.get_absolute_url }}">{{ book.title }}</a></h2>
-                <p class="author">by {{ book.author }}</p>
-                {% if book.catalog_book.categories.all %}
-                    <div class="tag-list">
-                        {% for category in book.catalog_book.categories.all|slice:":3" %}<span class="tag">{{ category.name }}</span>{% endfor %}
-                    </div>
-                {% endif %}
-                {% if book.total_pages %}
-                    <p>{{ book.total_pages }} pages</p>
-                {% else %}
-                    <p>Page count not recorded</p>
-                {% endif %}
-                <p>Current page: {{ book.current_page }}</p>
-                {% if book.progress_percentage is not None %}
-                    <p>{{ book.progress_percentage }}% complete</p>
-                {% else %}
-                    <p>Percentage unavailable</p>
-                {% endif %}
-                <a class="text-link" href="{{ book.get_absolute_url }}">View details →</a>
-            </article>
-        {% endfor %}
-    </div>
-{% else %}
-    <section class="empty-state">
-        {% if filters_active %}
-            <p class="eyebrow">No matches</p>
-            <h2>No books match these filters.</h2>
-            <a class="primary-button" href="{% url 'book-list' %}">Clear filters</a>
-        {% else %}
-            <p class="eyebrow">Your list is empty</p>
-            <h2>Add the first book to your reading journey.</h2>
-            <a class="primary-button" href="{% url 'book-search' %}">Search the book catalogue</a>
-        {% endif %}
-    </section>
-{% endif %}
+{% if books %}<div class="book-grid">{% for book in books %}
+<article class="book-card">
+    <span class="status status-{{ book.status }}">{{ book.get_status_display }}</span>
+    <h2><a href="{{ book.get_absolute_url }}">{{ book.title }}</a></h2><p class="author">by {{ book.author }}</p>
+    {% if book.catalog_book.categories.all %}<div class="tag-list">{% for category in book.catalog_book.categories.all|slice:":3" %}<span class="tag">{{ category.name }}</span>{% endfor %}</div>{% endif %}
+    <form class="status-picker" method="post" action="{% url 'book-status' book.pk %}" aria-label="Change status for {{ book.title }}">
+        {% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}">
+        {% for value, label in status_choices %}<button class="status-choice{% if book.status == value %} is-selected{% endif %}" type="submit" name="status" value="{{ value }}">{% if book.status == value %}<span aria-hidden="true">✓</span> {% endif %}{{ label }}</button>{% endfor %}
+    </form>
+    <div class="card-actions"><a class="secondary-button button-small" href="{% url 'book-edit' book.pk %}">Edit book</a><a class="primary-button button-small" href="{{ book.get_absolute_url }}">View details</a></div>
+</article>
+{% endfor %}</div>{% else %}<section class="empty-state">{% if filters_active %}<p class="eyebrow">No matches</p><h2>No books match these filters.</h2><a class="primary-button" href="{% url 'book-list' %}">Clear filters</a>{% else %}<p class="eyebrow">Your list is empty</p><h2>Add the first book to your collection.</h2><a class="primary-button" href="{% url 'book-search' %}">Search the book catalogue</a>{% endif %}</section>{% endif %}
 {% endblock %}

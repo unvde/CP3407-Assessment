@@ -14,7 +14,13 @@
     <article><strong>{{ forum_count }}</strong><span>Forums</span></article>
     <article><strong>{{ post_count }}</strong><span>Posts</span></article>
     <article><strong>{{ reply_count }}</strong><span>Replies</span></article>
+    <article><strong>{{ review_count }}</strong><span>Reviews</span></article>
     <article><strong>{{ category_count }}</strong><span>Categories</span></article>
+</section>
+
+<section class="moderation-section">
+    <div class="section-heading"><div><p class="eyebrow">Public opinions</p><h2>Recent reviews</h2></div></div>
+    {% if recent_reviews %}<div class="moderation-list">{% for review in recent_reviews %}<article class="moderation-row"><div><h3><a href="{{ review.get_absolute_url }}">{{ review.catalog_book.title }} · {{ review.rating }}/5</a></h3><p>{{ review.content|truncatewords:18 }} · by {{ review.author.username|default:"Deleted user" }}</p></div><div class="note-actions"><a class="secondary-button button-small" href="{% url 'public-review-edit' review.pk %}">Edit</a><a class="danger-button button-small" href="{% url 'public-review-delete' review.pk %}">Delete</a></div></article>{% endfor %}</div>{% else %}<p class="empty-inline">No public reviews yet.</p>{% endif %}
 </section>
 
 <section class="moderation-section">
@@ -24,7 +30,7 @@
         {% for reply in recent_replies %}
         <article class="moderation-row">
             <div><h3><a href="{{ reply.get_absolute_url }}">Reply to “{{ reply.post.title }}”</a></h3><p>{{ reply.content|truncatewords:18 }} · by {{ reply.author.username|default:"Deleted user" }} · {{ reply.created_at|date:"j M Y, H:i" }}</p></div>
-            <div class="note-actions"><a class="text-link" href="{% url 'forum-reply-edit' reply.pk %}">Edit</a><a class="danger-link" href="{% url 'forum-reply-delete' reply.pk %}">Delete</a></div>
+            <div class="note-actions"><a class="secondary-button button-small" href="{% url 'forum-reply-edit' reply.pk %}">Edit</a><a class="danger-button button-small" href="{% url 'forum-reply-delete' reply.pk %}">Delete</a></div>
         </article>
         {% endfor %}
     </div>
@@ -38,7 +44,7 @@
         {% for forum in forums %}
         <article class="moderation-row">
             <div><h3><a href="{{ forum.get_absolute_url }}">{{ forum.title }}</a></h3><p>{{ forum.book.title }} · {{ forum.post_count }} post{{ forum.post_count|pluralize }} · created by {{ forum.created_by.username|default:"Deleted user" }}</p></div>
-            <div class="note-actions"><a class="text-link" href="{% url 'forum-edit' forum.pk %}">Edit</a><a class="danger-link" href="{% url 'forum-delete' forum.pk %}">Delete</a></div>
+            <div class="note-actions"><a class="secondary-button button-small" href="{% url 'forum-edit' forum.pk %}">Edit</a><a class="danger-button button-small" href="{% url 'forum-delete' forum.pk %}">Delete</a></div>
         </article>
         {% endfor %}
     </div>
@@ -52,7 +58,7 @@
         {% for post in recent_posts %}
         <article class="moderation-row">
             <div><h3><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3><p>{{ post.forum.title }} · by {{ post.author.username|default:"Deleted user" }} · {{ post.created_at|date:"j M Y, H:i" }}</p></div>
-            <div class="note-actions"><a class="text-link" href="{% url 'forum-post-edit' post.pk %}">Edit</a><a class="danger-link" href="{% url 'forum-post-delete' post.pk %}">Delete</a></div>
+            <div class="note-actions"><a class="secondary-button button-small" href="{% url 'forum-post-edit' post.pk %}">Edit</a><a class="danger-button button-small" href="{% url 'forum-post-delete' post.pk %}">Delete</a></div>
         </article>
         {% endfor %}
     </div>
@@ -66,7 +72,7 @@
         {% for category in categories %}
         <article class="moderation-row">
             <div><h3>{{ category.name }}</h3><p>{{ category.get_source_display }} · {{ category.book_count }} book{{ category.book_count|pluralize }}{% if category.created_by %} · by {{ category.created_by.username }}{% endif %}</p></div>
-            <div class="note-actions"><a class="text-link" href="{% url 'category-edit' category.pk %}">Edit</a><a class="danger-link" href="{% url 'category-delete' category.pk %}">Delete</a></div>
+            <div class="note-actions"><a class="secondary-button button-small" href="{% url 'category-edit' category.pk %}">Edit</a><a class="danger-button button-small" href="{% url 'category-delete' category.pk %}">Delete</a></div>
         </article>
         {% endfor %}
     </div>

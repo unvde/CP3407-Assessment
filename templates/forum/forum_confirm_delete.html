@@ -9,7 +9,7 @@
         {% csrf_token %}
         <div class="actions">
             <button class="danger-button" type="submit">Delete forum and posts</button>
-            <a class="text-link" href="{{ object.get_absolute_url }}">Cancel</a>
+            <a class="secondary-button" href="{{ object.get_absolute_url }}">Cancel</a>
         </div>
     </form>
 </section>

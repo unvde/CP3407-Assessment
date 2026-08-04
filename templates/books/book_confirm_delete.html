@@ -12,9 +12,8 @@
         {% csrf_token %}
         <div class="actions">
             <button class="danger-button" type="submit">Delete book</button>
-            <a class="text-link" href="{{ book.get_absolute_url }}">Cancel</a>
+            <a class="secondary-button" href="{{ book.get_absolute_url }}">Cancel</a>
         </div>
     </form>
 </section>
 {% endblock %}
-

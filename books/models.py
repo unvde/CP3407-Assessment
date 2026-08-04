@@ -1,13 +1,8 @@
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.core.validators import (
-    MaxLengthValidator,
-    MaxValueValidator,
-    MinValueValidator,
-)
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.urls import reverse
-from django.utils import timezone
 from django.utils.text import slugify
 
 
@@ -120,24 +115,6 @@ class Book(models.Model):
         choices=ReadingStatus.choices,
         default=ReadingStatus.WANT_TO_READ,
     )
-    total_pages = models.PositiveIntegerField(
-        null=True,
-        blank=True,
-        validators=[MinValueValidator(1)],
-    )
-    current_page = models.PositiveIntegerField(default=0, blank=True)
-    target_date = models.DateField(null=True, blank=True)
-    rating = models.PositiveSmallIntegerField(
-        null=True,
-        blank=True,
-        validators=[MinValueValidator(1), MaxValueValidator(5)],
-    )
-    completion_date = models.DateField(null=True, blank=True)
-    reflection = models.TextField(
-        blank=True,
-        max_length=1000,
-        validators=[MaxLengthValidator(1000)],
-    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -157,41 +134,80 @@ class Book(models.Model):
     def get_absolute_url(self):
         return reverse("book-detail", kwargs={"pk": self.pk})
 
+
+
+class PublicReview(models.Model):
+    catalog_book = models.ForeignKey(
+        CatalogBook,
+        on_delete=models.CASCADE,
+        related_name="reviews",
+    )
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name="public_book_reviews",
+    )
+    rating = models.PositiveSmallIntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(5)]
+    )
+    content = models.TextField(max_length=3000)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-updated_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["catalog_book", "author"],
+                name="one_public_review_per_book_and_author",
+            )
+        ]
+
+    def __str__(self):
+        return f"Review of {self.catalog_book}"
+
     def clean(self):
         super().clean()
-        self.reflection = self.reflection.strip()
-        if (
-            self.total_pages is not None
-            and self.current_page is not None
-            and self.current_page > self.total_pages
-        ):
-            raise ValidationError(
-                {"current_page": "Current page cannot exceed total pages."}
-            )
-        has_review = any(
-            (
-                self.rating is not None,
-                self.completion_date is not None,
-                bool(self.reflection),
-            )
-        )
-        if has_review and self.status != self.ReadingStatus.COMPLETED:
-            raise ValidationError(
-                {"status": "Only completed books can have a review."}
-            )
-        if (
-            self.completion_date
-            and self.completion_date > timezone.localdate()
-        ):
-            raise ValidationError(
-                {"completion_date": "Completion date cannot be in the future."}
-            )
+        self.content = self.content.strip()
+        if not self.content:
+            raise ValidationError({"content": "Review cannot be blank."})
 
-    @property
-    def progress_percentage(self):
-        if not self.total_pages:
-            return None
-        return round((self.current_page / self.total_pages) * 100)
+    def get_absolute_url(self):
+        return f"{self.catalog_book.get_absolute_url()}#review-{self.pk}"
+
+
+class ReadingList(models.Model):
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="reading_lists",
+    )
+    name = models.CharField(max_length=120)
+    description = models.TextField(blank=True, max_length=500)
+    is_public = models.BooleanField(default=False)
+    books = models.ManyToManyField(
+        CatalogBook,
+        blank=True,
+        related_name="reading_lists",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-updated_at", "name"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["owner", "name"],
+                name="unique_reading_list_name_per_owner",
+            )
+        ]
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse("reading-list-detail", kwargs={"pk": self.pk})
 
 
 class ReadingNote(models.Model):

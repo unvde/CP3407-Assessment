@@ -1,0 +1,3 @@
+{% extends "base.html" %}
+{% block title %}Review {{ catalog_book.title }} | Reading Compass{% endblock %}
+{% block content %}<section class="form-card"><p class="eyebrow">Public review</p><h1>{{ catalog_book.title }}</h1><p>Your rating and review will be visible to everyone.</p><form method="post">{% csrf_token %}{% include "includes/form_fields.html" %}<div class="actions"><button class="primary-button" type="submit">Publish review</button><a class="secondary-button" href="{{ catalog_book.get_absolute_url }}">Cancel</a>{% if object.pk %}<a class="danger-button" href="{% url 'public-review-delete' object.pk %}">Delete review</a>{% endif %}</div></form></section>{% endblock %}

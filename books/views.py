@@ -4,10 +4,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core import signing
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
-from django.db.models import Count, Q, QuerySet
+from django.db.models import Avg, Count, Q, QuerySet
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.generic import (
     CreateView,
     DeleteView,
@@ -21,10 +22,11 @@ from django.views.generic import (
 from .forms import (
     BookForm,
     CategoryForm,
-    CompletionReviewForm,
     ForumForm,
     ForumPostForm,
     ForumReplyForm,
+    PublicReviewForm,
+    ReadingListForm,
     ReadingNoteForm,
     RegistrationForm,
     parse_category_names,
@@ -36,6 +38,8 @@ from .models import (
     Forum,
     ForumPost,
     ForumReply,
+    PublicReview,
+    ReadingList,
     ReadingNote,
 )
 from .services import BookSearchError, load_import_token, search_open_library
@@ -46,6 +50,17 @@ def get_or_create_category(name, user=None, source=Category.Source.USER):
     if category:
         return category
     return Category.objects.create(name=name, created_by=user, source=source)
+
+
+def safe_next_url(request, fallback):
+    candidate = request.POST.get("next", "")
+    if candidate and url_has_allowed_host_and_scheme(
+        candidate,
+        allowed_hosts={request.get_host()},
+        require_https=request.is_secure(),
+    ):
+        return candidate
+    return fallback
 
 
 class RegisterView(CreateView):
@@ -116,13 +131,62 @@ class DashboardView(OwnedBookQuerysetMixin, ListView):
     def get_queryset(self) -> QuerySet:
         return super().get_queryset().filter(
             status=Book.ReadingStatus.CURRENTLY_READING
+        ).select_related("catalog_book")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        shelf = Book.objects.filter(owner=self.request.user).select_related(
+            "catalog_book"
         )
+        owned_catalog_ids = {
+            book.catalog_book_id for book in shelf if book.catalog_book_id
+        }
+        category_weights = {}
+        for category_id in Category.objects.filter(
+            books__shelf_entries__owner=self.request.user
+        ).values_list("id", flat=True).distinct():
+            category_weights[category_id] = category_weights.get(category_id, 0) + 1
+        for review in PublicReview.objects.filter(
+            author=self.request.user, rating__gte=4
+        ).prefetch_related("catalog_book__categories"):
+            for category in review.catalog_book.categories.all():
+                category_weights[category.id] = (
+                    category_weights.get(category.id, 0) + review.rating
+                )
+
+        candidates = CatalogBook.objects.exclude(
+            pk__in=owned_catalog_ids
+        ).prefetch_related("categories").annotate(
+            average_rating=Avg("reviews__rating")
+        )[:100]
+        ranked = []
+        for candidate in candidates:
+            matched = [
+                category
+                for category in candidate.categories.all()
+                if category.id in category_weights
+            ]
+            score = sum(category_weights[category.id] for category in matched)
+            score += float(candidate.average_rating or 0)
+            if score:
+                ranked.append((score, candidate, matched[:2]))
+        ranked.sort(key=lambda item: (-item[0], item[1].title.casefold()))
+        context["recommendations"] = [
+            {"book": book, "matched_categories": matched}
+            for _, book, matched in ranked[:6]
+        ]
+        return context
 
 
 class BookDetailView(OwnedBookQuerysetMixin, DetailView):
     model = Book
     context_object_name = "book"
     template_name = "books/book_detail.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["status_choices"] = Book.ReadingStatus.choices
+        return context
 
 
 class BookCreateView(LoginRequiredMixin, CreateView):
@@ -154,10 +218,11 @@ class BookUpdateView(OwnedBookQuerysetMixin, UpdateView):
     def form_valid(self, form):
         response = super().form_valid(form)
         if self.object.catalog_book_id:
-            for name in form.cleaned_data.get("categories", []):
-                self.object.catalog_book.categories.add(
-                    get_or_create_category(name, self.request.user)
-                )
+            categories = [
+                get_or_create_category(name, self.request.user)
+                for name in form.cleaned_data.get("categories", [])
+            ]
+            self.object.catalog_book.categories.set(categories)
         return response
 
 
@@ -165,6 +230,19 @@ class BookDeleteView(OwnedBookQuerysetMixin, DeleteView):
     model = Book
     template_name = "books/book_confirm_delete.html"
     success_url = reverse_lazy("book-list")
+
+
+class BookStatusUpdateView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        book = get_object_or_404(Book, pk=pk, owner=request.user)
+        status = request.POST.get("status", "")
+        if status not in Book.ReadingStatus.values:
+            messages.error(request, "Choose a valid reading status.")
+            return redirect("book-list")
+        book.status = status
+        book.save(update_fields=["status", "updated_at"])
+        messages.success(request, f'“{book.title}” moved to {book.get_status_display()}.')
+        return redirect(safe_next_url(request, "book-list"))
 
 
 class ReadingNoteCreateView(LoginRequiredMixin, CreateView):
@@ -222,22 +300,6 @@ class ReadingNoteDeleteView(LoginRequiredMixin, DeleteView):
         return self.object.book.get_absolute_url()
 
 
-class CompletionReviewUpdateView(LoginRequiredMixin, UpdateView):
-    model = Book
-    form_class = CompletionReviewForm
-    context_object_name = "book"
-    template_name = "books/review_form.html"
-
-    def get_queryset(self) -> QuerySet:
-        return Book.objects.filter(
-            owner=self.request.user,
-            status=Book.ReadingStatus.COMPLETED,
-        )
-
-    def get_success_url(self):
-        return self.object.get_absolute_url()
-
-
 class CatalogBookListView(ListView):
     model = CatalogBook
     context_object_name = "catalog_books"
@@ -245,7 +307,10 @@ class CatalogBookListView(ListView):
     paginate_by = 24
 
     def get_queryset(self):
-        queryset = CatalogBook.objects.prefetch_related("categories")
+        queryset = CatalogBook.objects.prefetch_related("categories").annotate(
+            average_rating=Avg("reviews__rating"),
+            review_count=Count("reviews", distinct=True),
+        )
         query = self.request.GET.get("q", "").strip()
         category = self.request.GET.get("category", "").strip()
         if query:
@@ -257,7 +322,7 @@ class CatalogBookListView(ListView):
             )
         if category:
             queryset = queryset.filter(categories__slug=category)
-        return queryset.distinct()
+        return queryset.distinct().order_by("title", "author")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -273,7 +338,7 @@ class CatalogBookDetailView(DetailView):
     template_name = "books/catalog_detail.html"
 
     def get_queryset(self):
-        return CatalogBook.objects.prefetch_related("categories")
+        return CatalogBook.objects.prefetch_related("categories", "reviews")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -286,7 +351,152 @@ class CatalogBookDetailView(DetailView):
             context["forum"] = self.object.forum
         except Forum.DoesNotExist:
             context["forum"] = None
+        reviews = self.object.reviews.select_related("author")
+        context["reviews"] = reviews
+        context["review_summary"] = reviews.aggregate(
+            average=Avg("rating"), count=Count("id")
+        )
+        if self.request.user.is_authenticated:
+            context["user_review"] = reviews.filter(
+                author=self.request.user
+            ).first()
+            context["reading_lists"] = ReadingList.objects.filter(
+                owner=self.request.user
+            ).prefetch_related("books")
         return context
+
+
+class PublicReviewUpsertView(LoginRequiredMixin, UpdateView):
+    model = PublicReview
+    form_class = PublicReviewForm
+    template_name = "books/public_review_form.html"
+
+    def get_object(self, queryset=None):
+        catalog_book = get_object_or_404(CatalogBook, pk=self.kwargs["book_pk"])
+        try:
+            return PublicReview.objects.get(
+                catalog_book=catalog_book,
+                author=self.request.user,
+            )
+        except PublicReview.DoesNotExist:
+            return PublicReview(
+                catalog_book=catalog_book,
+                author=self.request.user,
+            )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["catalog_book"] = self.object.catalog_book
+        return context
+
+
+class PublicReviewPermissionMixin(LoginRequiredMixin):
+    model = PublicReview
+
+    def get_queryset(self):
+        queryset = PublicReview.objects.select_related("catalog_book", "author")
+        if self.request.user.is_staff:
+            return queryset
+        return queryset.filter(author=self.request.user)
+
+
+class PublicReviewUpdateView(PublicReviewPermissionMixin, UpdateView):
+    form_class = PublicReviewForm
+    template_name = "books/public_review_form.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["catalog_book"] = self.object.catalog_book
+        return context
+
+
+class PublicReviewDeleteView(PublicReviewPermissionMixin, DeleteView):
+    template_name = "books/public_review_confirm_delete.html"
+
+    def get_success_url(self):
+        return self.object.catalog_book.get_absolute_url()
+
+
+class ReadingListListView(LoginRequiredMixin, ListView):
+    model = ReadingList
+    context_object_name = "reading_lists"
+    template_name = "lists/list_list.html"
+
+    def get_queryset(self):
+        return ReadingList.objects.filter(owner=self.request.user).prefetch_related(
+            "books"
+        )
+
+
+class ReadingListDetailView(DetailView):
+    model = ReadingList
+    context_object_name = "reading_list"
+    template_name = "lists/list_detail.html"
+
+    def get_queryset(self):
+        queryset = ReadingList.objects.select_related("owner").prefetch_related(
+            "books__categories"
+        )
+        if self.request.user.is_authenticated:
+            return queryset.filter(Q(is_public=True) | Q(owner=self.request.user))
+        return queryset.filter(is_public=True)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["can_manage"] = (
+            self.request.user.is_authenticated
+            and self.object.owner_id == self.request.user.id
+        )
+        return context
+
+
+class ReadingListCreateView(LoginRequiredMixin, CreateView):
+    model = ReadingList
+    form_class = ReadingListForm
+    template_name = "lists/list_form.html"
+
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super().form_valid(form)
+
+
+class OwnedReadingListMixin(LoginRequiredMixin):
+    model = ReadingList
+
+    def get_queryset(self):
+        return ReadingList.objects.filter(owner=self.request.user)
+
+
+class ReadingListUpdateView(OwnedReadingListMixin, UpdateView):
+    form_class = ReadingListForm
+    template_name = "lists/list_form.html"
+
+
+class ReadingListDeleteView(OwnedReadingListMixin, DeleteView):
+    template_name = "lists/list_confirm_delete.html"
+    success_url = reverse_lazy("reading-list-list")
+
+
+class ReadingListBookAddView(LoginRequiredMixin, View):
+    def post(self, request, list_pk, book_pk):
+        reading_list = get_object_or_404(
+            ReadingList, pk=list_pk, owner=request.user
+        )
+        catalog_book = get_object_or_404(CatalogBook, pk=book_pk)
+        reading_list.books.add(catalog_book)
+        messages.success(request, f'Added “{catalog_book.title}” to {reading_list.name}.')
+        return redirect(safe_next_url(request, catalog_book.get_absolute_url()))
+
+
+class ReadingListBookRemoveView(LoginRequiredMixin, View):
+    def post(self, request, list_pk, book_pk):
+        reading_list = get_object_or_404(
+            ReadingList, pk=list_pk, owner=request.user
+        )
+        catalog_book = get_object_or_404(CatalogBook, pk=book_pk)
+        reading_list.books.remove(catalog_book)
+        messages.success(request, f'Removed “{catalog_book.title}”.')
+        return redirect(reading_list)
 
 
 class BookSearchView(LoginRequiredMixin, TemplateView):
@@ -565,12 +775,16 @@ class ModerationDashboardView(StaffRequiredMixin, TemplateView):
         context["recent_replies"] = ForumReply.objects.select_related(
             "post__forum", "author"
         )[:20]
+        context["recent_reviews"] = PublicReview.objects.select_related(
+            "catalog_book", "author"
+        )[:20]
         context["categories"] = Category.objects.select_related(
             "created_by"
         ).annotate(book_count=Count("books"))
         context["forum_count"] = Forum.objects.count()
         context["post_count"] = ForumPost.objects.count()
         context["reply_count"] = ForumReply.objects.count()
+        context["review_count"] = PublicReview.objects.count()
         context["category_count"] = Category.objects.count()
         return context
 

@@ -1,149 +1,96 @@
-from datetime import date
-
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
 
-from .models import Book, ReadingNote
+from .models import Book, CatalogBook, PublicReview, ReadingList
 
 
-class IterationThreeSystemTests(TestCase):
+class CommunityDiscoverySystemTests(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(username="reader", password="pass")
-        self.other_user = User.objects.create_user(username="other", password="pass")
-
-    def test_reader_journey_combines_search_notes_and_completion_review(self):
-        self.client.force_login(self.user)
-        create_response = self.client.post(
-            reverse("book-add"),
-            {
-                "title": "Dune",
-                "author": "Frank Herbert",
-                "status": Book.ReadingStatus.WANT_TO_READ,
-                "total_pages": 412,
-                "current_page": 0,
-                "target_date": "",
-            },
-        )
-        book = Book.objects.get(owner=self.user, title="Dune")
-        self.assertRedirects(create_response, book.get_absolute_url())
-
-        search_response = self.client.get(
-            reverse("book-list"),
-            {"q": "dune", "status": Book.ReadingStatus.WANT_TO_READ},
-        )
-        self.assertQuerySetEqual(search_response.context["books"], [book])
-
-        complete_response = self.client.post(
-            reverse("book-edit", args=[book.pk]),
-            {
-                "title": book.title,
-                "author": book.author,
-                "status": Book.ReadingStatus.COMPLETED,
-                "total_pages": 412,
-                "current_page": 412,
-                "target_date": "",
-            },
-        )
-        self.assertRedirects(complete_response, book.get_absolute_url())
-
-        note_response = self.client.post(
-            reverse("note-add", args=[book.pk]),
-            {"content": "A private system-test note."},
-        )
-        self.assertRedirects(note_response, book.get_absolute_url())
-
-        review_response = self.client.post(
-            reverse("book-review", args=[book.pk]),
-            {
-                "rating": 5,
-                "completion_date": date.min.isoformat(),
-                "reflection": "A private system-test review.",
-            },
-        )
-        self.assertRedirects(review_response, book.get_absolute_url())
-
-        detail_response = self.client.get(book.get_absolute_url())
-        self.assertContains(detail_response, "A private system-test note.")
-        self.assertContains(detail_response, "A private system-test review.")
-        self.assertContains(detail_response, "5 / 5")
-
-        completed_response = self.client.get(
-            reverse("book-list"),
-            {"status": Book.ReadingStatus.COMPLETED},
-        )
-        self.assertQuerySetEqual(completed_response.context["books"], [book])
-
-    def test_owner_boundary_protects_combined_iteration_three_features(self):
-        other_book = Book.objects.create(
-            owner=self.other_user,
-            title="Beloved",
-            author="Toni Morrison",
-            status=Book.ReadingStatus.COMPLETED,
-        )
-        other_note = ReadingNote.objects.create(
-            book=other_book,
-            content="Another reader's system-test note.",
-        )
-        self.client.force_login(self.user)
-
-        list_response = self.client.get(reverse("book-list"), {"q": "beloved"})
-        self.assertQuerySetEqual(list_response.context["books"], [])
-        self.assertEqual(
-            self.client.get(other_book.get_absolute_url()).status_code,
-            404,
-        )
-        self.assertEqual(
-            self.client.post(
-                reverse("note-add", args=[other_book.pk]),
-                {"content": "Intrusion"},
-            ).status_code,
-            404,
-        )
-        self.assertEqual(
-            self.client.post(
-                reverse("note-edit", args=[other_note.pk]),
-                {"content": "Changed"},
-            ).status_code,
-            404,
-        )
-        self.assertEqual(
-            self.client.post(reverse("note-delete", args=[other_note.pk])).status_code,
-            404,
-        )
-        self.assertEqual(
-            self.client.post(
-                reverse("book-review", args=[other_book.pk]),
-                {
-                    "rating": 1,
-                    "completion_date": date.min.isoformat(),
-                    "reflection": "Intrusion",
-                },
-            ).status_code,
-            404,
-        )
-
-        other_note.refresh_from_db()
-        other_book.refresh_from_db()
-        self.assertEqual(other_note.content, "Another reader's system-test note.")
-        self.assertIsNone(other_book.rating)
-
-    def test_anonymous_reader_is_redirected_from_iteration_three_writes(self):
-        book = Book.objects.create(
-            owner=self.user,
+        self.reader = User.objects.create_user(username="reader", password="pass")
+        self.other = User.objects.create_user(username="other", password="pass")
+        self.catalog_book = CatalogBook.objects.create(
             title="Dune",
             author="Frank Herbert",
-            status=Book.ReadingStatus.COMPLETED,
+            isbn_13="9780441172719",
         )
-        note = ReadingNote.objects.create(book=book, content="Private note")
-        routes = [
-            reverse("note-add", args=[book.pk]),
-            reverse("note-edit", args=[note.pk]),
-            reverse("note-delete", args=[note.pk]),
-            reverse("book-review", args=[book.pk]),
-        ]
+        self.book = Book.objects.create(
+            owner=self.reader,
+            catalog_book=self.catalog_book,
+            title="Dune",
+            author="Frank Herbert",
+        )
+        self.client.force_login(self.reader)
 
+    def test_reader_journey_updates_status_reviews_and_builds_list(self):
+        self.client.post(
+            reverse("book-status", args=[self.book.pk]),
+            {"status": Book.ReadingStatus.COMPLETED},
+        )
+        self.client.post(
+            reverse("public-review-upsert", args=[self.catalog_book.pk]),
+            {"rating": 5, "content": "A lasting favourite."},
+        )
+        response = self.client.post(
+            reverse("reading-list-create"),
+            {
+                "name": "Favourite science fiction",
+                "description": "Books worth revisiting.",
+                "is_public": True,
+            },
+        )
+        reading_list = ReadingList.objects.get(owner=self.reader)
+        self.client.post(
+            reverse(
+                "reading-list-book-add",
+                args=[reading_list.pk, self.catalog_book.pk],
+            )
+        )
+
+        self.book.refresh_from_db()
+        self.assertEqual(self.book.status, Book.ReadingStatus.COMPLETED)
+        self.assertTrue(
+            PublicReview.objects.filter(
+                author=self.reader, catalog_book=self.catalog_book, rating=5
+            ).exists()
+        )
+        self.assertTrue(reading_list.books.filter(pk=self.catalog_book.pk).exists())
+        self.assertRedirects(response, reading_list.get_absolute_url())
+
+    def test_reader_cannot_change_another_readers_status_or_private_list(self):
+        other_book = Book.objects.create(
+            owner=self.other,
+            catalog_book=self.catalog_book,
+            title="Dune",
+            author="Frank Herbert",
+        )
+        private_list = ReadingList.objects.create(
+            owner=self.other,
+            name="Private",
+        )
+
+        self.assertEqual(
+            self.client.post(
+                reverse("book-status", args=[other_book.pk]),
+                {"status": Book.ReadingStatus.COMPLETED},
+            ).status_code,
+            404,
+        )
+        self.assertEqual(
+            self.client.get(private_list.get_absolute_url()).status_code,
+            404,
+        )
+
+    def test_anonymous_reader_is_redirected_from_new_write_actions(self):
+        self.client.logout()
+        routes = [
+            reverse("public-review-upsert", args=[self.catalog_book.pk]),
+            reverse("reading-list-create"),
+            reverse("book-status", args=[self.book.pk]),
+        ]
         for route in routes:
             with self.subTest(route=route):
-                response = self.client.get(route)
-                self.assertRedirects(response, f"{reverse('login')}?next={route}")
+                self.assertRedirects(
+                    self.client.get(route),
+                    f"{reverse('login')}?next={route}",
+                )

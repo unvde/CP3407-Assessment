@@ -1,0 +1,84 @@
+from django.contrib.auth.models import User
+from django.test import TestCase
+from django.urls import reverse
+
+from .models import Book, CatalogBook, Category, PublicReview, ReadingList
+
+
+class ReadingListTests(TestCase):
+    def setUp(self):
+        self.owner = User.objects.create_user(username="owner", password="pass")
+        self.other = User.objects.create_user(username="other", password="pass")
+        self.book = CatalogBook.objects.create(title="Dune", author="Frank Herbert")
+        self.public_list = ReadingList.objects.create(
+            owner=self.owner,
+            name="Favourite science fiction",
+            is_public=True,
+        )
+        self.private_list = ReadingList.objects.create(
+            owner=self.owner,
+            name="Private ideas",
+            is_public=False,
+        )
+
+    def test_owner_can_create_list_and_add_and_remove_book(self):
+        self.client.force_login(self.owner)
+        response = self.client.post(
+            reverse("reading-list-book-add", args=[self.public_list.pk, self.book.pk])
+        )
+        self.assertRedirects(response, self.book.get_absolute_url())
+        self.assertTrue(self.public_list.books.filter(pk=self.book.pk).exists())
+
+        response = self.client.post(
+            reverse("reading-list-book-remove", args=[self.public_list.pk, self.book.pk])
+        )
+        self.assertRedirects(response, self.public_list.get_absolute_url())
+        self.assertFalse(self.public_list.books.filter(pk=self.book.pk).exists())
+
+    def test_other_reader_cannot_modify_list(self):
+        self.client.force_login(self.other)
+        response = self.client.post(
+            reverse("reading-list-book-add", args=[self.public_list.pk, self.book.pk])
+        )
+        self.assertEqual(response.status_code, 404)
+
+    def test_public_list_is_visible_but_private_list_is_not(self):
+        self.assertEqual(self.client.get(self.public_list.get_absolute_url()).status_code, 200)
+        self.assertEqual(self.client.get(self.private_list.get_absolute_url()).status_code, 404)
+
+        self.client.force_login(self.owner)
+        self.assertEqual(self.client.get(self.private_list.get_absolute_url()).status_code, 200)
+
+
+class RecommendationTests(TestCase):
+    def setUp(self):
+        self.reader = User.objects.create_user(username="reader", password="pass")
+        science_fiction = Category.objects.create(name="Science fiction")
+        owned_catalog = CatalogBook.objects.create(title="Dune", author="Frank Herbert")
+        owned_catalog.categories.add(science_fiction)
+        self.recommended = CatalogBook.objects.create(
+            title="The Left Hand of Darkness",
+            author="Ursula K. Le Guin",
+        )
+        self.recommended.categories.add(science_fiction)
+        self.unrelated = CatalogBook.objects.create(title="Emma", author="Jane Austen")
+        Book.objects.create(
+            owner=self.reader,
+            catalog_book=owned_catalog,
+            title=owned_catalog.title,
+            author=owned_catalog.author,
+        )
+        PublicReview.objects.create(
+            catalog_book=owned_catalog,
+            author=self.reader,
+            rating=5,
+            content="A favourite.",
+        )
+
+    def test_dashboard_recommends_matching_categories_not_owned_books(self):
+        self.client.force_login(self.reader)
+        response = self.client.get(reverse("dashboard"))
+
+        self.assertContains(response, self.recommended.title)
+        self.assertNotContains(response, self.unrelated.title)
+        self.assertContains(response, "Because you like Science fiction")

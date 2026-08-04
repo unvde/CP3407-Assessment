@@ -2,16 +2,16 @@
 
 ## Reading Compass
 
-Reading Compass is a web-based reading planning and reflection platform. It helps readers organise books they intend to read, set achievable reading plans, record progress, and reflect on completed books.
+Reading Compass is a community book-discovery platform. It helps readers import books, organise personal collections, share reviews and discuss books with other readers.
 
 The project will be developed iteratively as part of the CP3407 Advanced Software Engineering assessment.
 
 ## Project Objectives
 
 - Help users organise books they want to read.
-- Allow users to create manageable reading plans.
-- Provide a simple way to record reading progress.
-- Encourage reflection through reading notes and completion reviews.
+- Help users discover books through categories, reviews and recommendations.
+- Let users organise books with simple reading statuses and custom lists.
+- Encourage reflection through private notes and public reviews.
 - Apply agile software engineering practices throughout development.
 - Deliver a usable and tested web application over multiple iterations.
 
@@ -24,18 +24,18 @@ Reading Compass is intended for students and casual readers who want a straightf
 - User registration and authentication
 - Personal reading list
 - Reading status management
-- Reading plan creation
-- Progress updates
 - Reading notes
-- Completion reviews
-- Personal reading dashboard
+- Public ratings and reviews
+- Personalised recommendations
+- Public and private custom book lists
+- Discovery dashboard
 - Search and filtering
 - Open Library title, author and ISBN search with one-click import
 - Shared book catalogue with covers, publication metadata and categories
 - User-created free-text categories when API metadata is incomplete
 - One public discussion forum per book with posts and threaded replies
 - Forum-owner editing and administrator moderation controls
-- A dedicated moderation dashboard for forums, posts and categories
+- A dedicated moderation dashboard for forums, posts, replies, reviews and categories
 
 These ideas have been reviewed through target-user interviews and converted into a formal requirements backlog.
 

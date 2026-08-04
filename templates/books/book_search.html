@@ -21,7 +21,7 @@
 </form>
 
 {% if search_error %}
-    <section class="empty-state"><h2>Search unavailable</h2><p>{{ search_error }}</p><a class="text-link" href="{% url 'book-add' %}">Add this book manually</a></section>
+    <section class="empty-state"><h2>Search unavailable</h2><p>{{ search_error }}</p><a class="primary-button" href="{% url 'book-add' %}">Add this book manually</a></section>
 {% elif search_query and not results %}
     <section class="empty-state"><h2>No matching books found</h2><p>Try a shorter title, an author name, or the ISBN without spaces.</p><a class="primary-button" href="{% url 'book-add' %}">Add manually</a></section>
 {% endif %}

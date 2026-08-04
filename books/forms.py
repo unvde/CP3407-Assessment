@@ -1,9 +1,16 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from django.utils import timezone
-
-from .models import Book, Category, Forum, ForumPost, ForumReply, ReadingNote
+from .models import (
+    Book,
+    Category,
+    Forum,
+    ForumPost,
+    ForumReply,
+    PublicReview,
+    ReadingList,
+    ReadingNote,
+)
 
 
 def parse_category_names(value):
@@ -46,30 +53,10 @@ class BookForm(forms.ModelForm):
         fields = (
             "title",
             "author",
-            "status",
-            "total_pages",
-            "current_page",
-            "target_date",
             "categories",
         )
-        help_texts = {
-            "status": (
-                "Want to Read: saved for future reading; "
-                "Currently Reading: actively being read; "
-                "Paused: temporarily stopped; "
-                "Completed: finished."
-            ),
-            "current_page": (
-                "Enter 0 if you have not started. Progress cannot exceed the "
-                "total page count when one is recorded."
-            ),
-            "target_date": "Optional. Choose today or a future date.",
-        }
         widgets = {
             "title": forms.TextInput(attrs={"autofocus": True}),
-            "total_pages": forms.NumberInput(attrs={"min": 1}),
-            "current_page": forms.NumberInput(attrs={"min": 0}),
-            "target_date": forms.DateInput(attrs={"type": "date"}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -85,28 +72,49 @@ class BookForm(forms.ModelForm):
     def clean_author(self):
         return self.cleaned_data["author"].strip()
 
-    def clean_current_page(self):
-        return self.cleaned_data.get("current_page") or 0
-
-    def clean_target_date(self):
-        target_date = self.cleaned_data.get("target_date")
-        original_target = (
-            Book.objects.filter(pk=self.instance.pk)
-            .values_list("target_date", flat=True)
-            .first()
-            if self.instance.pk
-            else None
-        )
-        if (
-            target_date
-            and target_date < timezone.localdate()
-            and target_date != original_target
-        ):
-            raise forms.ValidationError("Target date cannot be in the past.")
-        return target_date
-
     def clean_categories(self):
         return parse_category_names(self.cleaned_data.get("categories", ""))
+
+
+class PublicReviewForm(forms.ModelForm):
+    class Meta:
+        model = PublicReview
+        fields = ("rating", "content")
+        labels = {"content": "Your review"}
+        widgets = {
+            "rating": forms.RadioSelect(
+                choices=[
+                    (value, f"{value} star{'s' if value != 1 else ''}")
+                    for value in range(1, 6)
+                ]
+            ),
+            "content": forms.Textarea(
+                attrs={
+                    "rows": 8,
+                    "placeholder": "What should other readers know about this book?",
+                }
+            ),
+        }
+
+    def clean_content(self):
+        content = self.cleaned_data["content"].strip()
+        if not content:
+            raise forms.ValidationError("Review cannot be blank.")
+        return content
+
+
+class ReadingListForm(forms.ModelForm):
+    class Meta:
+        model = ReadingList
+        fields = ("name", "description", "is_public")
+        labels = {"is_public": "Make this list public"}
+        widgets = {"description": forms.Textarea(attrs={"rows": 5})}
+
+    def clean_name(self):
+        return self.cleaned_data["name"].strip()
+
+    def clean_description(self):
+        return self.cleaned_data["description"].strip()
 
 
 class ForumForm(forms.ModelForm):
@@ -190,35 +198,3 @@ class ReadingNoteForm(forms.ModelForm):
         if not content:
             raise forms.ValidationError("Note content cannot be blank.")
         return content
-
-
-class CompletionReviewForm(forms.ModelForm):
-    rating = forms.IntegerField(
-        min_value=1,
-        max_value=5,
-        widget=forms.NumberInput(attrs={"min": 1, "max": 5, "autofocus": True}),
-        help_text="Choose a rating from 1 to 5.",
-    )
-    completion_date = forms.DateField(
-        widget=forms.DateInput(attrs={"type": "date"}),
-    )
-    reflection = forms.CharField(
-        max_length=1000,
-        widget=forms.Textarea(attrs={"rows": 8}),
-        help_text="Up to 1000 characters.",
-    )
-
-    class Meta:
-        model = Book
-        fields = ("rating", "completion_date", "reflection")
-
-    def clean_completion_date(self):
-        completion_date = self.cleaned_data["completion_date"]
-        if completion_date > timezone.localdate():
-            raise forms.ValidationError(
-                "Completion date cannot be in the future."
-            )
-        return completion_date
-
-    def clean_reflection(self):
-        return self.cleaned_data["reflection"].strip()

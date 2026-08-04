@@ -7,6 +7,8 @@ from .models import (
     Forum,
     ForumPost,
     ForumReply,
+    PublicReview,
+    ReadingList,
     ReadingNote,
 )
 
@@ -32,7 +34,6 @@ class BookAdmin(admin.ModelAdmin):
         "author",
         "owner",
         "status",
-        "rating",
         "updated_at",
     )
     list_filter = ("status",)
@@ -65,3 +66,19 @@ class ForumReplyAdmin(admin.ModelAdmin):
     list_display = ("post", "author", "updated_at")
     search_fields = ("content", "author__username", "post__title")
     list_select_related = ("post", "author")
+
+
+@admin.register(PublicReview)
+class PublicReviewAdmin(admin.ModelAdmin):
+    list_display = ("catalog_book", "rating", "author", "updated_at")
+    list_filter = ("rating",)
+    search_fields = ("catalog_book__title", "author__username", "content")
+    list_select_related = ("catalog_book", "author")
+
+
+@admin.register(ReadingList)
+class ReadingListAdmin(admin.ModelAdmin):
+    list_display = ("name", "owner", "is_public", "updated_at")
+    list_filter = ("is_public",)
+    search_fields = ("name", "description", "owner__username")
+    filter_horizontal = ("books",)

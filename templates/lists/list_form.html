@@ -1,0 +1,3 @@
+{% extends "base.html" %}
+{% block title %}{% if object %}Edit{% else %}Create{% endif %} list | Reading Compass{% endblock %}
+{% block content %}<section class="form-card"><p class="eyebrow">Custom book list</p><h1>{% if object %}Edit list{% else %}Create a list{% endif %}</h1><form method="post">{% csrf_token %}{% include "includes/form_fields.html" %}<div class="actions"><button class="primary-button" type="submit">Save list</button><a class="secondary-button" href="{% if object %}{{ object.get_absolute_url }}{% else %}{% url 'reading-list-list' %}{% endif %}">Cancel</a></div></form></section>{% endblock %}

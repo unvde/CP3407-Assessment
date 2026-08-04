@@ -1,0 +1,3 @@
+{% extends "base.html" %}
+{% block title %}Delete list | Reading Compass{% endblock %}
+{% block content %}<section class="form-card"><p class="eyebrow">Custom book list</p><h1>Delete “{{ object.name }}”?</h1><p>The books themselves remain in the catalogue and in My books.</p><form method="post">{% csrf_token %}<div class="actions"><button class="danger-button" type="submit">Delete list</button><a class="secondary-button" href="{{ object.get_absolute_url }}">Cancel</a></div></form></section>{% endblock %}

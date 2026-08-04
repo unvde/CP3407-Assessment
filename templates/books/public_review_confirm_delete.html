@@ -1,0 +1,3 @@
+{% extends "base.html" %}
+{% block title %}Delete review | Reading Compass{% endblock %}
+{% block content %}<section class="form-card"><p class="eyebrow">Public review</p><h1>Delete your review?</h1><p>This removes the rating and written review from the public book page.</p><form method="post">{% csrf_token %}<div class="actions"><button class="danger-button" type="submit">Delete review</button><a class="secondary-button" href="{{ object.get_absolute_url }}">Cancel</a></div></form></section>{% endblock %}

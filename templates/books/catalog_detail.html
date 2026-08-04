@@ -15,6 +15,7 @@
         </dl>
         <div class="actions">
             {% if user.is_authenticated %}{% if shelf_book %}<a class="primary-button" href="{{ shelf_book.get_absolute_url }}">Open my reading entry</a>{% else %}<form method="post" action="{% url 'catalog-book-add' catalog_book.pk %}">{% csrf_token %}<button class="primary-button" type="submit">Add to my books</button></form>{% endif %}{% else %}<a class="primary-button" href="{% url 'login' %}?next={{ request.path }}">Log in to add this book</a>{% endif %}
+            {% if user.is_authenticated %}<a class="secondary-button" href="{% url 'public-review-upsert' catalog_book.pk %}">{% if user_review %}Edit my review{% else %}Rate & review{% endif %}</a>{% endif %}
         </div>
     </div>
 </article>
@@ -22,6 +23,18 @@
 {% if user.is_authenticated %}
 <section class="inline-panel"><h2>Add categories</h2><p>Use short, useful labels separated by commas.</p><form method="post" action="{% url 'catalog-category-add' catalog_book.pk %}" class="search-row">{% csrf_token %}<input name="categories" maxlength="500" placeholder="Fantasy, Found family" required><button class="secondary-button" type="submit">Add</button></form></section>
 {% endif %}
+
+{% if user.is_authenticated %}
+<section class="inline-panel">
+    <div class="section-heading"><div><p class="eyebrow">Save and organise</p><h2>Add to a custom list</h2></div><a class="secondary-button button-small" href="{% url 'reading-list-create' %}">Create list</a></div>
+    {% if reading_lists %}<div class="list-choice-grid">{% for reading_list in reading_lists %}<form method="post" action="{% url 'reading-list-book-add' reading_list.pk catalog_book.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.path }}"><button class="list-choice-button{% if catalog_book in reading_list.books.all %} is-selected{% endif %}" type="submit">{% if catalog_book in reading_list.books.all %}✓ {% endif %}{{ reading_list.name }}</button></form>{% endfor %}</div>{% else %}<p>You have no custom lists yet.</p>{% endif %}
+</section>
+{% endif %}
+
+<section class="reviews-section" id="reviews">
+    <div class="section-heading"><div><p class="eyebrow">Reader opinions</p><h2>Ratings & reviews</h2><p>{% if review_summary.count %}<strong>{{ review_summary.average|floatformat:1 }} / 5</strong> from {{ review_summary.count }} reader{{ review_summary.count|pluralize }}{% else %}No ratings yet.{% endif %}</p></div>{% if user.is_authenticated %}<a class="primary-button" href="{% url 'public-review-upsert' catalog_book.pk %}">{% if user_review %}Edit my review{% else %}Write the first review{% endif %}</a>{% endif %}</div>
+    {% if reviews %}<div class="review-grid">{% for review in reviews %}<article class="review-card" id="review-{{ review.pk }}"><div class="review-heading"><div><span class="rating-stars" aria-label="{{ review.rating }} out of 5 stars">{% for number in "12345" %}{% if forloop.counter <= review.rating %}★{% else %}☆{% endif %}{% endfor %}</span><p class="post-meta">{{ review.author.username|default:"Deleted user" }} · {{ review.updated_at|date:"j M Y" }}</p></div>{% if user == review.author or user.is_staff %}<div class="note-actions"><a class="secondary-button button-small" href="{% url 'public-review-edit' review.pk %}">Edit</a><a class="danger-button button-small" href="{% url 'public-review-delete' review.pk %}">Delete</a></div>{% endif %}</div><div>{{ review.content|linebreaks }}</div></article>{% endfor %}</div>{% else %}<div class="empty-state"><p>Be the first reader to share an opinion.</p></div>{% endif %}
+</section>
 
 <section class="forum-callout">
     <div><p class="eyebrow">Reader discussion</p><h2>{% if forum %}Join the conversation{% else %}Start this book's forum{% endif %}</h2><p>{% if forum %}Read posts and share your take with other readers.{% else %}No one has created a discussion space for this book yet.{% endif %}</p></div>
