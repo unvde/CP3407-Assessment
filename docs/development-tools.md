@@ -39,8 +39,9 @@ browser from silently changing imported catalogue metadata.
 - `render.yaml` records the web service, PostgreSQL service, health route,
   start command and production environment settings.
 - GitHub Actions runs tests and deployment checks for repository changes.
-- MkDocs builds this evidence site, and GitHub Pages publishes it from a
-  separate documentation workflow using `docs-requirements.txt`.
+- GitHub Pages renders the repository README and Markdown documentation directly,
+  keeping the public project site aligned with `main` without a second
+  documentation build pipeline.
 
 ## Development checks
 
@@ -50,8 +51,8 @@ The normal local verification commands are:
 python manage.py check
 python manage.py makemigrations --check --dry-run
 python manage.py test
-mkdocs build --strict
 ```
 
 These commands detect invalid Django configuration, model/migration drift,
-behaviour regressions and broken documentation navigation before delivery.
+and behaviour regressions before delivery. Markdown documentation links are checked
+against the published GitHub Pages paths after updates to `main`.

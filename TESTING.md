@@ -1,20 +1,18 @@
 # Testing Reading Compass
 
-Testing is part of the implementation rather than a separate demonstration.
-The repository contains automated model, form, service, view, permission,
-acceptance and integrated-system tests. They run against an isolated Django
-test database and do not depend on the production database.
+The test code is kept beside the Django application it verifies. The links
+below open each test file directly.
 
 ## Test source code
 
 | Test file | Tests | Main responsibility |
 | --- | ---: | --- |
-| [`books/tests.py`](https://github.com/unvde/CP3407-Assessment/blob/main/books/tests.py) | 33 | Registration, authentication, shelf models, forms, ownership, status changes, dashboard, search and filters |
-| [`books/test_community.py`](https://github.com/unvde/CP3407-Assessment/blob/main/books/test_community.py) | 27 | Open Library services, signed imports, forums, replies, category maintenance and moderation |
-| [`books/test_discovery.py`](https://github.com/unvde/CP3407-Assessment/blob/main/books/test_discovery.py) | 11 | Reading lists, public profiles, recommendations, trait browsing, fallback and demo data |
-| [`books/test_notes.py`](https://github.com/unvde/CP3407-Assessment/blob/main/books/test_notes.py) | 13 | Reading-note validation, lifecycle, ownership and anonymous access |
-| [`books/test_reviews.py`](https://github.com/unvde/CP3407-Assessment/blob/main/books/test_reviews.py) | 6 | Rating constraints, review uniqueness, public visibility and permissions |
-| [`books/test_system.py`](https://github.com/unvde/CP3407-Assessment/blob/main/books/test_system.py) | 3 | Integrated reader journeys, privacy boundaries and anonymous write protection |
+| [`books/tests.py`](books/tests.py) | 33 | Registration, authentication, shelf models, forms, ownership, status changes, dashboard, search and filters |
+| [`books/test_community.py`](books/test_community.py) | 27 | Open Library services, signed imports, forums, replies, category maintenance and moderation |
+| [`books/test_discovery.py`](books/test_discovery.py) | 11 | Reading lists, public profiles, recommendations, trait browsing, fallback and demo data |
+| [`books/test_notes.py`](books/test_notes.py) | 13 | Reading-note validation, lifecycle, ownership and anonymous access |
+| [`books/test_reviews.py`](books/test_reviews.py) | 6 | Rating constraints, review uniqueness, public visibility and permissions |
+| [`books/test_system.py`](books/test_system.py) | 3 | Integrated reader journeys, privacy boundaries and anonymous write protection |
 | **Complete suite** | **93** | All delivered components and workflows |
 
 ## Test levels
@@ -57,7 +55,7 @@ Open Library is the only live external data dependency. Automated tests patch
 the symbol used by the production service or view and return realistic JSON or
 normalised results. This keeps parsing and application behaviour real while
 removing network timing from the suite. The detailed rationale is documented
-in [Mock Object Research](week8/mock-object-research.md).
+in [Mock Object Research](docs/week8/mock-object-research.md).
 
 ## Running the tests
 
@@ -89,12 +87,10 @@ python manage.py check --deploy
 ## Continuous integration
 
 The [Django tests workflow](https://github.com/unvde/CP3407-Assessment/actions/workflows/tests.yml)
-runs on pushes and Pull Requests. It installs pinned-range project dependencies,
-checks for missing migrations, executes the complete Django suite and validates
-production deployment settings. A failing step prevents the workflow from
-reporting success.
+runs on every push. It installs project dependencies, checks for missing
+migrations, executes the complete Django suite and validates production
+deployment settings.
 
 The current `main` suite completes all 93 tests with no Django system-check or
-migration-drift errors. Earlier planning, selected test cases and TDD
-specifications remain available in the weekly course record; this page is the
-current testing summary used for assessment.
+migration-drift errors. Earlier test plans, selected cases and TDD
+specifications remain in the weekly course record.

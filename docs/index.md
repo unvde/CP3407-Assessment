@@ -17,7 +17,7 @@ implementation, testing and delivery evidence.
 
 - [Feature traceability](traceability.md) links each delivered capability to
   implementation, automated tests and completion evidence.
-- [Testing evidence](testing.md) explains the test code, data, test levels,
+- [Testing](../TESTING.md) explains the test code, data, test levels,
   acceptance coverage, CI checks and current result.
 - [Architecture](design/architecture.md), [database design](design/database-design.md)
   and [interface design](design/interface-design.md) describe the current

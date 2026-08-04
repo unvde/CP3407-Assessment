@@ -155,7 +155,7 @@ recommendation dismissals.
 flowchart LR
     Commit["Repository change"] --> CI["GitHub Actions"]
     CI --> Tests["Django tests and system checks"]
-    CI --> Docs["MkDocs build"]
+    Commit --> Docs["GitHub Pages documentation"]
     Tests --> Build["Render build"]
     Build --> Install["Install dependencies"]
     Install --> Collect["Collect static files"]
