@@ -47,3 +47,18 @@ insertion. Therefore a separate Iteration 3 GitHub Project was not created in
 this checkpoint. This document is the initial board of record; every item is
 Project-ready and can be added without changing its scope, owner or workflow
 label when Projects access is available.
+
+## Final Snapshot — Week 9 Day 6
+
+All committed Story and Task Issues are closed with the `done` label.
+
+| Status | Stories | Story tasks | Total committed items |
+|:---:|---:|---:|---:|
+| todo | 0 | 0 | 0 |
+| in-progress | 0 | 0 | 0 |
+| done | 3 | 13 | 16 |
+
+Story 07 Issues #32 and #35–#38, Story 08 Issues #33 and #39–#43, and Story 09
+Issues #34 and #44–#47 are complete. Close-out Issue #50 separately records
+system testing and final acceptance outside the 7 development-day story
+capacity. Story 10 remains in the product backlog and was not started.

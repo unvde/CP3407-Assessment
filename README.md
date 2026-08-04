@@ -137,6 +137,7 @@ Responsibilities:
 
 - [Story 08 Private Reading Notes](docs/week9/story-08-private-notes.md)
 - [Story 09 Completion Review](docs/week9/story-09-completion-review.md)
+- [Iteration 3 Final Acceptance](docs/week9/iteration-3-final-acceptance.md)
 
 Additional weekly documentation covering design, iterations, testing and development tools will be added as the project progresses.
 
@@ -146,7 +147,8 @@ Additional weekly documentation covering design, iterations, testing and develop
 Stories 04–06 with an actual velocity of 7 development-days. Iteration 3 Story
 07 search and filtering, Story 08 private reading notes and Story 09 completion
 review are complete. Story 10 remains in the product backlog outside the
-selected Iteration 3 capacity.
+selected Iteration 3 capacity. Iteration 3 has passed final system testing and
+is ready for pull-request review.
 
 ## Local Development
 
