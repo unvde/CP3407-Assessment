@@ -1,13 +1,9 @@
-# Completed Iteration 2 User Stories
+# Iteration 2 — Completed User Stories
 
-Iteration 2 delivered the three stories selected for the adjusted seven-day
-capacity. Each page links the acceptance criteria to implementation and test
-evidence.
+Iteration 2 extended the private reading foundation into public discovery and intentional sharing.
 
-- [Story 04 — Reading Progress Updates](story-04-reading-progress.md)
-- [Story 05 — Reading Dashboard](story-05-reading-dashboard.md)
-- [Story 06 — Reading Plans](story-06-reading-plans.md)
+1. [Story 04 — Category and Trait Discovery](story-04-category-discovery.md)
+2. [Story 05 — Public Ratings and Reviews](story-05-public-reviews.md)
+3. [Story 06 — Custom Lists and Public Profiles](story-06-lists-profiles.md)
 
-All three stories reached `done` at the Week 7 Day 6 acceptance checkpoint.
-Search, notes, completion reviews and duplicate warnings remain outside
-Iteration 2.
+All three Stories are complete. Their estimates total seven development-days, matching the demonstrated iteration capacity.

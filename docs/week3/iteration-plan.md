@@ -1,74 +1,42 @@
-# Iteration Plan
+# Three-Iteration Plan
 
-## 1. Milestone Overview
+## Capacity
 
-The Reading Compass requirements backlog contains ten user stories with a combined estimated effort of 23 development days.
+The milestone uses three iterations with a seven-development-day planning capacity in each iteration. Story order is driven by dependency and risk rather than by page count.
 
-The stories are divided into three iterations according to priority, effort and technical dependencies.
+## Iteration 1 — Secure reading foundation
 
-## 2. Iteration 1 — Core Reading Management
+| Story | Estimate | Dependency rationale |
+| --- | ---: | --- |
+| #1 Secure Account Access | 2 days | Identity and permission boundaries protect every private workflow. |
+| #2 Shared Catalogue Search and Import | 3 days | A canonical catalogue prevents duplicate metadata before community features are added. |
+| #3 Personal Shelf and Reading Statuses | 2 days | The private shelf links a reader to the shared catalogue. |
+| **Total** | **7 days** | |
 
-**Iteration Goal:** Deliver a secure minimum reading-list workflow in which users can access an account, manage personal book records and assign reading statuses.
+Increment: a reader can create an account, find or import a book, add it to a private shelf and manage its status without exposing personal data.
 
-| No. | User Story | Priority | Estimate |
-| --- | --- | --- | --- |
-| 01 | User Account Access | 10 | 2 days |
-| 02 | Personal Reading List | 10 | 3 days |
-| 03 | Reading Status Management | 10 | 2 days |
-| **Total** |  |  | **7 days** |
+## Iteration 2 — Discovery and curation
 
-### Expected Outcome
+| Story | Estimate | Dependency rationale |
+| --- | ---: | --- |
+| #4 Category and Trait Discovery | 3 days | Builds on the shared catalogue and adds local/API discovery. |
+| #5 Public Ratings and Reviews | 2 days | Adds controlled public contributions to catalogue books. |
+| #6 Custom Lists and Public Profiles | 2 days | Reuses catalogue books and reviews while enforcing explicit privacy. |
+| **Total** | **7 days** | |
 
-At the end of Iteration 1, a user should be able to:
+Increment: readers can discover books by traits, publish opinions and curate public or private collections.
 
-- Register an account
-- Sign in and sign out
-- View a private reading list
-- Add, view, edit and delete personal book records
-- Assign a reading status to each book
-- Access only their own reading information
+## Iteration 3 — Community and delivery
 
-## 3. Iteration 2 — Reading Plans and Progress
+| Story | Estimate | Dependency rationale |
+| --- | ---: | --- |
+| #7 Forums and Threaded Replies | 3 days | Adds the most complex author/staff permission matrix. |
+| #8 Personalised Recommendations | 2 days | Uses accumulated shelf and category information. |
+| #9 Moderation and Production Delivery | 2 days | Completes staff controls, deployment and system acceptance. |
+| **Total** | **7 days** | |
 
-**Iteration Goal:** Allow users to plan their reading, record progress and view an activity summary.
+Increment: readers can hold contextual discussions and receive recommendations; staff can moderate public content; the application is deployed and acceptance-tested.
 
-| No. | User Story | Priority | Estimate |
-| --- | --- | --- | --- |
-| 04 | Reading Progress Updates | 10 | 3 days |
-| 05 | Reading Dashboard | 20 | 2 days |
-| 06 | Reading Plans | 20 | 2 days |
-| **Total** |  |  | **7 days** |
+## Definition of Done
 
-Reading Progress Updates has priority 10 but depends on the account and book-management functionality delivered in Iteration 1.
-
-Week 6 adjusted the original 8-day plan to the demonstrated Iteration 1
-velocity of 7 estimated development-days. The first dashboard release is
-restricted to active books, progress and optional targets. See the
-[Practical 6 Report](../week6/practical-report.md).
-
-## 4. Iteration 3 — Reading Support Features
-
-**Iteration Goal:** Improve the usefulness and organisation of the reading experience.
-
-| No. | User Story | Priority | Estimate |
-| --- | --- | --- | --- |
-| 07 | Search and Filtering | 30 | 2 days |
-| 08 | Private Reading Notes | 30 | 3 days |
-| 09 | Completion Review | 40 | 2 days |
-| 10 | Duplicate Book Warning | 50 | 1 day |
-| **Total** |  |  | **8 days** |
-
-## 5. Milestone Summary
-
-| Iteration | Goal | Estimated Effort |
-| --- | --- | --- |
-| 1 | Core reading management | 7 days |
-| 2 | Reading plans and progress | 7 days |
-| 3 | Reading support features | 8 days |
-| **Total** |  | **22 days** |
-
-## 6. Planning Rationale
-
-The implementation order prioritises the minimum usable product while respecting technical dependencies.
-
-Account and book-management functionality must exist before progress, planning, dashboard, note and review features can be implemented. Lower-priority enhancements are therefore scheduled after the core workflow becomes stable.
+A Story is Done only when its acceptance criteria pass, owner/staff boundaries are tested, the complete regression suite remains green, documentation links to real code and tests, and its canonical Issue records the result.

@@ -1,25 +1,14 @@
 # Iteration 3 Burndown
 
-The baseline begins at Week 8 Day 1 with 7 development-days. Accepted effort
-is removed from the actual line only when a complete story meets the Definition
-of Done; partial task progress remains visible in GitHub without presenting
-unaccepted work as velocity.
+| Course point | Ideal remaining | Actual remaining | Acceptance checkpoint |
+| --- | ---: | ---: | --- |
+| Start | 7 | 7 | Stories #7–#9 Todo |
+| Day 1 | 6 | 6 | forum model and public-read rules active |
+| Day 2 | 5 | 5 | post/reply author permissions active |
+| Day 3 | 4 | 4 | forum moderation acceptance active |
+| Day 4 | 3 | 3 | Story #7 accepted |
+| Day 5 | 2 | 2 | Story #8 accepted |
+| Day 6 | 1 | 1 | moderation/deployment checks active |
+| Day 7 | 0 | 0 | Story #9 and system acceptance complete |
 
-| Course Point | Ideal Remaining | Actual Remaining |
-|---|---:|---:|
-| Week 8 Day 1 | 7.00 | 7.00 |
-| Week 8 Day 2 | 7.00 | 7.00 |
-| Week 8 Day 3 | 7.00 | 7.00 |
-| Week 8 Day 4 | 7.00 | 7.00 |
-| Week 8 Day 5 | 5.00 | 5.00 |
-| Week 9 Day 1 | 4.00 | 5.00 |
-| Week 9 Day 2 | 3.25 | 5.00 |
-| Week 9 Day 3 | 2.00 | 2.00 |
-| Week 9 Day 4 | 1.00 | 2.00 |
-| Week 9 Day 5 | 0.00 | 0.00 |
-| Week 9 Day 6 | 0.00 | 0.00 |
-
-Story 07 removed 2 accepted days at Week 8 Day 5. Story 08 removed 3 accepted
-days at Week 9 Day 3, and Story 09 removed the final 2 accepted days at Week 9
-Day 5. Week 9 Day 6 is a close-out checkpoint outside story capacity, so the
-remaining effort stays at zero while system testing and final records complete.
+Only accepted Story effort is removed from the actual line. Final velocity is seven development-days with zero carry-over.

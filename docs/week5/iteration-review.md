@@ -1,60 +1,25 @@
 # Iteration 1 Review
 
-## 1. Iteration Goal
+## Outcome
 
-Iteration 1 aimed to deliver a secure minimum reading-list workflow: account
-access, private book management and controlled reading statuses.
+| Story | Planned | Accepted | Result |
+| --- | ---: | ---: | --- |
+| #1 Secure Account Access | 2 days | 2 days | Done |
+| #2 Shared Catalogue Search and Import | 3 days | 3 days | Done |
+| #3 Personal Shelf and Reading Statuses | 2 days | 2 days | Done |
+| **Total** | **7 days** | **7 days** | **100%** |
 
-## 2. Completed User Stories
+The increment supports the complete authenticated journey from finding a catalogue book to maintaining a private shelf. Owner isolation, token tampering and external-service failure are included in acceptance.
 
-| No. | User Story | Original Estimate | Final Status | Completion Evidence |
-| --- | --- | ---: |:---:|---|
-| 01 | User Account Access | 2 days | done | Registration, login, logout, route protection and automated tests |
-| 02 | Personal Reading List | 3 days | done | Owner-scoped list plus add, view, edit and delete workflows and tests |
-| 03 | Reading Status Management | 2 days | done | Four controlled statuses, display and update support, usability review and tests |
-| **Total** |  | **7 days** | **3 done** | |
+## Velocity
 
-Detailed feature documentation is available under
-[Completed User Stories](user-stories/README.md).
+Actual velocity is the sum of original estimates for accepted Stories: **7 development-days**, with zero carry-over. Iteration 2 is therefore planned to the same seven-day capacity.
 
-## 3. Unfinished User Stories
+## Review findings
 
-There are no unfinished stories within the committed Iteration 1 scope.
+- Shared catalogue data and private shelf data are separated correctly.
+- Server-side ownership prevents a browser from selecting or exposing another reader's records.
+- External API behaviour is isolated behind a service and deterministic mocks.
+- Repeated permission and form-rendering logic is centralised through mixins and shared templates.
 
-Stories 04–10 remain `todo`, not unfinished Iteration 1 work: they were allocated
-to Iterations 2 and 3 before Iteration 1 began. No story is currently
-`in-progress`.
-
-## 4. Actual Velocity
-
-Velocity is calculated from completed work using the estimates agreed at the
-start of the iteration. It is not the number of calendar days elapsed.
-
-```text
-Actual velocity
-= sum of original estimates for stories meeting Done
-= Story 01 (2 days) + Story 02 (3 days) + Story 03 (2 days)
-= 7 estimated development-days per iteration
-```
-
-The same result can be expressed as **3 completed user stories per iteration**.
-Because story sizes differ, the estimate-weighted figure of **7 estimated
-development-days per iteration** is the primary planning measure.
-
-```text
-Completion rate
-= completed estimated effort / planned estimated effort × 100%
-= 7 / 7 × 100%
-= 100%
-```
-
-Iteration 1 therefore achieved an actual velocity of **7 estimated
-development-days**, with **0 estimated days carried over**.
-
-## 5. Planning Interpretation
-
-The observed velocity supports planning about seven estimated development-days
-for a comparable future iteration. Iteration 2 currently contains eight
-estimated days, so it is one estimated day above the demonstrated velocity and
-should be reviewed before work starts. One iteration is limited evidence, so
-future plans should use the rolling average after more iterations.
+Completed Story evidence is available in [the Iteration 1 completion index](user-stories/README.md).

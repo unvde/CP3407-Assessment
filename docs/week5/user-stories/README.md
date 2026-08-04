@@ -1,14 +1,9 @@
-# Completed Iteration 1 User Stories
+# Iteration 1 — Completed User Stories
 
-The following Markdown pages provide GitHub Pages-ready documentation for every
-completed Iteration 1 user story:
+Iteration 1 delivered the secure foundation needed by every later feature.
 
-| No. | User Story | Status | Documentation |
-| --- | --- |:---:|---|
-| 01 | User Account Access | done | [Account access](story-01-account-access.md) |
-| 02 | Personal Reading List | done | [Personal reading list](story-02-reading-list.md) |
-| 03 | Reading Status Management | done | [Reading status management](story-03-reading-status.md) |
+1. [Story 01 — Secure Account Access](story-01-account-access.md)
+2. [Story 02 — Shared Catalogue Search and Import](story-02-catalogue-import.md)
+3. [Story 03 — Personal Shelf and Reading Statuses](story-03-personal-shelf.md)
 
-These pages describe implemented behaviour, acceptance evidence and related
-code. They are published through the
-[Reading Compass GitHub Pages site](https://unvde.github.io/CP3407-Assessment/).
+All three Stories are complete. Their estimates total seven development-days, matching the iteration capacity.

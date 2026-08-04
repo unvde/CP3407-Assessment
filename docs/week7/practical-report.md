@@ -1,119 +1,23 @@
-# Practical 7 Report — Test-Driven Development
+# Practical 7 — Test-Driven Development
 
-## Objective
+## Result
 
-Practical 7 requires the team to discuss, document and plan suitable project
-testing, select at least five user stories, write at least three test cases for
-each selected story, and implement at least 15 automated tests.
+The test plan selects Stories #1–#6 and defines eighteen representative automated cases, exceeding the requirement of five Stories, three cases per selected Story and fifteen automated tests.
 
-## Repository Baseline
+## TDD approach
 
-The work began on the Iteration 2 development branch, now named
-`iteration-2`. At the baseline, Reading Compass had one Django app, one model,
-two forms, account views and owner-scoped book CRUD views.
+1. Express validation, permission and failure behaviour as a failing test.
+2. Implement the smallest model/form/service/view change that passes it.
+3. Refactor shared responsibilities into services, mixins and shared templates.
+4. Run the focused suite followed by complete regression and migration checks.
 
-The initial suite contained 18 tests. The baseline command passed:
+## Evidence
 
-```text
-Found 18 test(s).
-Ran 18 tests
-OK
-System check identified no issues (0 silenced).
-```
+- [`test-cases.md`](test-cases.md) maps representative cases to test classes.
+- `books/tests.py` covers authentication, shelf and filtering.
+- `books/test_community.py` covers API integration, imports and shared-data permissions.
+- `books/test_reviews.py` covers public reviews.
+- `books/test_discovery.py` covers lists, profiles, traits and recommendations.
+- `books/test_notes.py` and `books/test_system.py` cover private data and cross-feature journeys.
 
-## Testing Discussion and Decisions
-
-The main risks are access to another reader's data, broken authentication and
-invalid book or progress values. The suite focuses on:
-
-- authentication and session state;
-- owner-only list, detail, edit and delete access;
-- input validation at both form and model boundaries;
-- positive, negative and boundary values;
-- persistence, redirects and important template output.
-
-Most cases use Django model, form and request tests. A short browser check is
-used for the main pages instead of maintaining a separate end-to-end suite.
-
-The detailed strategy, environment, entry/exit criteria, exclusions and risks
-are recorded in the [test plan](test-plan.md).
-
-## Selected User Stories
-
-Seven acceptance-level stories were selected from backlog Stories 01–06:
-
-1. access an account;
-2. view a private personal list;
-3. add valid book information;
-4. maintain owned books;
-5. update reading progress;
-6. view a personal reading dashboard;
-7. manage an optional reading target.
-
-Each selected workflow has at least three automated cases. The mapping is in
-[test cases](test-cases.md).
-
-## Automated Test Implementation
-
-The suite grew from 18 to **32 tests**. During review, overlapping cases were
-removed so that each remaining test checks a different rule or failure mode.
-The final set covers:
-
-- valid and invalid account access;
-- anonymous and cross-user access attempts;
-- book input, ownership, editing and deletion;
-- progress calculation, missing totals and page bounds;
-- dashboard authentication, filtering and owner isolation; and
-- future, newly entered past, unchanged historical, removable and cross-user
-  reading targets.
-
-Iteration 2 Stories 04–06 account for 12 of the 32 tests.
-
-## Final Test Result
-
-Command:
-
-```bash
-.venv/bin/python manage.py test -v 2
-```
-
-Result:
-
-```text
-Found 32 test(s).
-Ran 32 tests
-OK
-System check identified no issues (0 silenced).
-```
-
-The command uses Django's temporary in-memory database, so it does not change
-development data.
-
-## Browser Acceptance Check
-
-The signed-in workflow was also checked in a local browser. A reader with an
-empty dashboard added a Currently Reading book with 200 total pages, current
-page 80 and a future target date. The detail page and personal dashboard both
-showed 40% progress and the formatted target date, and the browser reported no
-console errors.
-
-## Practical 7 Requirement Check
-
-| Requirement | Result |
-|---|---|
-| Discuss, document and plan testing | Completed in test plan and this report |
-| Select at least 5 user stories | 7 selected |
-| At least 3 test cases per story | 3–7 cases per story |
-| At least 15 documented cases | 32 documented |
-| At least 15 automated tests | 32 automated tests |
-| Run the complete suite | 32/32 passed |
-
-Completed-story acceptance evidence is published in the
-[Iteration 2 user-story pages](user-stories/README.md).
-
-## Reflection and Next Steps
-
-The most useful tests were the permission and boundary cases because they found
-problems that a normal form submission would not show. Iteration 3 work will
-reuse the same pattern: write the acceptance case first, implement the smallest
-change that passes it, then rerun the 32-test regression suite.
+Iteration 2 Stories #4–#6 meet their acceptance criteria and their completion pages are linked from [`user-stories/README.md`](user-stories/README.md).

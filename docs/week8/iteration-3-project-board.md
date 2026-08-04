@@ -1,64 +1,15 @@
 # Iteration 3 Project Board
 
-## Initial Snapshot — Week 8 Day 1
+| Story | Supporting tasks | Final status |
+| --- | --- | --- |
+| #7 Forums and Threaded Replies | #32 one forum; #33 post permissions; #34 replies; #35 acceptance | Done |
+| #8 Personalised Recommendations | #36 local ranking; #37 API fallback; #38 dismissal; #39 acceptance | Done |
+| #9 Moderation and Production Delivery | #40 moderation; #41 categories/metadata; #42 Render; #43 seed/health; #44–#47 quality/delivery | Done |
 
-All committed work begins in `todo`. The issues are assigned to `unvde` and
-carry the repository's `todo` label.
+## Final checks
 
-| Status | Stories | Tasks | Total items |
-|:---:|---:|---:|---:|
-| todo | 3 | 13 | 16 |
-| in-progress | 0 | 0 | 0 |
-| done | 0 | 0 | 0 |
-
-## Story 07 — 2 development-days
-
-| Issue | Task | Estimate | Status |
-|---|---|---:|:---:|
-| [#35](https://github.com/unvde/CP3407-Assessment/issues/35) | Specify acceptance tests | 0.50 | todo |
-| [#36](https://github.com/unvde/CP3407-Assessment/issues/36) | Implement owner-scoped search query | 0.50 | todo |
-| [#37](https://github.com/unvde/CP3407-Assessment/issues/37) | Implement status filter and controls | 0.75 | todo |
-| [#38](https://github.com/unvde/CP3407-Assessment/issues/38) | Regression and acceptance review | 0.25 | todo |
-
-## Story 08 — 3 development-days
-
-| Issue | Task | Estimate | Status |
-|---|---|---:|:---:|
-| [#42](https://github.com/unvde/CP3407-Assessment/issues/42) | Specify acceptance tests | 0.50 | todo |
-| [#39](https://github.com/unvde/CP3407-Assessment/issues/39) | Add model and migration | 0.50 | todo |
-| [#40](https://github.com/unvde/CP3407-Assessment/issues/40) | Implement create and edit workflow | 0.75 | todo |
-| [#41](https://github.com/unvde/CP3407-Assessment/issues/41) | Implement deletion and privacy controls | 0.75 | todo |
-| [#43](https://github.com/unvde/CP3407-Assessment/issues/43) | Regression and acceptance review | 0.50 | todo |
-
-## Story 09 — 2 development-days
-
-| Issue | Task | Estimate | Status |
-|---|---|---:|:---:|
-| [#44](https://github.com/unvde/CP3407-Assessment/issues/44) | Specify acceptance tests | 0.50 | todo |
-| [#45](https://github.com/unvde/CP3407-Assessment/issues/45) | Add data and migration | 0.50 | todo |
-| [#46](https://github.com/unvde/CP3407-Assessment/issues/46) | Implement form, display and owner scope | 0.75 | todo |
-| [#47](https://github.com/unvde/CP3407-Assessment/issues/47) | Regression and acceptance review | 0.25 | todo |
-
-## GitHub Project Status
-
-The available GitHub connection supports repository Issues, labels, assignment,
-branches and pull requests, but does not expose GitHub Projects creation or item
-insertion. Therefore a separate Iteration 3 GitHub Project was not created in
-this checkpoint. This document is the initial board of record; every item is
-Project-ready and can be added without changing its scope, owner or workflow
-label when Projects access is available.
-
-## Final Snapshot — Week 9 Day 6
-
-All committed Story and Task Issues are closed with the `done` label.
-
-| Status | Stories | Story tasks | Total committed items |
-|:---:|---:|---:|---:|
-| todo | 0 | 0 | 0 |
-| in-progress | 0 | 0 | 0 |
-| done | 3 | 13 | 16 |
-
-Story 07 Issues #32 and #35–#38, Story 08 Issues #33 and #39–#43, and Story 09
-Issues #34 and #44–#47 are complete. Close-out Issue #50 separately records
-system testing and final acceptance outside the 7 development-day story
-capacity. Story 10 remains in the product backlog and was not started.
+- Focused Story suites pass.
+- Integrated reader, owner-boundary and anonymous-write journeys pass.
+- Moderation remains staff-only.
+- Migration, static, deployment and health configurations are present.
+- Story Issues #7–#9 contain the final evidence; duplicate evidence-only Issues are closed.

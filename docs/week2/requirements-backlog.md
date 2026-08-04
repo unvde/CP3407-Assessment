@@ -1,171 +1,84 @@
 # Requirements Backlog
 
-## Priority Scale
+The backlog contains nine committed User Stories. Priorities use the course scale: 50 is essential, followed by 40, 30, 20 and 10. Estimates are development-days and each iteration is limited to seven days.
 
-- **10 - Essential:** Required for the minimum usable product
-- **20 - High:** Important to the principal user workflow
-- **30 - Medium:** Provides significant usability or planning value
-- **40 - Low:** Valuable but not required for the initial release
-- **50 - Optional:** Implemented only if time and budget permit
+| No. | User Story | Priority | Estimate | Iteration | Status |
+| ---: | --- | ---: | ---: | ---: | --- |
+| 01 | As a reader, I want secure account access so that private reading data is protected. | 50 | 2 | 1 | Done |
+| 02 | As a reader, I want to search Open Library and import a shared catalogue record so that I avoid repeated data entry. | 50 | 3 | 1 | Done |
+| 03 | As a reader, I want a private shelf with controlled statuses and notes so that I can manage reading privately. | 50 | 2 | 1 | Done |
+| 04 | As a reader, I want category and trait discovery so that I can find books by interest. | 40 | 3 | 2 | Done |
+| 05 | As a community member, I want to rate and review books publicly so that I can share useful opinions. | 40 | 2 | 2 | Done |
+| 06 | As a reader, I want public or private lists and a public profile so that sharing remains intentional. | 40 | 2 | 2 | Done |
+| 07 | As a community member, I want forums with posts and threaded replies so that discussion stays attached to a book. | 30 | 3 | 3 | Done |
+| 08 | As a reader, I want personalised recommendations with a Not interested action so that discovery improves. | 30 | 2 | 3 | Done |
+| 09 | As a staff member, I want moderation and dependable production delivery so that public content and deployment remain safe. | 30 | 2 | 3 | Done |
 
-## 01 - User Account Access
+## Acceptance summary
 
-**Description:** Allow users to register, sign in and sign out securely.
+### Story 01 — Secure Account Access
 
-**User Story:** As a new reader, I want to create and access a personal account so that my reading information can be securely saved.
+- Email is required and duplicate email is rejected.
+- Valid users can log in and log out.
+- Private routes require authentication.
+- Staff-only routes reject ordinary users.
 
-**Priority:** 10  
-**Estimated Effort:** 2 days
+### Story 02 — Shared Catalogue Search and Import
 
-**Rationale:** A personal account is required to associate private reading information with the correct user.
+- Title, author and ISBN searches return normalised Open Library results.
+- Signed import tokens reject tampering.
+- Duplicate imports reuse catalogue and shelf records.
+- API failure produces a controlled fallback.
 
-## 02 - Personal Reading List
+### Story 03 — Personal Shelf and Reading Statuses
 
-**Description:** Allow users to add, view, edit and remove books in a personal reading list.
+- Shelf records are private and owner-scoped.
+- Status is limited to Want to Read, Currently Reading, Paused or Completed.
+- Owners can update status and maintain private notes.
+- Private data is absent from public pages.
 
-**User Story:** As a reader, I want to maintain a personal reading list so that I can keep books that interest me in one organised location.
+### Story 04 — Category and Trait Discovery
 
-**Priority:** 10  
-**Estimated Effort:** 3 days
+- API subjects and user categories are normalised and reused.
+- Trait discovery supports pagination.
+- Aliases resolve consistently.
+- API timeout falls back to local catalogue content.
 
-**Rationale:** The reading list is the central feature on which the remaining requirements depend.
+### Story 05 — Public Ratings and Reviews
 
-## 03 - Reading Status Management
+- Rating is limited to 1–5 and review content is not blank.
+- A reader has at most one review per catalogue book.
+- Reviews and aggregate ratings are public.
+- Author and staff permissions are enforced.
 
-**Description:** Allow each book to be assigned a status such as Want to Read, Currently Reading, Paused or Completed.
+### Story 06 — Custom Lists and Public Profiles
 
-**User Story:** As a reader, I want to assign a status to each book so that I can understand its position in my reading workflow.
+- Owners can create lists and add or remove books.
+- Only owners may edit or delete a list.
+- Private lists are absent from community search and profiles.
+- Public profiles show only intentionally public material.
 
-**Priority:** 10  
-**Estimated Effort:** 2 days
+### Story 07 — Forums and Threaded Replies
 
-**Rationale:** Status information is necessary for organising books and displaying relevant dashboard information.
+- A catalogue book has at most one forum.
+- Anonymous visitors can read but cannot write.
+- Authors can edit their own posts and replies only.
+- Staff can remove forums, posts and replies.
 
-## 04 - Reading Progress Updates
+### Story 08 — Personalised Recommendations
 
-**Description:** Allow users to record their current page and view calculated reading progress.
+- Category matches are ranked and owned books are excluded.
+- External results may fill a sparse local result.
+- Not interested persists and removes the suggestion.
+- External timeout leaves a usable local result or empty state.
 
-**User Story:** As a reader, I want to update my current reading position so that I can see how much of a book I have completed.
+### Story 09 — Moderation and Production Delivery
 
-**Priority:** 10  
-**Estimated Effort:** 3 days
+- Moderation routes require staff permission.
+- Staff can manage categories, refresh metadata and moderate public content.
+- Render configuration covers database, static files, HTTPS and health checks.
+- System, migration and deployment checks pass.
 
-**Rationale:** Progress tracking directly addresses the main purpose of the application.
+## Planning result
 
-## 05 - Reading Dashboard
-
-**Description:** Display active books, current progress and upcoming reading targets in one summary.
-
-**User Story:** As a reader, I want to view a personal dashboard so that I can quickly understand my current reading activity.
-
-**Priority:** 20  
-**Original Estimated Effort:** 3 days
-
-**Iteration 2 Adjusted Effort:** 2 days
-
-**Rationale:** The dashboard improves access to information produced by the core features.
-
-## 06 - Reading Plans
-
-**Description:** Allow users to set an optional target completion date for a book.
-
-**User Story:** As a reader, I want to set an optional completion target so that I can plan my reading without being forced to schedule every book.
-
-**Priority:** 20  
-**Estimated Effort:** 2 days
-
-**Rationale:** Planning supports consistent reading while remaining flexible for casual users.
-
-## 07 - Search and Filtering
-
-**Description:** Allow users to search by title or author and filter books by reading status.
-
-**User Story:** As a reader, I want to search and filter my reading list so that I can quickly locate relevant books.
-
-**Priority:** 30  
-**Estimated Effort:** 2 days
-
-**Rationale:** Search and filtering become more valuable as the number of saved books increases.
-
-## 08 - Private Reading Notes
-
-**Description:** Allow users to create, edit and delete private notes associated with a book.
-
-**User Story:** As a reader, I want to save private notes for a book so that I can retain important ideas and observations.
-
-**Priority:** 30  
-**Estimated Effort:** 3 days
-
-**Rationale:** Notes support reflection but are not required for basic reading-list and progress management.
-
-## 09 - Completion Review
-
-**Description:** Allow users to save a rating, completion date and short reflection after finishing a book.
-
-**User Story:** As a reader, I want to review a completed book so that I can preserve my opinion and learning.
-
-**Priority:** 40  
-**Estimated Effort:** 2 days
-
-**Rationale:** Completion reviews add long-term value but depend on the core book and status features.
-
-## 10 - Duplicate Book Warning
-
-**Description:** Warn users when they attempt to add a book with the same title and author as an existing entry.
-
-**User Story:** As a reader, I want to be warned about possible duplicate books so that my reading list remains organised.
-
-**Priority:** 50  
-**Estimated Effort:** 1 day
-
-**Rationale:** Duplicate prevention improves data quality but is not essential to the primary workflow.
-
-## Effort Summary
-
-| Priority | Requirements | Estimated Effort |
-|:---:|---:|---:|
-| 10 | 4 | 10 days |
-| 20 | 2 | 5 days |
-| 30 | 2 | 5 days |
-| 40 | 1 | 2 days |
-| 50 | 1 | 1 day |
-| **Total** | **10** | **23 days** |
-
-## Current Story Status
-
-Status uses the shared workflow `todo`, `in-progress` and `done`.
-
-| No. | User Story | Iteration | Status |
-|:---:|---|:---:|:---:|
-| 01 | User Account Access | 1 | done |
-| 02 | Personal Reading List | 1 | done |
-| 03 | Reading Status Management | 1 | done |
-| 04 | Reading Progress Updates | 2 | done |
-| 05 | Reading Dashboard | 2 | done |
-| 06 | Reading Plans | 2 | done |
-| 07 | Search and Filtering | 3 | done |
-| 08 | Private Reading Notes | 3 | done |
-| 09 | Completion Review | 3 | done |
-| 10 | Duplicate Book Warning | Backlog | todo |
-
-Iterations 1–3 are closed. Stories 04–06 reached `done` at the Week 7 Day 6
-acceptance checkpoint. Stories 07–09 reached `done` at the Iteration 3 final
-acceptance checkpoint and were merged into `main` through
-[PR #49](https://github.com/unvde/CP3407-Assessment/pull/49). Detailed
-Iteration 1 evidence and velocity are recorded in the
-[Week 5 Iteration Review](../week5/iteration-review.md).
-
-The Iteration 2 plan was adjusted in Week 6 to match the demonstrated velocity
-of 7 estimated development-days. Story 05 was narrowed from 3 to 2 days; its
-first release is limited to active books, progress and optional target dates.
-The detailed scope and rationale are recorded in the
-[Week 6 Practical Report](../week6/practical-report.md).
-
-The Iteration 2 review confirms an actual velocity of 7 development-days.
-Iteration 3 therefore selected and completed Stories 07–09 for a matching
-7-day capacity. Story 10 remains in the product backlog and was not committed
-to Iteration 3.
-
-## Planning Conclusion
-
-The four priority-10 requirements form the minimum usable product. Priority-20 requirements should follow once the core reading workflow is stable. Priority-30 to priority-50 requirements may be scheduled according to the team's demonstrated velocity and remaining project budget.
+Each iteration totals seven development-days. The order establishes privacy and catalogue foundations first, adds public discovery second, and introduces higher-risk community moderation and production delivery last.

@@ -1,128 +1,36 @@
 # Target-User Interview Findings
 
-## 1. Interview Overview
+## Method
 
-The project team conducted in-person interviews with potential Reading Compass
-users. The notes kept for this report do not include names, interview dates or
-the participant count, so the findings below are presented as a combined
-summary rather than individual transcripts.
+The team used semi-structured conversations with student and casual readers to understand discovery, tracking, sharing and privacy needs. Findings were consolidated rather than attributing personal comments to named participants.
 
-## 2. Interview Purpose
+## Main problems
 
-The interviews aimed to understand:
+- Re-entering book title, author and publication data is tedious.
+- Private reading state and notes should not become public accidentally.
+- Genre labels are inconsistent across sources.
+- Reviews are useful only when rating and authorship rules are clear.
+- Readers want collections that may be shared selectively.
+- General social feeds lose the context of the book being discussed.
+- Recommendations become repetitive without a dismissal mechanism.
 
-- How potential users currently organise books
-- Problems with existing reading-tracking methods
-- Which Reading Compass features would be most useful
-- How users prefer to record reading progress
-- Whether reading plans, notes and reflections would provide value
-- User expectations concerning usability and privacy
+## Requirements derived from feedback
 
-## 3. Interview Topics
+| Finding | Product response |
+| --- | --- |
+| Reduce repeated entry | Open Library search and shared catalogue import |
+| Protect personal activity | owner-scoped shelf, statuses and private notes |
+| Improve discovery | normalised categories, trait search and recommendations |
+| Support useful sharing | ratings/reviews, public/private lists and profiles |
+| Keep discussion contextual | one forum per catalogue book with threaded replies |
+| Protect the community | staff moderation, metadata maintenance and deployment checks |
 
-The discussions covered the following questions:
+## Usability expectations
 
-1. How do you currently keep track of books you want to read?
-2. What problems do you experience with your current method?
-3. What information would you record for each book?
-4. How do you normally track your reading progress?
-5. Would a target completion date be useful?
-6. What information would you expect to see on a reading dashboard?
-7. Do you write notes or reflections while reading?
-8. How important are search and filtering functions?
-9. Which proposed feature would be most valuable?
-10. Is there any feature you would remove or add?
-11. What would encourage you to use the application regularly?
-12. Do you have privacy concerns about storing reading information online?
+Readers preferred direct navigation, one clear search field, human-readable status labels, visible privacy state, obvious empty states and usable mobile layouts. These expectations informed the implemented My books, Dashboard, Find a book, Explore, Lists, Profiles and Forum screens.
 
-## 4. Consolidated Responses
+## Privacy expectations
 
-### Current Reading-Tracking Methods
+Private shelf records and notes must be owner-scoped; private lists must not appear in community search or profiles; anonymous users may read public content but must authenticate before writing; staff privileges must be explicit and tested.
 
-Participants described using notes applications, spreadsheets, screenshots and informal book lists. Information was often distributed across multiple locations.
-
-### Current Problems
-
-The main problems identified were:
-
-- Difficulty finding previously saved book recommendations
-- Reading lists becoming disorganised
-- Limited visibility of current reading progress
-- Duplicate book records
-- Too much manual work
-- No convenient summary of active books and reading plans
-
-### Most Valuable Features
-
-Participants considered the following features particularly valuable:
-
-- A personal reading list
-- Clear reading statuses
-- Quick progress updates
-- A dashboard showing active books
-- Search and filtering
-- Optional reading targets
-- Notes and completion reflections
-
-### Reading Plans
-
-Target completion dates were considered useful, particularly for study-related or scheduled reading. However, participants preferred completion dates to remain optional because leisure reading may not follow a fixed schedule.
-
-### Progress Tracking
-
-Participants wanted progress updates to be quick and uncomplicated. Recording a current page and automatically calculating a percentage was considered sufficient.
-
-### Notes and Reflections
-
-Some participants preferred to write notes during reading, while others were more interested in recording a rating and short reflection after completing a book. The application should support both behaviours without requiring either.
-
-### Search and Filtering
-
-Search by title or author and filtering by reading status were considered important once a user's reading list becomes larger.
-
-### Usability Expectations
-
-Participants preferred:
-
-- Simple navigation
-- Few required fields
-- Clear reading statuses
-- Fast progress updates
-- A dashboard focused on currently relevant information
-
-### Privacy Expectations
-
-Participants expected account information, reading activity, notes and reflections to remain private unless a future feature explicitly allowed sharing.
-
-## 5. Key Requirements Identified
-
-The interview findings support the following requirements:
-
-- Secure user accounts
-- A central personal reading list
-- Reading-status management
-- Simple reading-progress updates
-- Optional target completion dates
-- A personal reading dashboard
-- Search and filtering
-- Private reading notes
-- Completion ratings and reflections
-- Duplicate-book warnings
-
-## 6. Changes to the Initial Backlog
-
-The interviews largely supported the initial backlog. The following refinements were made:
-
-- Reading-plan completion dates will be optional.
-- Progress will be recorded using the current page and calculated percentage.
-- Personal notes and reflections will remain private.
-- Search will support both book title and author.
-- Filtering will support reading status.
-- A duplicate-book warning was added to improve data quality.
-- Optional fields will be used to keep book entry and progress updates simple.
-
-## 7. Interview Conclusion
-
-The interview results indicate that Reading Compass should prioritise a simple personal reading workflow rather than complex social features.
-
-The minimum usable product should allow users to create an account, maintain a reading list, assign reading statuses and update reading progress. Dashboard, planning, search, notes and reflection features should be implemented according to priority and available development capacity.
+The resulting formal backlog is recorded in [`requirements-backlog.md`](requirements-backlog.md).

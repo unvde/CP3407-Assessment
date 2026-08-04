@@ -1,92 +1,21 @@
-# Practical 5 Report
+# Practical 5 — Iteration 1 Reflection
 
-## Iteration 1 — Reflection
+## Completed versus unfinished
 
-## 1. Objective
+Stories #1–#3 are Done; no committed Iteration 1 work carries over. Stories #4–#9 remain planned for later iterations rather than being classified as unfinished Iteration 1 work.
 
-Practical 5 closes Iteration 1 by reviewing code quality, reconciling task and
-story status, documenting completed and unfinished work, documenting each
-completed story and calculating actual velocity.
+## SRP and DRY
 
-## 2. Team
+The review found clear responsibility boundaries among models, forms, services and views. Open Library behaviour is isolated in `books/services.py`; ownership and staff checks are reused through mixins; form fields use a shared include. Details are in [`srp-dry-review.md`](srp-dry-review.md).
 
-- **Tianyang Zhang:** Lead Developer and Technical Lead
-- **Yuhao Guo:** Project Coordinator and Requirements, Documentation and QA Lead
+## Velocity
 
-## 3. SRP and DRY Review
+Accepted original effort is 2 + 3 + 2 = **7 development-days**. Completion rate is 100% and carry-over is zero.
 
-The Iteration 1 model, forms and class-based views have focused
-responsibilities. Owner-only querying and reading-status definitions are
-already shared rather than duplicated.
+## Published completion evidence
 
-One material DRY issue was corrected: book, login and registration templates
-repeated their form-field rendering loop. They now reuse
-`templates/includes/form_fields.html`. Full findings and the rationale for
-changes not made are recorded in the [SRP and DRY Review](srp-dry-review.md).
+- [Story 01 — Secure Account Access](user-stories/story-01-account-access.md)
+- [Story 02 — Shared Catalogue Search and Import](user-stories/story-02-catalogue-import.md)
+- [Story 03 — Personal Shelf and Reading Statuses](user-stories/story-03-personal-shelf.md)
 
-## 4. Completed Versus Unfinished Stories
-
-All three Iteration 1 stories are `done`:
-
-| No. | User Story | Estimate | Status |
-| --- | --- | ---: |:---:|
-| 01 | User Account Access | 2 days | done |
-| 02 | Personal Reading List | 3 days | done |
-| 03 | Reading Status Management | 2 days | done |
-
-There is no unfinished Iteration 1 story. Stories 04–10 remain `todo` in their
-planned Iterations 2 and 3; none is currently `in-progress`. See the
-[Iteration 1 Review](iteration-review.md) and
-[Task and Story Tracking](task-tracking.md).
-
-## 5. Completed Story Documentation
-
-GitHub Pages-ready Markdown documentation now exists for:
-
-- [Story 01 — User Account Access](user-stories/story-01-account-access.md)
-- [Story 02 — Personal Reading List](user-stories/story-02-reading-list.md)
-- [Story 03 — Reading Status Management](user-stories/story-03-reading-status.md)
-
-These repository pages were published from the `main` branch root:
-
-- [Reading Compass GitHub Pages](https://unvde.github.io/CP3407-Assessment/)
-- [Published Practical 5 Report](https://unvde.github.io/CP3407-Assessment/docs/week5/practical-report.html)
-
-## 6. Actual Velocity
-
-Only original estimates for stories meeting the definition of Done are counted:
-
-```text
-2 days + 3 days + 2 days = 7 estimated development-days
-```
-
-Iteration 1 actual velocity is therefore **7 estimated development-days per
-iteration**, also expressed as **3 completed stories per iteration**. Planned
-effort was seven estimated days, so the completion rate is `7 / 7 × 100% =
-100%` and carry-over is zero. This measures completed estimated scope, not
-calendar time.
-
-## 7. Cross-check
-
-Story numbers, estimates and final statuses were checked against the Week 2
-backlog and Week 3 burndown. The linked pages use the same `todo`,
-`in-progress` and `done` terms.
-
-## 8. Practical Completion Checklist
-
-- [x] Review classes and templates against SRP.
-- [x] Review the implementation against DRY.
-- [x] Record findings and make the necessary DRY correction.
-- [x] Reconcile local task and story statuses.
-- [x] Document completed versus unfinished Iteration 1 stories.
-- [x] Add a Markdown page for every completed user story.
-- [x] Calculate actual Iteration 1 velocity and show the formula.
-- [x] Check consistency with Weeks 1–4.
-- [x] Identify remote GitHub actions that remain manual.
-
-## 9. Completion Status
-
-All local Practical 5 work is complete. During Week 5, the team confirmed the
-remote Issue and Project Board states, and the confirmed Project Board
-URL is recorded in the Week 3 documentation. GitHub Pages is publicly enabled
-with HTTPS enforced, and its initial build and deployment completed.
+The [Iteration 1 review](iteration-review.md) records the acceptance result and capacity decision.

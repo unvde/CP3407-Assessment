@@ -1,107 +1,49 @@
-# Reading Compass Class Diagram
-
-## 1. Purpose
-
-This diagram describes the principal classes currently used by the Iteration 1 implementation. Django framework classes are included only where they clarify inheritance or collaboration.
+# Reading Compass Domain Class Diagram
 
 ```mermaid
 classDiagram
-    direction LR
+    User "1" --> "0..*" Book : owns shelf entries
+    User "1" --> "0..*" PublicReview : writes
+    User "1" --> "0..*" ReadingList : curates
+    User "1" --> "0..*" ForumPost : writes
+    User "1" --> "0..*" ForumReply : writes
+    CatalogBook "1" --> "0..*" Book : referenced by
+    CatalogBook "0..*" --> "0..*" Category : tagged with
+    CatalogBook "1" --> "0..*" PublicReview : receives
+    CatalogBook "1" --> "0..1" Forum : has
+    CatalogBook "0..*" --> "0..*" ReadingList : included in
+    Book "1" --> "0..*" ReadingNote : contains private notes
+    Forum "1" --> "0..*" ForumPost : contains
+    ForumPost "1" --> "0..*" ForumReply : contains
 
-    class User {
-        +int id
-        +string username
-        +string email
-        +check_password()
+    class CatalogBook {
+      title
+      author
+      isbn_10
+      isbn_13
+      cover_url
     }
-
     class Book {
-        +int id
-        +string title
-        +string author
-        +ReadingStatus status
-        +int total_pages
-        +datetime created_at
-        +datetime updated_at
-        +__str__()
-        +get_absolute_url()
+      owner
+      catalog_book
+      status
     }
-
-    class ReadingStatus {
-        <<enumeration>>
-        WANT_TO_READ
-        CURRENTLY_READING
-        PAUSED
-        COMPLETED
+    class ReadingList {
+      owner
+      name
+      is_public
     }
-
-    class RegistrationForm {
-        +EmailField email
-        +clean_email()
+    class PublicReview {
+      author
+      rating
+      content
     }
-
-    class BookForm {
-        +clean_title()
-        +clean_author()
-    }
-
-    class RegisterView {
-        +form_valid(form)
-    }
-
-    class OwnedBookQuerysetMixin {
-        +get_queryset()
-    }
-
-    class BookListView
-    class BookDetailView
-    class BookCreateView {
-        +form_valid(form)
-    }
-    class BookUpdateView
-    class BookDeleteView
-
-    User "1" --> "0..*" Book : owns
-    Book --> ReadingStatus : uses
-    RegistrationForm --> User : creates
-    BookForm --> Book : validates
-    RegisterView --> RegistrationForm : uses
-    BookCreateView --> BookForm : uses
-    BookUpdateView --> BookForm : uses
-
-    OwnedBookQuerysetMixin <|-- BookListView
-    OwnedBookQuerysetMixin <|-- BookDetailView
-    OwnedBookQuerysetMixin <|-- BookUpdateView
-    OwnedBookQuerysetMixin <|-- BookDeleteView
-
-    BookListView --> Book : queries
-    BookDetailView --> Book : retrieves
-    BookCreateView --> Book : creates
-    BookUpdateView --> Book : updates
-    BookDeleteView --> Book : deletes
+    class RecommendationDismissal
+    class Forum
+    class ForumPost
+    class ForumReply
 ```
 
-## 2. Exported Diagram
+## Design interpretation
 
-The exported UML image is stored at [`diagrams/class-diagram.png`](diagrams/class-diagram.png).
-
-![Reading Compass class diagram](diagrams/class-diagram.png)
-
-## 3. Design Notes
-
-- `User` is provided by Django's authentication system.
-- Each `Book` has exactly one owner, while a user may own many books.
-- `ReadingStatus` restricts status values to four valid choices.
-- `BookForm` exposes only editable book fields; ownership is assigned by the server.
-- `OwnedBookQuerysetMixin` filters queries by the authenticated user and prevents cross-user access.
-- The class-based views separate list, detail, creation, update and deletion responsibilities.
-
-## 4. Responsibility Review
-
-The design keeps the current Iteration 1 responsibilities separated:
-
-- Models define stored data and domain choices.
-- Forms validate user input.
-- Views coordinate HTTP workflows.
-- Templates present information.
-- Authentication and ownership checks protect private data.
+The shared `CatalogBook` prevents repeated metadata. `Book` is the private owner-to-catalogue relationship and holds reading status; `ReadingNote` remains below that private boundary. Reviews, public lists and forums attach to catalogue books so community content is shared deliberately. Unique constraints prevent duplicate shelf entries, duplicate reader reviews, duplicate dismissals and multiple forums for one book.

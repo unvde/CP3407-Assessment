@@ -1,240 +1,65 @@
-# CP3407
+# Reading Compass
 
-## Reading Compass
+Reading Compass is a deployed Django community for discovering books, managing a private reading shelf, sharing reviews and lists, receiving recommendations, and discussing books in moderated forums.
 
-Reading Compass is a community book-discovery platform. It helps readers import books, organise personal collections, share reviews and discuss books with other readers.
+- **Live application:** https://reading-compass.onrender.com/
+- **Evidence portal:** `docs/index.md`
+- **Story-to-code traceability:** `docs/traceability.md`
 
-The project will be developed iteratively as part of the CP3407 Advanced Software Engineering assessment.
+## Delivered product
 
-## Project Objectives
+Readers can register and sign in, search Open Library by title, author or ISBN, import a shared catalogue record, maintain private reading statuses and notes, browse by category or trait, publish ratings and reviews, create public or private lists, view public profiles, receive dismissible recommendations, and participate in threaded forums. Staff-only tools support category maintenance, metadata refresh, public-content moderation and deployment checks.
 
-- Help users organise books they want to read.
-- Help users discover books through categories, reviews and recommendations.
-- Let users organise books with simple reading statuses and custom lists.
-- Encourage reflection through private notes and public reviews.
-- Apply agile software engineering practices throughout development.
-- Deliver a usable and tested web application over multiple iterations.
+## Three-iteration scope
 
-## Target Users
+| Iteration | Goal | Stories | Estimated effort |
+| --- | --- | --- | ---: |
+| 1 | Establish a secure personal reading foundation | #1 Account access; #2 catalogue search/import; #3 private shelf/statuses | 7 development-days |
+| 2 | Add social discovery and curation | #4 category/trait discovery; #5 ratings/reviews; #6 lists/profiles | 7 development-days |
+| 3 | Complete community engagement and delivery | #7 forums/replies; #8 recommendations; #9 moderation/deployment | 7 development-days |
 
-Reading Compass is intended for students and casual readers who want a straightforward way to organise their reading and maintain consistent reading habits.
+The authoritative backlog is in [`docs/week2/requirements-backlog.md`](docs/week2/requirements-backlog.md). Each completed Story has one canonical GitHub Issue (#1–#9); later evidence-only duplicates are superseded by those Story Issues.
 
-## Proposed Features
+## Evidence by course stage
 
-- User registration and authentication
-- Personal reading list
-- Reading status management
-- Reading notes
-- Public ratings and reviews
-- Personalised recommendations
-- Public and private custom book lists
-- Discovery dashboard
-- Search and filtering
-- Open Library title, author and ISBN search with one-click import
-- Shared book catalogue with covers, publication metadata and categories
-- User-created free-text categories when API metadata is incomplete
-- One public discussion forum per book with posts and threaded replies
-- Forum-owner editing and administrator moderation controls
-- A dedicated moderation dashboard for forums, posts, replies, reviews and categories
+- **Weeks 1–2:** [proposal](docs/week1/project-proposal.md), [interview findings](docs/week2/interview-findings.md), [requirements backlog](docs/week2/requirements-backlog.md)
+- **Weeks 3–5 / Iteration 1:** [plan](docs/week3/iteration-plan.md), [task breakdown](docs/week4/task-breakdown.md), [review and velocity](docs/week5/iteration-review.md), [completed Stories](docs/week5/user-stories/README.md)
+- **Weeks 6–8 / Iteration 2:** [adjusted plan](docs/week6/practical-report.md), [test plan](docs/week7/test-plan.md), [test cases](docs/week7/test-cases.md), [review and velocity](docs/week8/iteration-2-review.md), [completed Stories](docs/week7/user-stories/README.md)
+- **Weeks 8–9 / Iteration 3:** [plan](docs/week8/iteration-3-plan.md), [TDD specifications](docs/week8/test-specifications.md), [final acceptance](docs/week9/iteration-3-final-acceptance.md)
+- **Design:** [architecture](docs/design/architecture.md), [database](docs/design/database-design.md), [interface](docs/design/interface-design.md)
 
-These ideas have been reviewed through target-user interviews and converted into a formal requirements backlog.
+## Technology
 
-## Technology Stack
+- Python 3.12, Django and Django templates
+- SQLite for local development; PostgreSQL on Render
+- Gunicorn and WhiteNoise for production delivery
+- Open Library Search, Subjects and Covers APIs
+- Django test framework and GitHub Actions
 
-The initial proposed technology stack is:
-
-- Backend: Python and Django
-- Frontend: HTML, CSS and JavaScript
-- Database: SQLite during development
-- Version Control: Git and GitHub
-- Testing: Django testing framework
-
-The technology stack may be adjusted as the project requirements become clearer.
-
-## Team
-
-### Tianyang Zhang
-
-**Roles:** Lead Developer and Technical Lead
-
-Responsibilities:
-
-- Lead application development
-- Make technical and architectural decisions
-- Implement core application features
-- Maintain code quality
-- Support testing and deployment
-
-### Yuhao Guo
-
-**Roles:** Project Coordinator and Requirements, Documentation and QA Lead
-
-Responsibilities:
-
-- Coordinate project activities and iteration documentation
-- Assist with requirements collection and user-story preparation
-- Maintain project documentation
-- Prepare acceptance criteria and test cases
-- Conduct quality-assurance and usability checks
-- Track progress against iteration goals
-
-## Project Documentation
-
-### Design Evidence
-
-- [Complete Architecture Design](docs/design/architecture.md)
-- [Database Design and ERD](docs/design/database-design.md)
-- [Interface Design and Figma Prototype](docs/design/interface-design.md)
-
-### Week 1 - Project Initiation
-
-- [Project Proposal](docs/week1/project-proposal.md)
-- [Initial Backlog Ideas](docs/week1/initial-backlog.md)
-
-### Week 2 - Requirements Analysis
-
-- [Target-User Interview Findings](docs/week2/interview-findings.md)
-- [Requirements Backlog](docs/week2/requirements-backlog.md)
-- [Practical 2 Report](docs/week2/practical-report.md)
-
-### Week 3 - Iteration 1
-
-- [Iteration Plan](docs/week3/iteration-plan.md)
-- [Iteration 1 Project Board](docs/week3/project-board.md)
-- [Iteration 1 Burndown](docs/week3/burndown.md)
-
-### Week 4 - Execution and Tracking
-
-- [Task Breakdown](docs/week4/task-breakdown.md)
-- [Task Tracking](docs/week4/task-tracking.md)
-- [Class Diagram](docs/week4/class-diagram.md)
-- [Sequence Diagram](docs/week4/sequence-diagram.md)
-- [Practical 4 Report](docs/week4/practical-report.md)
-
-### Week 5 - Iteration 1 Review
-
-- [Published GitHub Pages Site](https://unvde.github.io/CP3407-Assessment/)
-- [Iteration 1 Review and Actual Velocity](docs/week5/iteration-review.md)
-- [SRP and DRY Review](docs/week5/srp-dry-review.md)
-- [Task and Story Tracking](docs/week5/task-tracking.md)
-- [Practical 5 Report](docs/week5/practical-report.md)
-- [Completed User Story Documentation](docs/week5/user-stories/README.md)
-
-### Week 6 - Iteration 2 Planning
-
-- [Iteration 2 GitHub Project](https://github.com/users/unvde/projects/3)
-- [Practical 6 Report](docs/week6/practical-report.md)
-- [Iteration 1 Burndown Graph](docs/week6/iteration-1-burndown.svg)
-
-### Week 7 - Test-Driven Development
-
-- [Test Plan](docs/week7/test-plan.md)
-- [Test Cases](docs/week7/test-cases.md)
-- [Practical 7 Report](docs/week7/practical-report.md)
-- [Completed Iteration 2 User Stories](docs/week7/user-stories/README.md)
-
-### Week 8 - Iteration 2 Review and Iteration 3 Planning
-
-- [Practical 8 Report](docs/week8/practical-report.md)
-- [Iteration 2 Review and Actual Velocity](docs/week8/iteration-2-review.md)
-- [Iteration 2 Burndown](docs/week8/iteration-2-burndown.md)
-- [Iteration 3 Plan](docs/week8/iteration-3-plan.md)
-- [Iteration 3 Project Board](docs/week8/iteration-3-project-board.md)
-- [Iteration 3 Initial Burndown](docs/week8/iteration-3-burndown.md)
-- [Mock Object Research](docs/week8/mock-object-research.md)
-- [Iteration 3 Test Specifications](docs/week8/test-specifications.md)
-- [Story 07 Search and Filtering](docs/week8/story-07-search-filtering.md)
-
-### Week 9 - Iteration 3 Development
-
-- [Story 08 Private Reading Notes](docs/week9/story-08-private-notes.md)
-- [Story 09 Completion Review](docs/week9/story-09-completion-review.md)
-- [Iteration 3 Final Acceptance](docs/week9/iteration-3-final-acceptance.md)
-
-Additional weekly documentation covering design, iterations, testing and development tools will be added as the project progresses.
-
-## Project Status
-
-**Current stage:** Iterations 1–3 are complete. Iteration 2 delivered Stories
-04–06 with an actual velocity of 7 development-days. Iteration 3 delivered
-Story 07 search and filtering, Story 08 private reading notes and Story 09
-completion review within the same 7-development-day capacity. The completed
-Iteration 3 scope passed final system testing and was merged into `main` through
-[PR #49](https://github.com/unvde/CP3407-Assessment/pull/49). Story 10 remains
-in the product backlog because it was outside the selected Iteration 3 capacity.
-
-## Local Development
-
-### Requirements
-
-- Python 3.12 or later
-- pip
-
-### Setup
-
-1. Create and activate a virtual environment:
-
-   ```bash
-   python3 -m venv .venv
-   source .venv/bin/activate
-   ```
-
-2. Install dependencies:
-
-   ```bash
-   python -m pip install -r requirements.txt
-   ```
-
-3. Configure local environment variables:
-
-   ```bash
-   export DJANGO_SECRET_KEY="replace-with-a-long-random-value"
-   export DJANGO_DEBUG=True
-   export DJANGO_ALLOWED_HOSTS="127.0.0.1,localhost"
-   export OPEN_LIBRARY_USER_AGENT="ReadingCompass/1.0 (contact: you@example.com)"
-   ```
-
-4. Prepare the database:
-
-   ```bash
-   python manage.py migrate
-   ```
-
-5. Run the development server:
-
-   ```bash
-   python manage.py runserver
-   ```
-
-6. Open `http://127.0.0.1:8000/`.
-
-Book search uses the public Open Library Search and Covers APIs and does not
-require an API key. If the service is unavailable or a title cannot be found,
-readers can always add the book manually.
-
-### Tests
-
-Run the automated test suite with:
+## Local setup
 
 ```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+python manage.py migrate
+python manage.py seed_demo_content
+python manage.py runserver
+```
+
+Run verification with:
+
+```bash
+python manage.py check
+python manage.py makemigrations --check
 python manage.py test
 ```
 
 ## Deployment
 
-The repository includes a Render Blueprint for a repeatable test deployment:
+`render.yaml` and `build.sh` define the Render deployment. Environment variables hold secrets and database configuration; migrations and static-file collection run during the build; `/health/` provides a lightweight health check. Demo content is seeded only when explicitly enabled.
 
-- Django runs behind Gunicorn.
-- WhiteNoise serves versioned static files.
-- Render PostgreSQL stores accounts, books, categories and forum posts.
-- Database migrations and static-file collection run during each build.
-- `/health/` provides a lightweight service health check.
-- GitHub Actions runs migrations checks, tests and Django's deployment checks.
+## Team
 
-To create the hosted test version, open the Render Blueprint dashboard, connect
-this GitHub repository, select `render.yaml`, and apply the Blueprint. Render
-generates the production secret and database connection automatically.
-
-The Blueprint intentionally uses Render's free instances during active
-development. A free PostgreSQL database expires after 30 days, so upgrade the
-database or move to a persistent production provider before final delivery.
+- **Tianyang Zhang:** lead developer and technical lead
+- **Yuhao Guo:** project coordination, requirements, documentation and QA

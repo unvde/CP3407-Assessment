@@ -1,0 +1,62 @@
+site_name: Reading Compass Evidence
+site_description: CP3407 project evidence for Reading Compass
+repo_url: https://github.com/unvde/CP3407-Assessment
+site_url: https://unvde.github.io/CP3407-Assessment/
+theme:
+  name: mkdocs
+nav:
+  - Home: index.md
+  - Traceability: traceability.md
+  - Week 1 — Initiation:
+      - Proposal: week1/project-proposal.md
+      - Initial backlog: week1/initial-backlog.md
+  - Week 2 — Requirements:
+      - Interview findings: week2/interview-findings.md
+      - Requirements backlog: week2/requirements-backlog.md
+      - Practical 2: week2/practical-report.md
+  - Iteration 1:
+      - Plan: week3/iteration-plan.md
+      - Project board: week3/project-board.md
+      - Burndown: week3/burndown.md
+      - Task breakdown: week4/task-breakdown.md
+      - Task tracking: week4/task-tracking.md
+      - Class diagram: week4/class-diagram.md
+      - Import sequence: week4/sequence-diagram.md
+      - Practical 4: week4/practical-report.md
+      - SRP and DRY: week5/srp-dry-review.md
+      - Review and velocity: week5/iteration-review.md
+      - Final tracking: week5/task-tracking.md
+      - Practical 5: week5/practical-report.md
+      - Completed stories:
+          - Overview: week5/user-stories/README.md
+          - Story 01: week5/user-stories/story-01-account-access.md
+          - Story 02: week5/user-stories/story-02-catalogue-import.md
+          - Story 03: week5/user-stories/story-03-personal-shelf.md
+  - Iteration 2:
+      - Plan and Practical 6: week6/practical-report.md
+      - Test plan: week7/test-plan.md
+      - Test cases: week7/test-cases.md
+      - Practical 7: week7/practical-report.md
+      - Burndown: week8/iteration-2-burndown.md
+      - Review and velocity: week8/iteration-2-review.md
+      - Completed stories:
+          - Overview: week7/user-stories/README.md
+          - Story 04: week7/user-stories/story-04-category-discovery.md
+          - Story 05: week7/user-stories/story-05-public-reviews.md
+          - Story 06: week7/user-stories/story-06-lists-profiles.md
+  - Iteration 3:
+      - Practical 8: week8/practical-report.md
+      - Plan: week8/iteration-3-plan.md
+      - Project board: week8/iteration-3-project-board.md
+      - Burndown: week8/iteration-3-burndown.md
+      - Test specifications: week8/test-specifications.md
+      - Mock-object research: week8/mock-object-research.md
+      - Story 07: week9/story-07-forums.md
+      - Story 08: week9/story-08-recommendations.md
+      - Story 09: week9/story-09-moderation-delivery.md
+      - Final acceptance: week9/iteration-3-final-acceptance.md
+      - Demo checklist: week9/final-demo-checklist.md
+  - Design:
+      - Architecture: design/architecture.md
+      - Database: design/database-design.md
+      - Interface: design/interface-design.md

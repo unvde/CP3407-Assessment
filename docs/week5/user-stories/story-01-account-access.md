@@ -1,32 +1,23 @@
-# Story 01 — User Account Access
+# Story 01 — Secure Account Access
 
-## User Story
+**Issue:** [#1](https://github.com/unvde/CP3407-Assessment/issues/1)
 
-As a new reader, I want to create and access a personal account so that my
-reading information can be securely saved.
+**Iteration:** 1 · **Estimate:** 2 development-days · **Status:** Done
 
-**Estimate:** 2 days  
-**Iteration:** 1  
-**Status:** done
+## Delivered behaviour
 
-## Completed Behaviour
+- Registration requires email and rejects duplicate email case-insensitively.
+- Successful registration signs the reader in.
+- Login, logout and post-login redirects are controlled.
+- Private book routes require authentication.
+- Ordinary readers cannot enter staff moderation routes.
 
-- A reader can register with username, email and password.
-- Email addresses are required and duplicates are rejected
-  case-insensitively.
-- A successful registration signs the reader in and opens their book list.
-- Existing readers can log in and log out.
-- Private book routes redirect unauthenticated visitors to login.
+## Implementation and tests
 
-## Acceptance Evidence
+- Implementation: `RegistrationForm`, `RegisterView`, `SafeLoginView`, `LoginRequiredMixin` and `StaffRequiredMixin`.
+- Automated evidence: `RegistrationTests` and `AuthenticationTests` in `books/tests.py`.
+- Security regression: normal users are not redirected into unauthorised staff pages; staff users may continue to moderation.
 
-Automated tests cover successful registration, duplicate-email rejection,
-valid and invalid login, logout and authentication protection. The shared base
-template changes its navigation according to authentication state.
+## Acceptance
 
-## Main Implementation
-
-- `RegistrationForm` validates registration data.
-- `RegisterView` creates and signs in the user.
-- Django authentication views provide login and logout.
-- `LoginRequiredMixin` protects private book workflows.
+All acceptance criteria are automated and included in the complete Django regression suite. The live application exposes Register, Log in and Log out flows and protects private navigation.
