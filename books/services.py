@@ -1,16 +1,20 @@
 import json
+import logging
 import re
+import ssl
 from dataclasses import asdict, dataclass
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
+import certifi
 from django.conf import settings
 from django.core import signing
 
 
 OPEN_LIBRARY_SEARCH_URL = "https://openlibrary.org/search.json"
 IMPORT_SALT = "reading-compass.book-import"
+logger = logging.getLogger(__name__)
 
 
 class BookSearchError(Exception):
@@ -69,9 +73,11 @@ def search_open_library(query, limit=12):
         },
     )
     try:
-        with urlopen(request, timeout=6) as response:
+        ssl_context = ssl.create_default_context(cafile=certifi.where())
+        with urlopen(request, timeout=8, context=ssl_context) as response:
             payload = json.load(response)
     except (HTTPError, URLError, TimeoutError, json.JSONDecodeError) as exc:
+        logger.warning("Open Library search failed: %s", exc)
         raise BookSearchError("Book search is temporarily unavailable.") from exc
 
     results = []

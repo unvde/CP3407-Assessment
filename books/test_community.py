@@ -1,3 +1,5 @@
+import io
+import json
 from unittest.mock import patch
 
 from django.contrib.auth.models import User
@@ -5,7 +7,40 @@ from django.test import TestCase
 from django.urls import reverse
 
 from .models import Book, CatalogBook, Category, Forum, ForumPost
-from .services import BookSearchResult
+from .services import BookSearchResult, search_open_library
+
+
+class OpenLibraryServiceTests(TestCase):
+    @patch("books.services.urlopen")
+    def test_search_parses_results_using_explicit_certificate_context(self, urlopen):
+        urlopen.return_value = io.BytesIO(
+            json.dumps(
+                {
+                    "docs": [
+                        {
+                            "key": "/works/OL893415W",
+                            "title": "Dune",
+                            "author_name": ["Frank Herbert"],
+                            "isbn": ["9780441172719"],
+                            "cover_i": 123,
+                            "publisher": ["Ace"],
+                            "first_publish_year": 1965,
+                            "subject": ["Science fiction", "Adventure"],
+                        }
+                    ]
+                }
+            ).encode()
+        )
+
+        results = search_open_library("Dune")
+
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0].title, "Dune")
+        self.assertEqual(results[0].isbn_13, "9780441172719")
+        self.assertEqual(results[0].categories, ("Science fiction", "Adventure"))
+        _, kwargs = urlopen.call_args
+        self.assertEqual(kwargs["timeout"], 8)
+        self.assertIsNotNone(kwargs["context"])
 
 
 class BookImportTests(TestCase):
