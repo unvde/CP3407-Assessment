@@ -92,15 +92,20 @@ def _result_score(result, query, edition_count=0):
     return score if matched_tokens or score >= 250 else -1
 
 
-def search_open_library(query, limit=12):
+def search_open_library(query, limit=12, page=1, subject=None):
     query = query.strip()
     if not query:
         return []
 
+    page = max(int(page or 1), 1)
+    relevance_query = subject.strip() if subject else query
+    api_query = f'subject:"{relevance_query}"' if subject else query
+
     params = urlencode(
         {
-            "q": query,
-            "limit": min(max(limit * 4, 20), 50),
+            "q": api_query,
+            "page": page,
+            "limit": limit if subject else min(max(limit * 4, 20), 50),
             "fields": (
                 "key,title,author_name,isbn,cover_i,publisher,"
                 "first_publish_year,subject,edition_count"
@@ -167,7 +172,9 @@ def search_open_library(query, limit=12):
         )
         if dedupe_key in seen:
             continue
-        score = _result_score(result, query, item.get("edition_count", 0))
+        score = _result_score(
+            result, relevance_query, item.get("edition_count", 0)
+        )
         if score < 0:
             continue
         seen.add(dedupe_key)

@@ -4,26 +4,33 @@
 
 {% block content %}
 <div class="page-heading">
-    <div><p class="eyebrow">Community catalogue</p><h1>{% if active_category %}{{ active_category.name }} books{% else %}Explore books{% endif %}</h1><p>{% if active_category %}Showing only books tagged {{ active_category.name }}.{% else %}Discover books already added by readers and join their discussions.{% endif %}</p></div>
+    <div><p class="eyebrow">Live book discovery</p><h1>{% if trait %}Books with: {{ trait }}{% else %}Explore books{% endif %}</h1><p>{% if trait %}Live results from Open Library, about ten books at a time.{% else %}Choose any trait or tag to search the wider Open Library catalogue.{% endif %}</p></div>
     <div class="actions"><a class="secondary-button" href="{% url 'public-list-list' %}">Browse community lists</a>{% if user.is_authenticated %}<a class="primary-button" href="{% url 'book-search' %}">Import a book</a>{% endif %}</div>
 </div>
 
-<form class="filter-bar" method="get" role="search">
-    <div class="filter-field filter-search"><label for="catalog-search">Title, author or ISBN</label><input id="catalog-search" name="q" type="search" value="{{ search_query }}"></div>
-    <div class="filter-field"><label for="catalog-category">Category</label><select id="catalog-category" name="category"><option value="">All categories</option>{% for category in categories %}<option value="{{ category.slug }}"{% if selected_category == category.slug %} selected{% endif %}>{{ category.name }}</option>{% endfor %}</select></div>
-    <button class="primary-button" type="submit">Explore</button>
+<form class="filter-bar trait-search" method="get" role="search">
+    <div class="filter-field filter-search"><label for="trait-search">Trait, genre or theme</label><input id="trait-search" name="trait" type="search" value="{{ trait }}" placeholder="Science fiction, found family, space opera" required></div>
+    <button class="primary-button" type="submit">Find books</button>
 </form>
 
-{% if categories %}<section class="inline-panel"><div class="section-heading"><div><p class="eyebrow">Browse by tag</p><h2>Choose a category</h2></div>{% if active_category %}<a class="secondary-button button-small" href="{% url 'catalog-book-list' %}">Show all books</a>{% endif %}</div><div class="tag-list category-browser">{% for category in categories %}<a class="tag{% if selected_category == category.slug %} is-selected{% endif %}" href="{% url 'catalog-book-list' %}?category={{ category.slug }}">{{ category.name }} <span aria-label="{{ category.book_count }} books">{{ category.book_count }}</span></a>{% endfor %}</div></section>{% endif %}
+{% if categories %}<section class="inline-panel"><div class="section-heading"><div><p class="eyebrow">Quick traits</p><h2>Choose a category</h2></div>{% if trait %}<a class="secondary-button button-small" href="{% url 'catalog-book-list' %}">Back to community catalogue</a>{% endif %}</div><div class="tag-list category-browser">{% for category in categories %}<a class="tag{% if active_category == category and trait %} is-selected{% endif %}" href="{% url 'catalog-book-list' %}?trait={{ category.name|urlencode }}">{{ category.name }}</a>{% endfor %}</div></section>{% endif %}
 
+{% if trait %}
+{% if api_search_error %}<section class="empty-state"><h2>Live search is temporarily unavailable.</h2><p>{{ api_search_error }}</p></section>
+{% elif api_results %}<div class="search-results">{% for result in api_results %}<article class="search-result"><div class="cover-shell">{% if result.cover_url %}<img src="{{ result.cover_url }}" alt="Cover of {{ result.title }}">{% else %}<span>No cover</span>{% endif %}</div><div class="result-body"><h2>{{ result.title }}</h2><p class="author">by {{ result.author }}</p><p class="book-facts">{% if result.published_year %}First published {{ result.published_year }}{% endif %}{% if result.isbn_13 %} · ISBN {{ result.isbn_13 }}{% endif %}</p><div class="tag-list">{% for category in result.categories|slice:":4" %}<span class="tag">{{ category }}</span>{% endfor %}</div></div>{% if user.is_authenticated %}<form method="post" action="{% url 'book-import' %}">{% csrf_token %}<input type="hidden" name="token" value="{{ result.import_token }}"><button class="primary-button" type="submit">Add to my books</button></form>{% else %}<a class="primary-button" href="{% url 'login' %}?next={{ request.get_full_path|urlencode }}">Log in to add</a>{% endif %}</article>{% endfor %}</div>
+<nav class="pagination-actions" aria-label="API result pages">{% if api_page > 1 %}<a class="secondary-button" href="?trait={{ trait|urlencode }}&amp;page={{ previous_api_page }}">Previous page</a>{% endif %}<span>Page {{ api_page }}</span>{% if api_has_next %}<a class="primary-button" href="?trait={{ trait|urlencode }}&amp;page={{ next_api_page }}">Next page</a>{% endif %}</nav>
+{% else %}<section class="empty-state"><h2>No books found for this trait.</h2><p>Try a broader genre or a shorter phrase.</p></section>{% endif %}
+{% else %}
+<div class="section-heading catalogue-heading"><div><p class="eyebrow">Already in Reading Compass</p><h2>Community catalogue</h2></div></div>
 {% if catalog_books %}
 <div class="catalog-grid">
     {% for book in catalog_books %}
     <article class="catalog-card">
         <div class="cover-shell">{% if book.cover_url %}<img src="{{ book.cover_url }}" alt="Cover of {{ book.title }}">{% else %}<span>No cover</span>{% endif %}</div>
-        <div><h2><a href="{{ book.get_absolute_url }}">{{ book.title }}</a></h2><p class="author">by {{ book.author }}</p>{% if book.review_count %}<p class="rating-line"><span aria-hidden="true">★</span> {{ book.average_rating|floatformat:1 }} · {{ book.review_count }} review{{ book.review_count|pluralize }}</p>{% endif %}<div class="tag-list">{% for category in book.categories.all|slice:":3" %}<a class="tag" href="{% url 'catalog-book-list' %}?category={{ category.slug }}">{{ category.name }}</a>{% endfor %}</div><a class="primary-button button-small" href="{{ book.get_absolute_url }}">View book</a></div>
+        <div><h2><a href="{{ book.get_absolute_url }}">{{ book.title }}</a></h2><p class="author">by {{ book.author }}</p>{% if book.review_count %}<p class="rating-line"><span aria-hidden="true">★</span> {{ book.average_rating|floatformat:1 }} · {{ book.review_count }} review{{ book.review_count|pluralize }}</p>{% endif %}<div class="tag-list">{% for category in book.categories.all|slice:":3" %}<a class="tag" href="{% url 'catalog-book-list' %}?trait={{ category.name|urlencode }}">{{ category.name }}</a>{% endfor %}</div><a class="primary-button button-small" href="{{ book.get_absolute_url }}">View book</a></div>
     </article>
     {% endfor %}
 </div>
-{% else %}<section class="empty-state"><h2>No books match your search.</h2></section>{% endif %}
+{% else %}<section class="empty-state"><h2>The community catalogue is empty.</h2></section>{% endif %}
+{% endif %}
 {% endblock %}

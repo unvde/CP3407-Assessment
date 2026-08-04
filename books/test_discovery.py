@@ -176,16 +176,33 @@ class CategoryBrowseTests(TestCase):
         self.emma.categories.add(romance)
         self.science_fiction = science_fiction
 
-    def test_category_link_only_shows_books_with_that_tag(self):
+    @patch("books.views.search_open_library")
+    def test_trait_search_uses_api_and_shows_pagination(self, search):
+        search.return_value = [
+            BookSearchResult(
+                title=f"Science Fiction Book {number}",
+                author="Demo Author",
+                open_library_key=f"OL-SF-{number}",
+                categories=("Science Fiction",),
+            )
+            for number in range(10)
+        ]
         response = self.client.get(
             reverse("catalog-book-list"),
-            {"category": self.science_fiction.slug},
+            {"trait": self.science_fiction.name, "page": 2},
         )
 
-        self.assertContains(response, "Science Fiction books")
-        self.assertContains(response, self.dune.title)
+        self.assertContains(response, "Books with: Science Fiction")
+        self.assertContains(response, "Science Fiction Book 0")
         self.assertNotContains(response, self.emma.title)
-        self.assertContains(response, "Show all books")
+        self.assertContains(response, "Previous page")
+        self.assertContains(response, "Next page")
+        search.assert_called_once_with(
+            "Science Fiction",
+            limit=10,
+            page=2,
+            subject="Science Fiction",
+        )
 
 
 class DemoContentCommandTests(TestCase):

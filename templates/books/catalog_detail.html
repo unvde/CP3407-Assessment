@@ -7,7 +7,7 @@
     <div class="cover-shell large">{% if catalog_book.cover_url %}<img src="{{ catalog_book.cover_url }}" alt="Cover of {{ catalog_book.title }}">{% else %}<span>No cover</span>{% endif %}</div>
     <div>
         <p class="eyebrow">Community book page</p><h1>{{ catalog_book.title }}</h1><p class="detail-author">by {{ catalog_book.author }}</p>
-        <div class="tag-list">{% for category in catalog_book.categories.all %}<span class="tag"><a href="{% url 'catalog-book-list' %}?category={{ category.slug }}">{{ category.name }}</a>{% if user.is_staff %} <a aria-label="Edit {{ category.name }}" href="{% url 'category-edit' category.pk %}">✎</a>{% endif %}</span>{% endfor %}</div>
+        <div class="tag-list">{% for category in catalog_book.categories.all %}<span class="tag"><a href="{% url 'catalog-book-list' %}?trait={{ category.name|urlencode }}">{{ category.name }}</a>{% if user.is_staff %} <a aria-label="Edit {{ category.name }}" href="{% url 'category-edit' category.pk %}">✎</a>{% endif %}</span>{% endfor %}</div>
         <dl class="metadata compact-metadata">
             <div><dt>ISBN</dt><dd>{{ catalog_book.isbn_13|default:catalog_book.isbn_10|default:"Not recorded" }}</dd></div>
             <div><dt>Publisher</dt><dd>{{ catalog_book.publisher|default:"Not recorded" }}</dd></div>

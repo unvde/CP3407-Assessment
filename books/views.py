@@ -404,6 +404,11 @@ class CatalogBookListView(ListView):
     template_name = "books/catalog_list.html"
     paginate_by = 24
 
+    def get_paginate_by(self, queryset):
+        if self.request.GET.get("trait", "").strip():
+            return None
+        return self.paginate_by
+
     def get_queryset(self):
         queryset = CatalogBook.objects.prefetch_related("categories").annotate(
             average_rating=Avg("reviews__rating"),
@@ -411,6 +416,7 @@ class CatalogBookListView(ListView):
         )
         query = self.request.GET.get("q", "").strip()
         category = self.request.GET.get("category", "").strip()
+        trait = self.request.GET.get("trait", "").strip()
         if query:
             queryset = queryset.filter(
                 Q(title__icontains=query)
@@ -418,7 +424,7 @@ class CatalogBookListView(ListView):
                 | Q(isbn_10__icontains=query)
                 | Q(isbn_13__icontains=query)
             )
-        if category:
+        if category and not trait:
             queryset = queryset.filter(categories__slug=category)
         return queryset.distinct().order_by("title", "author")
 
@@ -426,12 +432,35 @@ class CatalogBookListView(ListView):
         context = super().get_context_data(**kwargs)
         context["search_query"] = self.request.GET.get("q", "").strip()
         context["selected_category"] = self.request.GET.get("category", "").strip()
+        context["trait"] = self.request.GET.get("trait", "").strip()[:80]
         context["categories"] = Category.objects.annotate(
             book_count=Count("books", distinct=True)
         ).filter(book_count__gt=0)
-        context["active_category"] = context["categories"].filter(
-            slug=context["selected_category"]
-        ).first()
+        context["active_category"] = (
+            context["categories"].filter(name__iexact=context["trait"]).first()
+            or context["categories"].filter(
+                slug=context["selected_category"]
+            ).first()
+        )
+        try:
+            page = max(int(self.request.GET.get("page", 1) or 1), 1)
+        except (TypeError, ValueError):
+            page = 1
+        context["api_page"] = page
+        context["previous_api_page"] = page - 1
+        context["next_api_page"] = page + 1
+        if context["trait"]:
+            try:
+                context["api_results"] = search_open_library(
+                    context["trait"],
+                    limit=10,
+                    page=page,
+                    subject=context["trait"],
+                )
+            except BookSearchError as exc:
+                context["api_search_error"] = str(exc)
+                context["api_results"] = []
+            context["api_has_next"] = len(context["api_results"]) == 10
         return context
 
 
