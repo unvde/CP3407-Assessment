@@ -8,6 +8,7 @@ from .models import (
     ForumPost,
     ForumReply,
     PublicReview,
+    RecommendationDismissal,
     ReadingList,
     ReadingNote,
 )
@@ -82,3 +83,10 @@ class ReadingListAdmin(admin.ModelAdmin):
     list_filter = ("is_public",)
     search_fields = ("name", "description", "owner__username")
     filter_horizontal = ("books",)
+
+
+@admin.register(RecommendationDismissal)
+class RecommendationDismissalAdmin(admin.ModelAdmin):
+    list_display = ("user", "identifier", "created_at")
+    search_fields = ("user__username", "identifier")
+    list_select_related = ("user",)

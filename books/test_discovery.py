@@ -1,8 +1,17 @@
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
+from unittest.mock import patch
 
-from .models import Book, CatalogBook, Category, PublicReview, ReadingList
+from .models import (
+    Book,
+    CatalogBook,
+    Category,
+    PublicReview,
+    ReadingList,
+    RecommendationDismissal,
+)
+from .services import BookSearchResult
 
 
 class ReadingListTests(TestCase):
@@ -75,10 +84,82 @@ class RecommendationTests(TestCase):
             content="A favourite.",
         )
 
-    def test_dashboard_recommends_matching_categories_not_owned_books(self):
+    @patch("books.views.search_open_library", return_value=[])
+    def test_dashboard_recommends_matching_categories_not_owned_books(self, _search):
         self.client.force_login(self.reader)
         response = self.client.get(reverse("dashboard"))
 
         self.assertContains(response, self.recommended.title)
         self.assertNotContains(response, self.unrelated.title)
         self.assertContains(response, "Because you like Science fiction")
+
+    def test_not_interested_hides_local_recommendation(self):
+        self.client.force_login(self.reader)
+        self.client.post(
+            reverse("recommendation-dismiss"),
+            {"identifier": f"catalog:{self.recommended.pk}"},
+        )
+
+        self.assertTrue(
+            RecommendationDismissal.objects.filter(
+                user=self.reader,
+                identifier=f"catalog:{self.recommended.pk}",
+            ).exists()
+        )
+        with patch("books.views.search_open_library", return_value=[]):
+            response = self.client.get(reverse("dashboard"))
+        self.assertNotContains(response, self.recommended.title)
+
+    @patch("books.views.search_open_library")
+    def test_api_fallback_fills_sparse_recommendations(self, search):
+        search.return_value = [
+            BookSearchResult(
+                title="A Memory Called Empire",
+                author="Arkady Martine",
+                open_library_key="OL-FALLBACK",
+                categories=("Science fiction",),
+            )
+        ]
+        self.client.force_login(self.reader)
+
+        response = self.client.get(reverse("dashboard"))
+
+        self.assertContains(response, "A Memory Called Empire")
+        self.assertContains(response, "From Open Library")
+
+
+class PublicDiscoveryTests(TestCase):
+    def setUp(self):
+        self.reader = User.objects.create_user(username="curator", password="pass")
+        self.book = CatalogBook.objects.create(title="Dune", author="Frank Herbert")
+        self.public_list = ReadingList.objects.create(
+            owner=self.reader,
+            name="Desert science fiction",
+            description="Books about ecology and power.",
+            is_public=True,
+        )
+        self.public_list.books.add(self.book)
+        self.private_list = ReadingList.objects.create(
+            owner=self.reader, name="Secret drafts", is_public=False
+        )
+        PublicReview.objects.create(
+            catalog_book=self.book,
+            author=self.reader,
+            rating=5,
+            content="A classic.",
+        )
+
+    def test_public_list_discovery_searches_books_and_hides_private_lists(self):
+        response = self.client.get(reverse("public-list-list"), {"q": "Dune"})
+
+        self.assertContains(response, self.public_list.name)
+        self.assertNotContains(response, self.private_list.name)
+
+    def test_public_profile_shows_lists_and_reviews_but_not_private_lists(self):
+        response = self.client.get(
+            reverse("public-profile", args=[self.reader.username])
+        )
+
+        self.assertContains(response, self.public_list.name)
+        self.assertContains(response, "A classic.")
+        self.assertNotContains(response, self.private_list.name)

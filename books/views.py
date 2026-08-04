@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth import login
+from django.contrib.auth.models import User
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core import signing
 from django.core.exceptions import PermissionDenied
@@ -9,6 +10,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.utils.http import url_has_allowed_host_and_scheme
+from django.utils.text import slugify
 from django.views.generic import (
     CreateView,
     DeleteView,
@@ -39,13 +41,38 @@ from .models import (
     ForumPost,
     ForumReply,
     PublicReview,
+    RecommendationDismissal,
     ReadingList,
     ReadingNote,
 )
 from .services import BookSearchError, load_import_token, search_open_library
 
 
+CATEGORY_ALIASES = {
+    "sci-fi": "Science Fiction",
+    "scifi": "Science Fiction",
+    "science-fiction": "Science Fiction",
+    "romantic-fiction": "Romance",
+    "love-stories": "Romance",
+    "fantasy-fiction": "Fantasy",
+    "detective-and-mystery-stories": "Mystery",
+    "young-adult-fiction": "Young Adult",
+    "ya": "Young Adult",
+}
+
+
+def normalize_category_name(name):
+    cleaned = " ".join(str(name).strip().split())[:80]
+    if not cleaned:
+        return ""
+    alias_key = slugify(cleaned)
+    return CATEGORY_ALIASES.get(alias_key, cleaned.title())
+
+
 def get_or_create_category(name, user=None, source=Category.Source.USER):
+    name = normalize_category_name(name)
+    if not name:
+        raise ValueError("Category name cannot be blank.")
     category = Category.objects.filter(name__iexact=name).first()
     if category:
         return category
@@ -141,6 +168,22 @@ class DashboardView(OwnedBookQuerysetMixin, ListView):
         owned_catalog_ids = {
             book.catalog_book_id for book in shelf if book.catalog_book_id
         }
+        owned_catalogs = CatalogBook.objects.filter(pk__in=owned_catalog_ids)
+        owned_open_library_keys = set(
+            owned_catalogs.exclude(open_library_key__isnull=True)
+            .exclude(open_library_key="")
+            .values_list("open_library_key", flat=True)
+        )
+        owned_isbns = set(
+            owned_catalogs.exclude(isbn_13="").values_list("isbn_13", flat=True)
+        ) | set(
+            owned_catalogs.exclude(isbn_10="").values_list("isbn_10", flat=True)
+        )
+        dismissed = set(
+            RecommendationDismissal.objects.filter(
+                user=self.request.user
+            ).values_list("identifier", flat=True)
+        )
         category_weights = {}
         for category_id in Category.objects.filter(
             books__shelf_entries__owner=self.request.user
@@ -161,6 +204,9 @@ class DashboardView(OwnedBookQuerysetMixin, ListView):
         )[:100]
         ranked = []
         for candidate in candidates:
+            identifier = f"catalog:{candidate.pk}"
+            if identifier in dismissed:
+                continue
             matched = [
                 category
                 for category in candidate.categories.all()
@@ -169,13 +215,62 @@ class DashboardView(OwnedBookQuerysetMixin, ListView):
             score = sum(category_weights[category.id] for category in matched)
             score += float(candidate.average_rating or 0)
             if score:
-                ranked.append((score, candidate, matched[:2]))
+                ranked.append((score, candidate, matched[:2], identifier))
         ranked.sort(key=lambda item: (-item[0], item[1].title.casefold()))
         context["recommendations"] = [
-            {"book": book, "matched_categories": matched}
-            for _, book, matched in ranked[:6]
+            {
+                "book": book,
+                "matched_categories": matched,
+                "identifier": identifier,
+            }
+            for _, book, matched, identifier in ranked[:6]
         ]
+        external_recommendations = []
+        remaining = 6 - len(context["recommendations"])
+        if remaining and category_weights:
+            favourite_category_id = max(
+                category_weights,
+                key=lambda category_id: category_weights[category_id],
+            )
+            favourite_category = Category.objects.filter(
+                pk=favourite_category_id
+            ).first()
+            if favourite_category:
+                try:
+                    api_results = search_open_library(
+                        favourite_category.name, limit=12
+                    )
+                except BookSearchError:
+                    api_results = []
+                for result in api_results:
+                    if result.recommendation_identifier in dismissed:
+                        continue
+                    if (
+                        result.open_library_key in owned_open_library_keys
+                        or result.isbn_13 in owned_isbns
+                        or result.isbn_10 in owned_isbns
+                    ):
+                        continue
+                    external_recommendations.append(result)
+                    if len(external_recommendations) >= remaining:
+                        break
+        context["external_recommendations"] = external_recommendations
+        context["recommendation_category"] = (
+            favourite_category if category_weights and remaining else None
+        )
         return context
+
+
+class RecommendationDismissView(LoginRequiredMixin, View):
+    def post(self, request):
+        identifier = request.POST.get("identifier", "")[:100]
+        if identifier.startswith(("catalog:", "openlibrary:")):
+            RecommendationDismissal.objects.get_or_create(
+                user=request.user,
+                identifier=identifier,
+            )
+            messages.success(request, "We will use that to improve your recommendations.")
+        return redirect("dashboard")
 
 
 class BookDetailView(OwnedBookQuerysetMixin, DetailView):
@@ -222,7 +317,10 @@ class BookUpdateView(OwnedBookQuerysetMixin, UpdateView):
                 get_or_create_category(name, self.request.user)
                 for name in form.cleaned_data.get("categories", [])
             ]
-            self.object.catalog_book.categories.set(categories)
+            if self.request.user.is_staff:
+                self.object.catalog_book.categories.set(categories)
+            else:
+                self.object.catalog_book.categories.add(*categories)
         return response
 
 
@@ -428,6 +526,56 @@ class ReadingListListView(LoginRequiredMixin, ListView):
         )
 
 
+class PublicReadingListListView(ListView):
+    model = ReadingList
+    context_object_name = "reading_lists"
+    template_name = "lists/public_list_list.html"
+    paginate_by = 24
+
+    def get_queryset(self):
+        queryset = ReadingList.objects.filter(is_public=True).select_related(
+            "owner"
+        ).prefetch_related("books__categories")
+        query = self.request.GET.get("q", "").strip()
+        if query:
+            queryset = queryset.filter(
+                Q(name__icontains=query)
+                | Q(description__icontains=query)
+                | Q(owner__username__icontains=query)
+                | Q(books__title__icontains=query)
+                | Q(books__author__icontains=query)
+                | Q(books__categories__name__icontains=query)
+            )
+        return queryset.distinct()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["search_query"] = self.request.GET.get("q", "").strip()
+        return context
+
+
+class UserPublicProfileView(DetailView):
+    model = User
+    context_object_name = "profile_user"
+    template_name = "profiles/public_profile.html"
+    slug_field = "username"
+    slug_url_kwarg = "username"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["public_lists"] = self.object.reading_lists.filter(
+            is_public=True
+        ).prefetch_related("books")
+        context["public_reviews"] = self.object.public_book_reviews.select_related(
+            "catalog_book"
+        )[:12]
+        context["public_list_count"] = self.object.reading_lists.filter(
+            is_public=True
+        ).count()
+        context["review_count"] = self.object.public_book_reviews.count()
+        return context
+
+
 class ReadingListDetailView(DetailView):
     model = ReadingList
     context_object_name = "reading_list"
@@ -597,6 +745,44 @@ class StaffRequiredMixin(LoginRequiredMixin):
         if not request.user.is_staff:
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
+
+
+class CatalogBookRefreshView(StaffRequiredMixin, View):
+    def post(self, request, pk):
+        catalog_book = get_object_or_404(CatalogBook, pk=pk)
+        query = (
+            catalog_book.isbn_13
+            or catalog_book.isbn_10
+            or f"{catalog_book.title} {catalog_book.author}"
+        )
+        try:
+            results = search_open_library(query, limit=5)
+        except BookSearchError as exc:
+            messages.error(request, str(exc))
+            return redirect(catalog_book)
+        if not results:
+            messages.info(request, "No matching Open Library record was found.")
+            return redirect(catalog_book)
+
+        result = results[0]
+        catalog_book.isbn_10 = result.isbn_10 or catalog_book.isbn_10
+        catalog_book.isbn_13 = result.isbn_13 or catalog_book.isbn_13
+        catalog_book.cover_url = result.cover_url or catalog_book.cover_url
+        catalog_book.publisher = result.publisher or catalog_book.publisher
+        catalog_book.published_year = (
+            result.published_year or catalog_book.published_year
+        )
+        if result.open_library_key and not CatalogBook.objects.exclude(
+            pk=catalog_book.pk
+        ).filter(open_library_key=result.open_library_key).exists():
+            catalog_book.open_library_key = result.open_library_key
+        catalog_book.save()
+        for name in result.categories[:8]:
+            catalog_book.categories.add(
+                get_or_create_category(name, source=Category.Source.API)
+            )
+        messages.success(request, "Book information refreshed from Open Library.")
+        return redirect(catalog_book)
 
 
 class ForumCreateView(LoginRequiredMixin, CreateView):

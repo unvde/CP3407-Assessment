@@ -5,7 +5,7 @@
 {% block content %}
 <div class="page-heading">
     <div><p class="eyebrow">Community catalogue</p><h1>Explore books</h1><p>Discover books already added by readers and join their discussions.</p></div>
-    {% if user.is_authenticated %}<a class="primary-button" href="{% url 'book-search' %}">Import a book</a>{% endif %}
+    <div class="actions"><a class="secondary-button" href="{% url 'public-list-list' %}">Browse community lists</a>{% if user.is_authenticated %}<a class="primary-button" href="{% url 'book-search' %}">Import a book</a>{% endif %}</div>
 </div>
 
 <form class="filter-bar" method="get" role="search">

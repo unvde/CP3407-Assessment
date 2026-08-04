@@ -3,6 +3,7 @@ import logging
 import re
 import ssl
 from dataclasses import asdict, dataclass
+from difflib import SequenceMatcher
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
@@ -37,6 +38,13 @@ class BookSearchResult:
     def import_token(self):
         return signing.dumps(asdict(self), salt=IMPORT_SALT, compress=True)
 
+    @property
+    def recommendation_identifier(self):
+        identity = self.open_library_key or self.isbn_13 or self.isbn_10
+        if not identity:
+            identity = _normalise_search_text(f"{self.title} {self.author}")
+        return f"openlibrary:{identity}"[:100]
+
 
 def _first(values, default=""):
     return values[0] if isinstance(values, list) and values else default
@@ -44,6 +52,43 @@ def _first(values, default=""):
 
 def _clean_isbn(value):
     return re.sub(r"[^0-9Xx]", "", value or "").upper()
+
+
+def _normalise_search_text(value):
+    return " ".join(re.findall(r"[a-z0-9]+", (value or "").casefold()))
+
+
+def _result_score(result, query):
+    clean_query = _normalise_search_text(query)
+    isbn_query = _clean_isbn(query)
+    if isbn_query and len(isbn_query) in {10, 13}:
+        return 10_000 if isbn_query in {result.isbn_10, result.isbn_13} else -1
+
+    title = _normalise_search_text(result.title)
+    author = _normalise_search_text(result.author)
+    categories = [_normalise_search_text(value) for value in result.categories]
+    if not clean_query:
+        return -1
+    if title == clean_query:
+        return 1_000
+    score = 0
+    if title.startswith(clean_query):
+        score += 600
+    elif clean_query in title:
+        score += 450
+    if author == clean_query:
+        score += 500
+    elif clean_query in author:
+        score += 300
+    if clean_query in categories:
+        score += 500
+    query_tokens = set(clean_query.split())
+    matched_tokens = query_tokens & set(
+        f"{title} {author} {' '.join(categories)}".split()
+    )
+    score += 120 * len(matched_tokens)
+    score += int(SequenceMatcher(None, clean_query, title).ratio() * 100)
+    return score if matched_tokens or score >= 250 else -1
 
 
 def search_open_library(query, limit=12):
@@ -54,7 +99,7 @@ def search_open_library(query, limit=12):
     params = urlencode(
         {
             "q": query,
-            "limit": min(limit, 20),
+            "limit": min(max(limit * 4, 20), 50),
             "fields": (
                 "key,title,author_name,isbn,cover_i,publisher,"
                 "first_publish_year,subject"
@@ -80,7 +125,8 @@ def search_open_library(query, limit=12):
         logger.warning("Open Library search failed: %s", exc)
         raise BookSearchError("Book search is temporarily unavailable.") from exc
 
-    results = []
+    ranked_results = []
+    seen = set()
     for item in payload.get("docs", []):
         title = str(item.get("title", "")).strip()
         if not title:
@@ -96,8 +142,7 @@ def search_open_library(query, limit=12):
                 if str(value).strip()
             )
         )
-        results.append(
-            BookSearchResult(
+        result = BookSearchResult(
                 title=title[:200],
                 author=", ".join(item.get("author_name", []))[:200]
                 or "Unknown author",
@@ -113,8 +158,21 @@ def search_open_library(query, limit=12):
                 published_year=item.get("first_publish_year"),
                 categories=subjects,
             )
+        dedupe_key = (
+            result.open_library_key
+            or result.isbn_13
+            or result.isbn_10
+            or f"{_normalise_search_text(result.title)}:{_normalise_search_text(result.author)}"
         )
-    return results
+        if dedupe_key in seen:
+            continue
+        score = _result_score(result, query)
+        if score < 0:
+            continue
+        seen.add(dedupe_key)
+        ranked_results.append((score, result))
+    ranked_results.sort(key=lambda item: (-item[0], item[1].title.casefold()))
+    return [result for _, result in ranked_results[:limit]]
 
 
 def load_import_token(token, max_age=3600):

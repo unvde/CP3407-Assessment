@@ -17,6 +17,7 @@ from .views import (
     CatalogBookCategoryAddView,
     CatalogBookDetailView,
     CatalogBookListView,
+    CatalogBookRefreshView,
     CategoryDeleteView,
     CategoryUpdateView,
     ForumCreateView,
@@ -33,6 +34,8 @@ from .views import (
     PublicReviewDeleteView,
     PublicReviewUpdateView,
     PublicReviewUpsertView,
+    PublicReadingListListView,
+    RecommendationDismissView,
     ReadingListBookAddView,
     ReadingListBookRemoveView,
     ReadingListCreateView,
@@ -40,6 +43,7 @@ from .views import (
     ReadingListDetailView,
     ReadingListListView,
     ReadingListUpdateView,
+    UserPublicProfileView,
 )
 
 
@@ -50,6 +54,7 @@ urlpatterns = [
     path("explore/<int:pk>/", CatalogBookDetailView.as_view(), name="catalog-book-detail"),
     path("explore/<int:pk>/add/", CatalogBookAddToShelfView.as_view(), name="catalog-book-add"),
     path("explore/<int:pk>/categories/", CatalogBookCategoryAddView.as_view(), name="catalog-category-add"),
+    path("explore/<int:pk>/refresh/", CatalogBookRefreshView.as_view(), name="catalog-book-refresh"),
     path("search-books/", BookSearchView.as_view(), name="book-search"),
     path("import-book/", BookImportView.as_view(), name="book-import"),
     path("books/add/", BookCreateView.as_view(), name="book-add"),
@@ -61,6 +66,9 @@ urlpatterns = [
     path("reviews/<int:pk>/edit/", PublicReviewUpdateView.as_view(), name="public-review-edit"),
     path("reviews/<int:pk>/delete/", PublicReviewDeleteView.as_view(), name="public-review-delete"),
     path("lists/", ReadingListListView.as_view(), name="reading-list-list"),
+    path("community/lists/", PublicReadingListListView.as_view(), name="public-list-list"),
+    path("people/<str:username>/", UserPublicProfileView.as_view(), name="public-profile"),
+    path("recommendations/dismiss/", RecommendationDismissView.as_view(), name="recommendation-dismiss"),
     path("lists/create/", ReadingListCreateView.as_view(), name="reading-list-create"),
     path("lists/<int:pk>/", ReadingListDetailView.as_view(), name="reading-list-detail"),
     path("lists/<int:pk>/edit/", ReadingListUpdateView.as_view(), name="reading-list-edit"),

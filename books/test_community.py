@@ -42,6 +42,25 @@ class OpenLibraryServiceTests(TestCase):
         self.assertEqual(kwargs["timeout"], 8)
         self.assertIsNotNone(kwargs["context"])
 
+    @patch("books.services.urlopen")
+    def test_search_ranks_exact_match_and_removes_duplicates_and_noise(self, urlopen):
+        urlopen.return_value = io.BytesIO(
+            json.dumps(
+                {
+                    "docs": [
+                        {"key": "/works/noise", "title": "Go Ask Alice", "author_name": ["Anonymous"]},
+                        {"key": "/works/dune", "title": "Dune", "author_name": ["Frank Herbert"]},
+                        {"key": "/works/children", "title": "Children of Dune", "author_name": ["Frank Herbert"]},
+                        {"key": "/works/dune", "title": "Dune", "author_name": ["Frank Herbert"]},
+                    ]
+                }
+            ).encode()
+        )
+
+        results = search_open_library("Dune")
+
+        self.assertEqual([result.title for result in results], ["Dune", "Children of Dune"])
+
 
 class BookImportTests(TestCase):
     def setUp(self):
@@ -80,7 +99,7 @@ class BookImportTests(TestCase):
         self.assertEqual(catalog_book.isbn_13, "9780441172719")
         self.assertSetEqual(
             set(catalog_book.categories.values_list("name", flat=True)),
-            {"Science fiction", "Adventure"},
+            {"Science Fiction", "Adventure"},
         )
 
     def test_duplicate_import_reuses_catalog_and_shelf_entry(self):
@@ -297,7 +316,74 @@ class CategoryModerationTests(TestCase):
         )
 
         self.assertTrue(self.book.categories.filter(name="Politics").exists())
-        self.assertTrue(self.book.categories.filter(name="Desert ecology").exists())
+        self.assertTrue(self.book.categories.filter(name="Desert Ecology").exists())
+
+    def test_category_aliases_are_normalised_and_reused(self):
+        self.client.force_login(self.reader)
+        self.client.post(
+            reverse("catalog-category-add", args=[self.book.pk]),
+            {"categories": "sci-fi, Science fiction"},
+        )
+
+        self.assertEqual(Category.objects.filter(name="Science Fiction").count(), 1)
+
+    def test_reader_can_add_but_not_remove_shared_categories(self):
+        shelf_book = Book.objects.create(
+            owner=self.reader,
+            catalog_book=self.book,
+            title=self.book.title,
+            author=self.book.author,
+        )
+        self.client.force_login(self.reader)
+        self.client.post(
+            reverse("book-edit", args=[shelf_book.pk]),
+            {"title": shelf_book.title, "author": shelf_book.author, "categories": "Politics"},
+        )
+
+        self.assertTrue(self.book.categories.filter(pk=self.category.pk).exists())
+        self.assertTrue(self.book.categories.filter(name="Politics").exists())
+
+    def test_staff_can_replace_categories_on_their_own_entry(self):
+        shelf_book = Book.objects.create(
+            owner=self.staff,
+            catalog_book=self.book,
+            title=self.book.title,
+            author=self.book.author,
+        )
+        self.client.force_login(self.staff)
+        self.client.post(
+            reverse("book-edit", args=[shelf_book.pk]),
+            {"title": shelf_book.title, "author": shelf_book.author, "categories": "Politics"},
+        )
+
+        self.assertSetEqual(
+            set(self.book.categories.values_list("name", flat=True)), {"Politics"}
+        )
+
+    @patch("books.views.search_open_library")
+    def test_staff_can_refresh_book_metadata_but_reader_cannot(self, search):
+        search.return_value = [
+            BookSearchResult(
+                title="Dune",
+                author="Frank Herbert",
+                open_library_key="OL893415W",
+                isbn_13="9780441172719",
+                publisher="Ace",
+                published_year=1965,
+                categories=("Science fiction",),
+            )
+        ]
+        refresh_url = reverse("catalog-book-refresh", args=[self.book.pk])
+        self.client.force_login(self.reader)
+        self.assertEqual(self.client.post(refresh_url).status_code, 403)
+
+        self.client.force_login(self.staff)
+        response = self.client.post(refresh_url)
+
+        self.book.refresh_from_db()
+        self.assertRedirects(response, self.book.get_absolute_url())
+        self.assertEqual(self.book.isbn_13, "9780441172719")
+        self.assertTrue(self.book.categories.filter(name="Science Fiction").exists())
 
     def test_non_staff_cannot_rename_category(self):
         self.client.force_login(self.reader)

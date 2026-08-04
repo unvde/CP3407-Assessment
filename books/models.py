@@ -210,6 +210,28 @@ class ReadingList(models.Model):
         return reverse("reading-list-detail", kwargs={"pk": self.pk})
 
 
+class RecommendationDismissal(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="recommendation_dismissals",
+    )
+    identifier = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "identifier"],
+                name="unique_recommendation_dismissal_per_user",
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.user}: {self.identifier}"
+
+
 class ReadingNote(models.Model):
     book = models.ForeignKey(
         Book,
