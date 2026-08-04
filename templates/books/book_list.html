@@ -9,7 +9,10 @@
         <h1>My books</h1>
         <p>Keep each book in the right place as your reading changes.</p>
     </div>
-    <a class="primary-button" href="{% url 'book-add' %}">Add a book</a>
+    <div class="actions compact-actions">
+        <a class="primary-button" href="{% url 'book-search' %}">Find a book</a>
+        <a class="secondary-button" href="{% url 'book-add' %}">Add manually</a>
+    </div>
 </div>
 
 <form class="filter-bar" method="get" role="search">
@@ -32,6 +35,15 @@
             {% endfor %}
         </select>
     </div>
+    <div class="filter-field">
+        <label for="category-filter">Category</label>
+        <select id="category-filter" name="category">
+            <option value="">All categories</option>
+            {% for category in categories %}
+                <option value="{{ category.slug }}"{% if selected_category == category.slug %} selected{% endif %}>{{ category.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
     <button class="primary-button" type="submit">Apply filters</button>
     <a class="text-link clear-filters" href="{% url 'book-list' %}">Clear filters</a>
 </form>
@@ -43,6 +55,11 @@
                 <span class="status status-{{ book.status }}">{{ book.get_status_display }}</span>
                 <h2><a href="{{ book.get_absolute_url }}">{{ book.title }}</a></h2>
                 <p class="author">by {{ book.author }}</p>
+                {% if book.catalog_book.categories.all %}
+                    <div class="tag-list">
+                        {% for category in book.catalog_book.categories.all|slice:":3" %}<span class="tag">{{ category.name }}</span>{% endfor %}
+                    </div>
+                {% endif %}
                 {% if book.total_pages %}
                     <p>{{ book.total_pages }} pages</p>
                 {% else %}
@@ -67,7 +84,7 @@
         {% else %}
             <p class="eyebrow">Your list is empty</p>
             <h2>Add the first book to your reading journey.</h2>
-            <a class="primary-button" href="{% url 'book-add' %}">Add your first book</a>
+            <a class="primary-button" href="{% url 'book-search' %}">Search the book catalogue</a>
         {% endif %}
     </section>
 {% endif %}
