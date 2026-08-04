@@ -35,4 +35,4 @@ Forms use associated labels and visible error messages; navigation and actions u
 
 ## Prototype-to-code evidence
 
-The deployed implementation at https://reading-compass.onrender.com/ is the acceptance reference. Templates under `templates/` implement the screen hierarchy and `static/css/app.css` provides the responsive visual system.
+The deployed implementation at https://reading-compass.onrender.com/ is the acceptance reference. Templates under `templates/` implement the screen hierarchy and `static/css/app.css` provides the responsive visual system. The editable prototype source covers the Explore, community book and dashboard views: [Reading Compass — Current System Prototype](https://www.figma.com/design/IGorE0HsUzZ7mb68WYIBqJ).

@@ -731,6 +731,11 @@ class BookSearchView(LoginRequiredMixin, TemplateView):
 
 class BookImportView(LoginRequiredMixin, View):
     def post(self, request):
+        status = request.POST.get("status", Book.ReadingStatus.WANT_TO_READ)
+        if status not in Book.ReadingStatus.values:
+            messages.error(request, "Choose a valid reading status.")
+            return redirect("book-search")
+
         try:
             data = load_import_token(request.POST.get("token", ""))
         except signing.BadSignature:
@@ -769,7 +774,7 @@ class BookImportView(LoginRequiredMixin, View):
                 defaults={
                     "title": catalog_book.title,
                     "author": catalog_book.author,
-                    "status": request.POST.get("status", Book.ReadingStatus.WANT_TO_READ),
+                    "status": status,
                 },
             )
         if created:

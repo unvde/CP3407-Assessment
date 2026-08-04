@@ -148,6 +148,21 @@ class BookImportTests(TestCase):
         self.assertRedirects(response, reverse("book-search"))
         self.assertFalse(CatalogBook.objects.exists())
 
+    def test_import_rejects_unknown_reading_status(self):
+        response = self.client.post(
+            reverse("book-import"),
+            {
+                "token": self.result.import_token,
+                "status": "not-a-real-status",
+            },
+            follow=True,
+        )
+
+        self.assertRedirects(response, reverse("book-search"))
+        self.assertContains(response, "Choose a valid reading status.")
+        self.assertFalse(CatalogBook.objects.exists())
+        self.assertFalse(Book.objects.filter(owner=self.user).exists())
+
 
 class ForumPermissionTests(TestCase):
     def setUp(self):
