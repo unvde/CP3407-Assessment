@@ -206,7 +206,7 @@ def search_open_library_subject(subject, limit=10, page=1):
     )
     try:
         ssl_context = ssl.create_default_context(cafile=certifi.where())
-        with urlopen(request, timeout=12, context=ssl_context) as response:
+        with urlopen(request, timeout=6, context=ssl_context) as response:
             payload = json.load(response)
     except (HTTPError, URLError, TimeoutError, json.JSONDecodeError) as exc:
         logger.warning("Open Library subject search failed: %s", exc)

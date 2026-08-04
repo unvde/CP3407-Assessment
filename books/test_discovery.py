@@ -13,6 +13,7 @@ from .models import (
     RecommendationDismissal,
 )
 from .services import BookSearchResult
+from .services import BookSearchError
 
 
 class ReadingListTests(TestCase):
@@ -202,6 +203,18 @@ class CategoryBrowseTests(TestCase):
             limit=10,
             page=2,
         )
+
+    @patch("books.views.search_open_library_subject")
+    def test_trait_search_falls_back_to_local_category_on_timeout(self, search):
+        search.side_effect = BookSearchError("Temporarily unavailable")
+
+        response = self.client.get(
+            reverse("catalog-book-list"), {"trait": "Science Fiction"}
+        )
+
+        self.assertContains(response, "Community fallback")
+        self.assertContains(response, self.dune.title)
+        self.assertNotContains(response, self.emma.title)
 
 
 class DemoContentCommandTests(TestCase):

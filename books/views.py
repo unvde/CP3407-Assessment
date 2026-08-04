@@ -464,6 +464,17 @@ class CatalogBookListView(ListView):
             except BookSearchError as exc:
                 context["api_search_error"] = str(exc)
                 context["api_results"] = []
+                context["api_fallback_books"] = (
+                    CatalogBook.objects.filter(
+                        categories__name__icontains=context["trait"]
+                    )
+                    .prefetch_related("categories")
+                    .annotate(
+                        average_rating=Avg("reviews__rating"),
+                        review_count=Count("reviews", distinct=True),
+                    )
+                    .distinct()[:10]
+                )
             context["api_has_next"] = len(context["api_results"]) == 10
         return context
 
