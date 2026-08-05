@@ -464,3 +464,21 @@ class BookSearchAndFilterAcceptanceTests(TestCase):
         self.assertContains(response, 'name="status"')
         self.assertContains(response, "Currently Reading")
         self.assertContains(response, 'href="{}"'.format(reverse("book-list")))
+
+    def test_personal_shelf_is_paginated_and_preserves_filters(self):
+        for number in range(25):
+            Book.objects.create(
+                owner=self.user,
+                title=f"Extra book {number:02d}",
+                author="Demo Author",
+                status=Book.ReadingStatus.WANT_TO_READ,
+            )
+
+        response = self.client.get(
+            reverse("book-list"),
+            {"status": Book.ReadingStatus.WANT_TO_READ},
+        )
+
+        self.assertTrue(response.context["is_paginated"])
+        self.assertContains(response, "Next page")
+        self.assertContains(response, "status=want_to_read&amp;page=2")

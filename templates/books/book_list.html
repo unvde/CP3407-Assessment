@@ -25,5 +25,7 @@
     </form>
     <div class="card-actions"><a class="secondary-button button-small" href="{% url 'book-edit' book.pk %}">Edit book</a><a class="primary-button button-small" href="{{ book.get_absolute_url }}">View details</a></div>
 </article>
-{% endfor %}</div>{% else %}<section class="empty-state">{% if filters_active %}<p class="eyebrow">No matches</p><h2>No books match these filters.</h2><a class="primary-button" href="{% url 'book-list' %}">Clear filters</a>{% else %}<p class="eyebrow">Your list is empty</p><h2>Add the first book to your collection.</h2><a class="primary-button" href="{% url 'book-search' %}">Search the book catalogue</a>{% endif %}</section>{% endif %}
+{% endfor %}</div>
+{% if is_paginated %}<nav class="pagination-actions" aria-label="My books pages">{% if page_obj.has_previous %}<a class="secondary-button" href="?{% if pagination_query %}{{ pagination_query }}&amp;{% endif %}page={{ page_obj.previous_page_number }}">Previous page</a>{% endif %}<span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>{% if page_obj.has_next %}<a class="primary-button" href="?{% if pagination_query %}{{ pagination_query }}&amp;{% endif %}page={{ page_obj.next_page_number }}">Next page</a>{% endif %}</nav>{% endif %}
+{% else %}<section class="empty-state">{% if filters_active %}<p class="eyebrow">No matches</p><h2>No books match these filters.</h2><a class="primary-button" href="{% url 'book-list' %}">Clear filters</a>{% else %}<p class="eyebrow">Your list is empty</p><h2>Add the first book to your collection.</h2><a class="primary-button" href="{% url 'book-search' %}">Search the book catalogue</a>{% endif %}</section>{% endif %}
 {% endblock %}

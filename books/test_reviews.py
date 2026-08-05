@@ -80,6 +80,27 @@ class PublicReviewTests(TestCase):
         self.assertContains(response, "Public recommendation.")
         self.assertContains(response, "4.0 / 5")
 
+    def test_public_reviews_are_paginated(self):
+        for number in range(13):
+            reviewer = User.objects.create_user(
+                username=f"reviewer-{number:02d}", password="pass"
+            )
+            PublicReview.objects.create(
+                catalog_book=self.book,
+                author=reviewer,
+                rating=4,
+                content=f"Review number {number:02d}.",
+            )
+
+        first_page = self.client.get(self.book.get_absolute_url())
+        second_page = self.client.get(
+            self.book.get_absolute_url(), {"review_page": 2}
+        )
+
+        self.assertTrue(first_page.context["reviews_are_paginated"])
+        self.assertContains(first_page, "Next reviews")
+        self.assertEqual(len(second_page.context["reviews"]), 1)
+
     def test_reader_cannot_edit_another_review_but_staff_can_delete_it(self):
         review = PublicReview.objects.create(
             catalog_book=self.book,

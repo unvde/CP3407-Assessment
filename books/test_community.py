@@ -8,6 +8,7 @@ from django.urls import reverse
 
 from .models import Book, CatalogBook, Category, Forum, ForumPost, ForumReply
 from .services import (
+    BookSearchError,
     BookSearchResult,
     search_open_library,
     search_open_library_subject,
@@ -90,6 +91,40 @@ class OpenLibraryServiceTests(TestCase):
         request = urlopen.call_args.args[0]
         self.assertIn("/subjects/science_fiction.json", request.full_url)
         self.assertIn("offset=20", request.full_url)
+
+    @patch("books.services.urlopen")
+    def test_search_rejects_valid_json_with_invalid_structure(self, urlopen):
+        urlopen.return_value = io.BytesIO(json.dumps({"docs": {}}).encode())
+
+        with self.assertRaises(BookSearchError):
+            search_open_library("Dune")
+
+    @patch("books.services.urlopen")
+    def test_search_normalises_scalar_metadata_fields(self, urlopen):
+        urlopen.return_value = io.BytesIO(
+            json.dumps(
+                {
+                    "docs": [
+                        {
+                            "key": "/works/dune",
+                            "title": "Dune",
+                            "author_name": "Frank Herbert",
+                            "isbn": "9780441172719",
+                            "publisher": "Ace",
+                            "subject": "Science fiction",
+                            "first_publish_year": "1965",
+                        }
+                    ]
+                }
+            ).encode()
+        )
+
+        result = search_open_library("Dune")[0]
+
+        self.assertEqual(result.author, "Frank Herbert")
+        self.assertEqual(result.publisher, "Ace")
+        self.assertEqual(result.categories, ("Science fiction",))
+        self.assertEqual(result.published_year, 1965)
 
 
 class BookImportTests(TestCase):
@@ -191,6 +226,22 @@ class ForumPermissionTests(TestCase):
             self.client.get(add_url),
             f"{reverse('login')}?next={add_url}",
         )
+
+    def test_forum_posts_are_paginated(self):
+        for number in range(20):
+            ForumPost.objects.create(
+                forum=self.forum,
+                author=self.author,
+                title=f"Additional topic {number:02d}",
+                content="Discussion content.",
+            )
+
+        first_page = self.client.get(self.forum.get_absolute_url())
+        second_page = self.client.get(self.forum.get_absolute_url(), {"page": 2})
+
+        self.assertTrue(first_page.context["is_paginated"])
+        self.assertContains(first_page, "Next page")
+        self.assertEqual(len(second_page.context["posts"]), 1)
 
     def test_author_can_edit_own_post(self):
         self.client.force_login(self.author)

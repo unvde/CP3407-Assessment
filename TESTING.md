@@ -7,13 +7,13 @@ below open each test file directly.
 
 | Test file | Tests | Main responsibility |
 | --- | ---: | --- |
-| [`books/tests.py`](books/tests.py) | 33 | Registration, authentication, shelf models, forms, ownership, status changes, dashboard, search and filters |
-| [`books/test_community.py`](books/test_community.py) | 27 | Open Library services, signed imports, forums, replies, category maintenance and moderation |
-| [`books/test_discovery.py`](books/test_discovery.py) | 11 | Reading lists, public profiles, recommendations, trait browsing, fallback and demo data |
+| [`books/tests.py`](books/tests.py) | 34 | Registration, authentication, shelf models, forms, ownership, status changes, dashboard, search, filters and pagination |
+| [`books/test_community.py`](books/test_community.py) | 30 | Open Library validation, signed imports, forums, pagination, replies, category maintenance and moderation |
+| [`books/test_discovery.py`](books/test_discovery.py) | 13 | Reading lists, public profiles, unbiased recommendations, caching, trait browsing, fallback and demo data |
 | [`books/test_notes.py`](books/test_notes.py) | 13 | Reading-note validation, lifecycle, ownership and anonymous access |
-| [`books/test_reviews.py`](books/test_reviews.py) | 6 | Rating constraints, review uniqueness, public visibility and permissions |
+| [`books/test_reviews.py`](books/test_reviews.py) | 7 | Rating constraints, review uniqueness, pagination, public visibility and permissions |
 | [`books/test_system.py`](books/test_system.py) | 3 | Integrated reader journeys, privacy boundaries and anonymous write protection |
-| **Complete suite** | **93** | All delivered components and workflows |
+| **Complete suite** | **100** | All delivered components and workflows |
 
 ## Test levels
 

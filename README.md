@@ -74,14 +74,17 @@ perform writes.
 
 Open Library access is isolated in a dedicated service layer rather than mixed
 into views. Requests use an identifiable User-Agent, a verified CA bundle and
-finite timeouts. Responses are normalised into typed search results, cleaned,
-deduplicated and ranked before reaching a template.
+finite timeouts. Responses are schema-checked, normalised into typed search
+results, cleaned, deduplicated and ranked before reaching a template. Dashboard
+fallback results are cached briefly so repeated page loads do not amplify
+provider traffic.
 
 Search relevance handles exact ISBNs, exact and prefix title matches, author and
 category matches, token overlap, fuzzy title similarity and edition popularity.
 The Subjects API supports trait browsing with pagination. Network, HTTP,
-timeout and invalid-JSON failures become one controlled application error; trait
-pages then fall back to matching books already stored locally.
+timeout, invalid-JSON and unexpected-schema failures become one controlled
+application error; trait pages then fall back to matching books already stored
+locally.
 
 ### Safe catalogue imports
 
@@ -165,7 +168,7 @@ password variables to be set.
 
 ## Automated quality checks
 
-The repository contains **93 automated tests** across model, form, service,
+The repository contains **100 automated tests** across model, form, service,
 view, permission, acceptance and end-to-end system behaviour. External API
 boundaries are mocked deterministically while parsing, ranking, validation and
 database behaviour remain real.
