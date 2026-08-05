@@ -3,8 +3,10 @@ from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.cache import cache
 from django.core import signing
 from django.core.exceptions import PermissionDenied
+from django.core.paginator import Paginator
 from django.db import transaction
 from django.db.models import Avg, Count, Q, QuerySet
 from django.http import HttpResponseRedirect
@@ -83,7 +85,11 @@ def get_or_create_category(name, user=None, source=Category.Source.USER):
     category = Category.objects.filter(name__iexact=name).first()
     if category:
         return category
-    return Category.objects.create(name=name, created_by=user, source=source)
+    category, _ = Category.objects.get_or_create(
+        name=name,
+        defaults={"created_by": user, "source": source},
+    )
+    return category
 
 
 def safe_next_url(request, fallback):
@@ -133,6 +139,7 @@ class BookListView(OwnedBookQuerysetMixin, ListView):
     model = Book
     context_object_name = "books"
     template_name = "books/book_list.html"
+    paginate_by = 24
 
     def get_queryset(self) -> QuerySet:
         queryset = super().get_queryset()
@@ -170,6 +177,9 @@ class BookListView(OwnedBookQuerysetMixin, ListView):
             or context["selected_status"]
             or context["selected_category"]
         )
+        pagination_query = self.request.GET.copy()
+        pagination_query.pop("page", None)
+        context["pagination_query"] = pagination_query.urlencode()
         return context
 
 
@@ -220,11 +230,13 @@ class DashboardView(OwnedBookQuerysetMixin, ListView):
                     category_weights.get(category.id, 0) + review.rating
                 )
 
-        candidates = CatalogBook.objects.exclude(
-            pk__in=owned_catalog_ids
-        ).prefetch_related("categories").annotate(
-            average_rating=Avg("reviews__rating")
-        )[:100]
+        candidates = (
+            CatalogBook.objects.exclude(pk__in=owned_catalog_ids)
+            .filter(categories__id__in=category_weights)
+            .prefetch_related("categories")
+            .annotate(average_rating=Avg("reviews__rating"))
+            .distinct()
+        )
         ranked = []
         for candidate in candidates:
             identifier = f"catalog:{candidate.pk}"
@@ -259,12 +271,17 @@ class DashboardView(OwnedBookQuerysetMixin, ListView):
                 pk=favourite_category_id
             ).first()
             if favourite_category:
+                cache_key = f"reading-compass:recommendations:v1:{favourite_category.pk}"
+                api_results = cache.get(cache_key)
                 try:
-                    api_results = search_open_library(
-                        favourite_category.name, limit=12
-                    )
+                    if api_results is None:
+                        api_results = search_open_library(
+                            favourite_category.name, limit=12
+                        )
+                        cache.set(cache_key, api_results, timeout=300)
                 except BookSearchError:
                     api_results = []
+                    cache.set(cache_key, api_results, timeout=30)
                 for result in api_results:
                     if result.recommendation_identifier in dismissed:
                         continue
@@ -517,10 +534,14 @@ class CatalogBookDetailView(DetailView):
         except Forum.DoesNotExist:
             context["forum"] = None
         reviews = self.object.reviews.select_related("author")
-        context["reviews"] = reviews
         context["review_summary"] = reviews.aggregate(
             average=Avg("rating"), count=Count("id")
         )
+        review_paginator = Paginator(reviews, 12)
+        review_page = review_paginator.get_page(self.request.GET.get("review_page"))
+        context["reviews"] = review_page.object_list
+        context["review_page_obj"] = review_page
+        context["reviews_are_paginated"] = review_page.has_other_pages()
         if self.request.user.is_authenticated:
             context["user_review"] = reviews.filter(
                 author=self.request.user
@@ -751,18 +772,35 @@ class BookImportView(LoginRequiredMixin, View):
             if not candidates.exists() and data.get("isbn_13"):
                 candidates = CatalogBook.objects.filter(isbn_13=data["isbn_13"])
             catalog_book = candidates.first()
-            if not catalog_book:
+            created_catalog = False
+            defaults = {
+                "title": data["title"],
+                "author": data["author"],
+                "isbn_10": data.get("isbn_10", ""),
+                "isbn_13": data.get("isbn_13", ""),
+                "cover_url": data.get("cover_url", ""),
+                "publisher": data.get("publisher", ""),
+                "published_year": data.get("published_year"),
+                "added_by": request.user,
+            }
+            if not catalog_book and data.get("open_library_key"):
+                catalog_book, created_catalog = CatalogBook.objects.get_or_create(
+                    open_library_key=data["open_library_key"],
+                    defaults=defaults,
+                )
+            elif not catalog_book:
                 catalog_book = CatalogBook.objects.create(
                     title=data["title"],
                     author=data["author"],
                     isbn_10=data.get("isbn_10", ""),
                     isbn_13=data.get("isbn_13", ""),
-                    open_library_key=data.get("open_library_key") or None,
                     cover_url=data.get("cover_url", ""),
                     publisher=data.get("publisher", ""),
                     published_year=data.get("published_year"),
                     added_by=request.user,
                 )
+                created_catalog = True
+            if created_catalog:
                 for name in data.get("categories", [])[:8]:
                     catalog_book.categories.add(
                         get_or_create_category(name, source=Category.Source.API)
@@ -802,7 +840,7 @@ class CatalogBookAddToShelfView(LoginRequiredMixin, View):
 class CatalogBookCategoryAddView(LoginRequiredMixin, View):
     def post(self, request, pk):
         catalog_book = get_object_or_404(CatalogBook, pk=pk)
-        names = parse_category_names(request.POST.get("categories", ""))
+        names = parse_category_names(request.POST.get("categories", ""))[:8]
         for name in names:
             catalog_book.categories.add(get_or_create_category(name, request.user))
         if names:
@@ -919,9 +957,19 @@ class ForumDetailView(DetailView):
     template_name = "forum/forum_detail.html"
 
     def get_queryset(self):
-        return Forum.objects.select_related("book", "created_by").prefetch_related(
-            "posts__author", "posts__replies__author"
+        return Forum.objects.select_related("book", "created_by")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        posts = self.object.posts.select_related("author").prefetch_related(
+            "replies__author"
         )
+        paginator = Paginator(posts, 20)
+        page = paginator.get_page(self.request.GET.get("page"))
+        context["posts"] = page.object_list
+        context["page_obj"] = page
+        context["is_paginated"] = page.has_other_pages()
+        return context
 
 
 class ForumPostCreateView(LoginRequiredMixin, CreateView):

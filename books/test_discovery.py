@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.core.cache import cache
 from django.core.management import call_command
 from django.test import TestCase
 from django.urls import reverse
@@ -63,6 +64,7 @@ class ReadingListTests(TestCase):
 
 class RecommendationTests(TestCase):
     def setUp(self):
+        cache.clear()
         self.reader = User.objects.create_user(username="reader", password="pass")
         science_fiction = Category.objects.create(name="Science fiction")
         owned_catalog = CatalogBook.objects.create(title="Dune", author="Frank Herbert")
@@ -128,6 +130,46 @@ class RecommendationTests(TestCase):
 
         self.assertContains(response, "A Memory Called Empire")
         self.assertContains(response, "From Open Library")
+
+    @patch("books.views.search_open_library", return_value=[])
+    def test_recommendations_consider_matching_books_beyond_first_hundred(self, _search):
+        for number in range(100):
+            catalog = CatalogBook.objects.create(
+                title=f"A catalogue book {number:03d}", author="Demo Author"
+            )
+            catalog.categories.add(self.recommended.categories.first())
+        target = CatalogBook.objects.create(
+            title="Zulu high-rated match", author="Demo Author"
+        )
+        target.categories.add(self.recommended.categories.first())
+        reviewer = User.objects.create_user(username="reviewer", password="pass")
+        PublicReview.objects.create(
+            catalog_book=target,
+            author=reviewer,
+            rating=5,
+            content="Excellent.",
+        )
+        self.client.force_login(self.reader)
+
+        response = self.client.get(reverse("dashboard"))
+
+        self.assertContains(response, target.title)
+
+    @patch("books.views.search_open_library")
+    def test_external_recommendations_are_cached(self, search):
+        search.return_value = [
+            BookSearchResult(
+                title="Cached recommendation",
+                author="Demo Author",
+                open_library_key="OL-CACHED",
+            )
+        ]
+        self.client.force_login(self.reader)
+
+        self.client.get(reverse("dashboard"))
+        self.client.get(reverse("dashboard"))
+
+        search.assert_called_once_with("Science fiction", limit=12)
 
 
 class PublicDiscoveryTests(TestCase):

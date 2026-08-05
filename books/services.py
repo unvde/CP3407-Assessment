@@ -52,7 +52,28 @@ def _first(values, default=""):
 
 
 def _clean_isbn(value):
-    return re.sub(r"[^0-9Xx]", "", value or "").upper()
+    return re.sub(r"[^0-9Xx]", "", str(value or "")).upper()
+
+
+def _as_list(value):
+    if value is None:
+        return []
+    return value if isinstance(value, list) else [value]
+
+
+def _clean_year(value):
+    try:
+        year = int(value)
+    except (TypeError, ValueError):
+        return None
+    return year if 0 < year <= 32_767 else None
+
+
+def _require_mapping_list(payload, key):
+    if not isinstance(payload, dict) or not isinstance(payload.get(key, []), list):
+        logger.warning("Open Library returned an unexpected response structure.")
+        raise BookSearchError("Book search is temporarily unavailable.")
+    return payload.get(key, [])
 
 
 def _normalise_search_text(value):
@@ -132,26 +153,33 @@ def search_open_library(query, limit=12, page=1, subject=None):
         logger.warning("Open Library search failed: %s", exc)
         raise BookSearchError("Book search is temporarily unavailable.") from exc
 
+    documents = _require_mapping_list(payload, "docs")
     ranked_results = []
     seen = set()
-    for item in payload.get("docs", []):
+    for item in documents:
+        if not isinstance(item, dict):
+            continue
         title = str(item.get("title", "")).strip()
         if not title:
             continue
-        isbns = [_clean_isbn(value) for value in item.get("isbn", [])]
+        isbns = [_clean_isbn(value) for value in _as_list(item.get("isbn"))]
         isbn_13 = next((value for value in isbns if len(value) == 13), "")
         isbn_10 = next((value for value in isbns if len(value) == 10), "")
         cover_id = item.get("cover_i")
         subjects = tuple(
             dict.fromkeys(
                 str(value).strip()[:80]
-                for value in item.get("subject", [])[:8]
+                for value in _as_list(item.get("subject"))[:8]
                 if str(value).strip()
             )
         )
         result = BookSearchResult(
                 title=title[:200],
-                author=", ".join(item.get("author_name", []))[:200]
+                author=", ".join(
+                    str(value).strip()
+                    for value in _as_list(item.get("author_name"))
+                    if str(value).strip()
+                )[:200]
                 or "Unknown author",
                 open_library_key=str(item.get("key", "")).replace("/works/", "")[:40],
                 isbn_10=isbn_10,
@@ -161,8 +189,8 @@ def search_open_library(query, limit=12, page=1, subject=None):
                     if cover_id
                     else ""
                 ),
-                publisher=str(_first(item.get("publisher", [])))[:200],
-                published_year=item.get("first_publish_year"),
+                publisher=str(_first(_as_list(item.get("publisher"))))[:200],
+                published_year=_clean_year(item.get("first_publish_year")),
                 categories=subjects,
             )
         dedupe_key = (
@@ -212,9 +240,12 @@ def search_open_library_subject(subject, limit=10, page=1):
         logger.warning("Open Library subject search failed: %s", exc)
         raise BookSearchError("Book search is temporarily unavailable.") from exc
 
+    works = _require_mapping_list(payload, "works")
     results = []
     seen = set()
-    for item in payload.get("works", []):
+    for item in works:
+        if not isinstance(item, dict):
+            continue
         title = str(item.get("title", "")).strip()
         work_key = str(item.get("key", "")).replace("/works/", "")[:40]
         if not title or not work_key or work_key in seen:
@@ -223,15 +254,15 @@ def search_open_library_subject(subject, limit=10, page=1):
         cover_id = item.get("cover_id")
         author_names = [
             str(author.get("name", "")).strip()
-            for author in item.get("authors", [])
-            if str(author.get("name", "")).strip()
+            for author in _as_list(item.get("authors"))
+            if isinstance(author, dict) and str(author.get("name", "")).strip()
         ]
         categories = tuple(
             dict.fromkeys(
                 [subject]
                 + [
                     str(value).strip()[:80]
-                    for value in item.get("subject", [])[:3]
+                    for value in _as_list(item.get("subject"))[:3]
                     if str(value).strip()
                 ]
             )
@@ -246,7 +277,7 @@ def search_open_library_subject(subject, limit=10, page=1):
                     if cover_id
                     else ""
                 ),
-                published_year=item.get("first_publish_year"),
+                published_year=_clean_year(item.get("first_publish_year")),
                 categories=categories,
             )
         )

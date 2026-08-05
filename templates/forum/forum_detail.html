@@ -14,9 +14,9 @@
         {% if user.is_authenticated %}<a class="primary-button" href="{% url 'forum-post-add' forum.pk %}">Write a post</a>{% else %}<a class="primary-button" href="{% url 'login' %}?next={{ request.path }}">Log in to post</a>{% endif %}
     </div>
 </div>
-{% if forum.posts.all %}
+{% if posts %}
 <div class="post-list">
-    {% for post in forum.posts.all %}
+    {% for post in posts %}
     <article class="post-card" id="post-{{ post.pk }}">
         <div class="post-heading">
             <div><h2>{{ post.title }}</h2><p class="post-meta">By {{ post.author.username|default:"Deleted user" }} · {{ post.created_at|date:"j M Y, H:i" }}{% if post.updated_at != post.created_at %} · edited{% endif %}</p></div>
@@ -39,5 +39,6 @@
     </article>
     {% endfor %}
 </div>
+{% if is_paginated %}<nav class="pagination-actions" aria-label="Forum post pages">{% if page_obj.has_previous %}<a class="secondary-button" href="?page={{ page_obj.previous_page_number }}">Previous page</a>{% endif %}<span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>{% if page_obj.has_next %}<a class="primary-button" href="?page={{ page_obj.next_page_number }}">Next page</a>{% endif %}</nav>{% endif %}
 {% else %}<section class="empty-state"><h2>No posts yet</h2><p>Be the first reader to start a conversation.</p>{% if user.is_authenticated %}<a class="primary-button" href="{% url 'forum-post-add' forum.pk %}">Write the first post</a>{% endif %}</section>{% endif %}
 {% endblock %}

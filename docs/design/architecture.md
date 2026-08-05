@@ -77,7 +77,7 @@ flowchart TB
 | URL configuration | Maps stable public, authenticated and staff routes | `reading_compass/urls.py`, `books/urls.py` |
 | Views and permission mixins | Coordinates shelf, discovery, community, forum and moderation workflows; applies owner/author/staff scope | `books/views.py` |
 | Forms | Normalises input and presents field-level validation | `books/forms.py` |
-| Services | Calls Open Library, normalises/ranks results, handles failures and signs import payloads | `books/services.py` |
+| Services | Calls Open Library, validates and ranks results, handles failures and signs import payloads | `books/services.py` |
 | Models | Stores shared catalogue, private shelf and community data; enforces relational rules | `books/models.py` |
 | Templates | Renders accessible server-side pages and CSRF-protected forms | `templates/` |
 | Static delivery | Provides the responsive visual system in development and production | `static/`, WhiteNoise |
@@ -143,9 +143,11 @@ flowchart LR
 
 ## Failure Handling
 
-Open Library calls have finite timeouts and translate HTTP, network, timeout and
-invalid-JSON failures into `BookSearchError`. Views show a controlled message or
-fall back to locally stored catalogue data. Database constraints provide the
+Open Library calls have finite timeouts and translate HTTP, network, timeout,
+invalid-JSON and unexpected-schema failures into `BookSearchError`. Dashboard
+fallback results use a short cache to reduce repeated provider traffic. Views
+show a controlled message or fall back to locally stored catalogue data.
+Database constraints provide the
 final defence against duplicate shelf entries, reviews, list names and
 recommendation dismissals.
 
