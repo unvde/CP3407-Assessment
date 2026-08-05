@@ -9,4 +9,3 @@ staticfiles/
 .coverage
 htmlcov/
 .pytest_cache/
-site/
