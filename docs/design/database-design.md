@@ -38,7 +38,7 @@ erDiagram
         varchar name UK
         varchar slug UK
         varchar source
-        bigint created_by_id FK NULL
+        bigint created_by_id FK "nullable"
         datetime created_at
     }
 
@@ -48,12 +48,12 @@ erDiagram
         varchar author
         varchar isbn_10
         varchar isbn_13
-        varchar open_library_key UK NULL
+        varchar open_library_key UK "nullable"
         varchar cover_url
         varchar publisher
-        smallint published_year NULL
+        smallint published_year "nullable"
         text description
-        bigint added_by_id FK NULL
+        bigint added_by_id FK "nullable"
         datetime created_at
         datetime updated_at
     }
@@ -61,7 +61,7 @@ erDiagram
     BOOK {
         bigint id PK
         bigint owner_id FK
-        bigint catalog_book_id FK NULL
+        bigint catalog_book_id FK "nullable"
         varchar title
         varchar author
         varchar status
@@ -80,7 +80,7 @@ erDiagram
     PUBLIC_REVIEW {
         bigint id PK
         bigint catalog_book_id FK
-        bigint author_id FK NULL
+        bigint author_id FK "nullable"
         smallint rating
         text content
         datetime created_at
@@ -106,17 +106,17 @@ erDiagram
 
     FORUM {
         bigint id PK
-        bigint book_id FK UK
+        bigint book_id FK, UK
         varchar title
         text description
-        bigint created_by_id FK NULL
+        bigint created_by_id FK "nullable"
         datetime created_at
     }
 
     FORUM_POST {
         bigint id PK
         bigint forum_id FK
-        bigint author_id FK NULL
+        bigint author_id FK "nullable"
         varchar title
         text content
         datetime created_at
@@ -126,7 +126,7 @@ erDiagram
     FORUM_REPLY {
         bigint id PK
         bigint post_id FK
-        bigint author_id FK NULL
+        bigint author_id FK "nullable"
         text content
         datetime created_at
         datetime updated_at
