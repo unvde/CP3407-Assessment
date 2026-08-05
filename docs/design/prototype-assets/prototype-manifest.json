@@ -1,0 +1,107 @@
+{
+  "project": "Reading Compass",
+  "canvas": {
+    "width": 1440,
+    "height": 900
+  },
+  "prototypeUrl": "https://design.penpot.app/#/workspace?team-id=81f57451-85cc-819d-8008-6f857ab31971&file-id=3be9e5e1-190f-8090-8008-6f8638edd4d2&page-id=3be9e5e1-190f-8090-8008-6f8638edd4d3",
+  "verified": "2026-08-05",
+  "flows": [
+    {
+      "name": "Reader journey",
+      "start": "01-login.svg"
+    },
+    {
+      "name": "Book discovery",
+      "start": "05-private-book.svg"
+    },
+    {
+      "name": "Staff moderation",
+      "start": "10-moderation.svg"
+    }
+  ],
+  "screens": [
+    {
+      "file": "01-login.svg",
+      "purpose": "Account access"
+    },
+    {
+      "file": "02-dashboard.svg",
+      "purpose": "Dashboard and recommendations"
+    },
+    {
+      "file": "03-find-book.svg",
+      "purpose": "Search and import"
+    },
+    {
+      "file": "04-my-books.svg",
+      "purpose": "Private shelf"
+    },
+    {
+      "file": "05-private-book.svg",
+      "purpose": "Private book detail and notes"
+    },
+    {
+      "file": "06-explore.svg",
+      "purpose": "Category and trait discovery"
+    },
+    {
+      "file": "07-community-book.svg",
+      "purpose": "Community book, reviews and actions"
+    },
+    {
+      "file": "08-lists-profile.svg",
+      "purpose": "Lists and public profile"
+    },
+    {
+      "file": "09-forum.svg",
+      "purpose": "Forum and threaded replies"
+    },
+    {
+      "file": "10-moderation.svg",
+      "purpose": "Staff moderation"
+    }
+  ],
+  "connections": [
+    {
+      "from": "01-login.svg",
+      "trigger": "Board click",
+      "to": "02-dashboard.svg"
+    },
+    {
+      "from": "02-dashboard.svg",
+      "trigger": "Board click",
+      "to": "03-find-book.svg"
+    },
+    {
+      "from": "03-find-book.svg",
+      "trigger": "Board click",
+      "to": "04-my-books.svg"
+    },
+    {
+      "from": "04-my-books.svg",
+      "trigger": "Board click",
+      "to": "05-private-book.svg"
+    },
+    {
+      "from": "05-private-book.svg",
+      "trigger": "Board click",
+      "to": "06-explore.svg"
+    },
+    {
+      "from": "06-explore.svg",
+      "trigger": "Board click",
+      "to": "07-community-book.svg"
+    },
+    {
+      "from": "07-community-book.svg",
+      "trigger": "Board click",
+      "to": "08-lists-profile.svg"
+    },
+    {
+      "from": "08-lists-profile.svg",
+      "trigger": "Board click",
+      "to": "09-forum.svg"
+    }
+  ]
+}
