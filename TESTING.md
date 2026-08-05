@@ -91,6 +91,6 @@ runs on every push. It installs project dependencies, checks for missing
 migrations, executes the complete Django suite and validates production
 deployment settings.
 
-The current `main` suite completes all 93 tests with no Django system-check or
+The current `main` suite completes all 100 tests with no Django system-check or
 migration-drift errors. Earlier test plans, selected cases and TDD
 specifications remain in the weekly course record.
