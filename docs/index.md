@@ -32,15 +32,5 @@ implementation, testing and delivery evidence.
 | Foundation | Secure account, shared catalogue import and private shelf | `week5/user-stories/` |
 | Community | Category discovery, public reviews, lists and profiles | `week7/user-stories/` |
 | Delivery | Forums, recommendations, moderation and production delivery | `week9/` |
-
-## Repository organisation
-
-The topic pages above are the current source of truth. Directories named by
-week retain the practical work, planning snapshots, burndowns and iteration
-reviews required to demonstrate the development process. They remain available
-as chronological supporting evidence, but are intentionally placed after the
-current-system pages in navigation.
-
-The repository's Issues and Pull requests tabs retain GitHub's immutable audit
 history. Feature names, code, tests and completion pages are used for current
 traceability instead of GitHub record numbers.
