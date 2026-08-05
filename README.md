@@ -5,8 +5,10 @@ personal shelf and discovering what to read next. It combines live Open Library
 data with a shared local catalogue, private reading tools and public community
 features in one responsive Django application.
 
-[**Open the live application**](https://reading-compass.onrender.com/) ·
-[**View the test suite**](TESTING.md) ·
+[**Open the live application**](https://reading-compass.onrender.com/)
+
+[**View the test suite**](TESTING.md)
+
 [**Browse the project documentation**](docs/index.md)
 
 ## Product overview
