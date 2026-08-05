@@ -19,9 +19,10 @@ implementation, testing and delivery evidence.
   implementation, automated tests and completion evidence.
 - [Testing](../TESTING.md) explains the test code, data, test levels,
   acceptance coverage, CI checks and current result.
-- [Architecture](design/architecture.md), [database design](design/database-design.md)
-  and [interface design](design/interface-design.md) describe the current
-  implementation.
+- [Design evidence](design/README.md) is the rubric-aligned entry point for the
+  architecture, database and interface designs. It includes the
+  [interactive Penpot prototype](design/interface-prototype.md), design
+  justification and downloadable source evidence.
 - [Development tools](development-tools.md) explains the libraries, build
   tools, delivery platform and external services used by the project.
 
