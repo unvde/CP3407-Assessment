@@ -32,5 +32,3 @@ implementation, testing and delivery evidence.
 | Foundation | Secure account, shared catalogue import and private shelf | `week5/user-stories/` |
 | Community | Category discovery, public reviews, lists and profiles | `week7/user-stories/` |
 | Delivery | Forums, recommendations, moderation and production delivery | `week9/` |
-history. Feature names, code, tests and completion pages are used for current
-traceability instead of GitHub record numbers.
